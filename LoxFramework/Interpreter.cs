@@ -12,26 +12,26 @@ namespace LoxFramework
 
                 foreach (var token in tokens)
                 {
-                    OnStatus?.Invoke(null, new InterpreterEventArgs(token.ToString()));
+                    Status?.Invoke(null, new InterpreterEventArgs(token.ToString()));
                 }
             } catch (ScannerException e)
             {
-                Error(e.Line, e.Message);
+                HandleScannerException(e.Line, e.Message);
             }
         }
 
-        internal static void Error(int line, string message)
+        internal static void HandleScannerException(int line, string message)
         {
             Report(line, "", message);
         }
 
         internal static void Report(int line, string where, string message)
         {
-            OnError?.Invoke(null, new InterpreterEventArgs($"[line {line}] Error{where}: {message}"));
+            Error?.Invoke(typeof(Interpreter), new InterpreterEventArgs($"[line {line}] Error{where}: {message}"));
         }
 
-        public static event EventHandler<InterpreterEventArgs> OnError;
+        public static event EventHandler<InterpreterEventArgs> Error;
 
-        public static event EventHandler<InterpreterEventArgs> OnStatus;
+        public static event EventHandler<InterpreterEventArgs> Status;
     }
 }

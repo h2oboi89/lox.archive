@@ -8,13 +8,13 @@ namespace Lox
     {
         static void Main(string[] args)
         {
-            Interpreter.OnError += (_, e) =>
+            Interpreter.Error += (_, e) =>
             {
                 Console.WriteLine(e.Message);
                 Environment.Exit(1);
             };
 
-            Interpreter.OnStatus += (_, e) => Console.WriteLine(e.Message);
+            Interpreter.Status += (_, e) => Console.WriteLine(e.Message);
 
             if (args.Length > 1)
             {
