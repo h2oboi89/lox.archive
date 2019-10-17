@@ -6,11 +6,12 @@
 SHELL := C:\Windows\System32\cmd.exe
 
 # default values, overwritten for Release
-# NOTE: Variables using CONFIG should be set using '=' instead of ':=' 
+# NOTE: Variables using these values should be set using '=' instead of ':=' 
 # 	to allow for recursive expansion if release rule changes default
 #	debug values to release values
 CONFIG := Debug
 VERSION := 0.0
+VERSION_FULL = $(VERSION).*.*
 
 # Tools and related variables
 TDD_TOOL := .\packages\NUnit.ConsoleRunner.3.10.0\tools\nunit3-console.exe
@@ -87,37 +88,25 @@ build: nuget
 	@echo -----------------------------------
 	$(call build_solution,Rebuild,$(CONFIG))
 
-# This rule resets the tdd directory
-.PHONY: reset_tdd_dir
-reset_tdd_dir:
+# his rule runs TDD
+.PHONY: tdd
+tdd:
 	@echo _
 	@echo -----------------------------------
 	@echo Reseting tdd directory ...
 	@echo -----------------------------------
 	@if EXIST $(TDD_DIR) rmdir $(TDD_DIR) /q /s;
 	@mkdir $(TDD_DIR)
-	
-# This rule runs nunit and coverage
-.PHONY: nunit
-nunit: build reset_tdd_dir
 	@echo _
 	@echo -----------------------------------
 	@echo Running tests w/ coverage ...
 	@echo -----------------------------------
 	$(COVERAGE_TOOL) -target:$(TDD_TOOL) -targetargs:"$(TDD_DLL) --work=$(TDD_DIR)" -register:user -output:$(COVERAGE_REPORT)
-
-# This rule converts OpenCover XML report to HTML
-.PHONY: coverage_report
-coverage_report: nunit 
 	@echo _
 	@echo -----------------------------------
 	@echo Converting coverage report to HTML ...
 	@echo -----------------------------------
 	$(COVERAGE_REPORT_TOOL) -reports:$(COVERAGE_REPORT) -targetdir:$(TDD_DIR) -assemblyFilters:-nunit.framework -verbosity:Warning -tag:$(GIT_LONG_HASH)
-
-# This rule runs TDD
-.PHONY: tdd
-tdd: coverage_report
 
 # This rule generates a shared assembly info file that sets the git hash and version number
 # for all build assemblies (DLLs and EXEs) in the solution.
@@ -131,8 +120,8 @@ set_assembly_info:
 	@echo -----------------------------------
 	@echo using System.Reflection; > $(SHARED_ASSEMBLY_FILE)
 	@echo [assembly: AssemblyInformationalVersion("$(CONFIG):$(GIT_LONG_HASH)")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyVersion("$(VERSION).*.*")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyFileVersion("$(VERSION).*.*")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyVersion("$(VERSION_FULL)")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyFileVersion("$(VERSION_FULL)")] >> $(SHARED_ASSEMBLY_FILE)
 
 # This rule clears the contents of the SharedAssemblyInfo.cs file. By doing this
 # we ensure that if someone builds locally using visual studio, the version numbers
