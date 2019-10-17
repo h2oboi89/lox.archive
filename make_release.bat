@@ -1,2 +1,0 @@
-make package CONFIG=Release
-
