@@ -35,9 +35,12 @@ define zip_files
 	@if not ["$1"]==[] (7z.exe a -tzip -mx9 $2 $1 && @move $2 $3) ELSE ( @echo Error: No files && exit 1 )
 endef
 
-# define build_solution
-	# msbuild.exe $(SOLUTION_FILE) /v:q /nologo /t:$1 /p:Configuration=$2
-# endef
+# Runs MSbuild
+# $1 Build target (IE: Clean, Build, Rebuild)
+# $2 Build configuration (IE: Debug, Release)
+define build_solution
+	msbuild.exe $(SOLUTION_FILE) /v:q /nologo /t:$1 /p:Configuration=$2
+endef
 
 # Files that are copied to the artifacts folder for builds.
 # Note: starting with ".\" copies just the file and not the path to the artifacts folder.
@@ -70,7 +73,7 @@ build: nuget
 	@echo -----------------------------------
 	@echo Building Solution ($(CONFIG)) ...
 	@echo -----------------------------------
-	msbuild.exe $(SOLUTION_FILE) /v:q /nologo /t:Rebuild /p:Configuration=$(CONFIG)
+	$(call build_solution,Rebuild,$(CONFIG))
 
 # This rule resets the coverage directory
 .PHONY: reset_coverage_dir
@@ -79,8 +82,8 @@ reset_coverage_dir:
 	@echo -----------------------------------
 	@echo Reseting coverage directory ...
 	@echo -----------------------------------
-	@if exist $(COVERAGE_DIR) (rd $(COVERAGE_DIR) /q /s)
-	@md $(COVERAGE_DIR)
+	@if EXIST $(COVERAGE_DIR) rmdir $(COVERAGE_DIR) /q /s
+	@mkdir $(COVERAGE_DIR)
 	
 # This rule runs nunit and coverage
 .PHONY: nunit
@@ -172,6 +175,5 @@ clean:
 	@echo Cleaning solution and artifacts ...
 	@echo -----------------------------------
 	@if EXIST artifacts rmdir artifacts /s /q;
-	msbuild.exe $(SOLUTION_FILE) /v:q /nologo /t:Clean /p:Configuration=Release
-	msbuild.exe $(SOLUTION_FILE) /v:q /nologo /t:Clean /p:Configuration=Debug
-	
+	$(call build_solution,Clean,Release)
+	$(call build_solution,Clean,Debug)	
