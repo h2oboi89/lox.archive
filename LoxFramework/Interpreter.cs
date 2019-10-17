@@ -6,11 +6,9 @@ namespace LoxFramework
     {
         public static void Run(string source)
         {
-            var scanner = new Scanner(source);
-
             try
             {
-                var tokens = scanner.ScanTokens();
+                var tokens = Scanner.Scan(source);
 
                 foreach (var token in tokens)
                 {

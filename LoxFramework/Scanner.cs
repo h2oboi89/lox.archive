@@ -2,14 +2,13 @@
 
 namespace LoxFramework
 {
-    // TODO: make Scanner static?
-    class Scanner
+    static class Scanner
     {
-        readonly string _source;
-        readonly List<Token> _tokens = new List<Token>();
-        private int _start = 0;
-        private int _current = 0;
-        private int _line = 1;
+        private static string _source;
+        private static List<Token> _tokens;
+        private static int _start;
+        private static int _current;
+        private static int _line;
         private static readonly Dictionary<string, TokenType> _keywords = new Dictionary<string, TokenType>
         {
             { "and", TokenType.AND },
@@ -30,13 +29,14 @@ namespace LoxFramework
             { "while", TokenType.WHILE }
         };
 
-        public Scanner(string source)
+        public static IEnumerable<Token> Scan(string source)
         {
-            this._source = source;
-        }
+            _source = source;
+            _tokens = new List<Token>();
+            _start = 0;
+            _current = 0;
+            _line = 1;
 
-        public IEnumerable<Token> ScanTokens()
-        {
             while (!IsAtEnd())
             {
                 _start = _current;
@@ -47,7 +47,7 @@ namespace LoxFramework
             return _tokens;
         }
 
-        private void ScanToken()
+        private static void ScanToken()
         {
             var c = Advance();
             switch (c)
@@ -66,28 +66,13 @@ namespace LoxFramework
                 case '=': AddToken(Match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL); break;
                 case '<': AddToken(Match('=') ? TokenType.LESS_EQUAL : TokenType.LESS); break;
                 case '>': AddToken(Match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER); break;
-                case '/':
-                    if (Match('/'))
-                    {
-                        // comment goes until end of line or end of input
-                        while (Peek() != '\n' && !IsAtEnd())
-                        {
-                            Advance();
-                        }
-                    }
-                    else
-                    {
-                        AddToken(TokenType.SLASH);
-                    }
-                    break;
+                case '/': SlashOrComment(); break;
                 case ' ':
                 case '\r':
                 case '\t':
                     // ignore whitespace
                     break;
-                case '\n':
-                    _line++;
-                    break;
+                case '\n': _line++; break;
                 case '"': String(); break;
                 default:
                     if (IsDigit(c))
@@ -96,7 +81,7 @@ namespace LoxFramework
                     }
                     else if (IsAlpha(c))
                     {
-                        Identifier();
+                        IdentifierOrKeyword();
                     }
                     else
                     {
@@ -106,7 +91,23 @@ namespace LoxFramework
             }
         }
 
-        private void Identifier()
+        private static void SlashOrComment()
+        {
+            if (Match('/'))
+            {
+                // comment goes until end of line or end of input
+                while (Peek() != '\n' && !IsAtEnd())
+                {
+                    Advance();
+                }
+            }
+            else
+            {
+                AddToken(TokenType.SLASH);
+            }
+        }
+
+        private static void IdentifierOrKeyword()
         {
             while (IsAlphaNumeric(Peek()))
             {
@@ -132,7 +133,7 @@ namespace LoxFramework
                 c == '_';
         }
 
-        private void Number()
+        private static void Number()
         {
             ConsumeDigits();
 
@@ -147,7 +148,7 @@ namespace LoxFramework
             AddToken(TokenType.NUMBER, double.Parse(_source.Extract(_start, _current)));
         }
 
-        private void ConsumeDigits()
+        private static void ConsumeDigits()
         {
             while (IsDigit(Peek()))
             {
@@ -160,18 +161,18 @@ namespace LoxFramework
             return c >= '0' && c <= '9';
         }
 
-        private bool IsAtEnd(int n = 0)
+        private static bool IsAtEnd(int n = 0)
         {
             return _current + n >= _source.Length;
         }
 
-        private char Peek(int n = 0)
+        private static char Peek(int n = 0)
         {
             if (IsAtEnd(n)) return '\0';
             return _source[_current + n];
         }
 
-        private void String()
+        private static void String()
         {
             while (Peek() != '"' && !IsAtEnd())
             {
@@ -193,18 +194,18 @@ namespace LoxFramework
             AddToken(TokenType.STRING, _source.Extract(_start + 1, _current - 1));
         }
 
-        private char Advance()
+        private static char Advance()
         {
             return _source[_current++];
         }
 
-        private void AddToken(TokenType type, object literal = null)
+        private static void AddToken(TokenType type, object literal = null)
         {
             var text = _source.Extract(_start, _current);
             _tokens.Add(new Token(type, text, literal, _line));
         }
 
-        private bool Match(char expected)
+        private static bool Match(char expected)
         {
             if (IsAtEnd() || _source[_current] != expected)
             {
