@@ -1,6 +1,7 @@
 ﻿using LoxFramework;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Lox
 {
@@ -41,6 +42,9 @@ namespace Lox
 
         static void RunPrompt()
         {
+            var assemblyName = Assembly.GetExecutingAssembly().GetName();
+            Console.WriteLine($"{assemblyName.Name} {assemblyName.Version}");
+            
             while (true)
             {
                 Console.Write("> ");

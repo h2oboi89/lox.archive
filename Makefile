@@ -11,7 +11,6 @@ SHELL := C:\Windows\System32\cmd.exe
 #	debug values to release values
 CONFIG := Debug
 VERSION := 0.0
-VERSION_FULL = $(VERSION).*.*
 
 # Tools and related variables
 TDD_TOOL := .\packages\NUnit.ConsoleRunner.3.10.0\tools\nunit3-console.exe
@@ -120,8 +119,8 @@ set_assembly_info:
 	@echo -----------------------------------
 	@echo using System.Reflection; > $(SHARED_ASSEMBLY_FILE)
 	@echo [assembly: AssemblyInformationalVersion("$(CONFIG):$(GIT_LONG_HASH)")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyVersion("$(VERSION_FULL)")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyFileVersion("$(VERSION_FULL)")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyVersion("$(VERSION).*")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyFileVersion("$(VERSION).0.0")] >> $(SHARED_ASSEMBLY_FILE)
 
 # This rule clears the contents of the SharedAssemblyInfo.cs file. By doing this
 # we ensure that if someone builds locally using visual studio, the version numbers
@@ -135,8 +134,8 @@ clear_assembly_info:
 	@echo -----------------------------------
 	@echo using System.Reflection; > $(SHARED_ASSEMBLY_FILE)
 	@echo [assembly: AssemblyInformationalVersion("")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyVersion("0.0.*.*")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyFileVersion("0.0.*.*")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyVersion("0.0.*")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyFileVersion("0.0.0.0")] >> $(SHARED_ASSEMBLY_FILE)
 
 # This rule generates Doxygen documentation
 .PHONY: doxygen
