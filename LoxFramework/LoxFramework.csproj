@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="InternalsVisiableToUnitTests.cs" />
+    <Compile Include="InternalsVisibleToUnitTests.cs" />
     <Compile Include="Interpreter.cs" />
     <Compile Include="InterpreterEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
