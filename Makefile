@@ -90,7 +90,7 @@ build: nuget
 
 # his rule runs TDD
 .PHONY: tdd
-tdd:
+tdd: build
 	@echo _
 	@echo -----------------------------------
 	@echo Reseting tdd directory ...
@@ -140,7 +140,7 @@ clear_assembly_info:
 
 # This rule generates Doxygen documentation
 .PHONY: doxygen
-doxygen:
+doxygen: build
 	@echo _
 	@echo -----------------------------------
 	@echo Generating doxygen docs ...
