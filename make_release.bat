@@ -1,0 +1,2 @@
+make package CONFIG=Release
+
