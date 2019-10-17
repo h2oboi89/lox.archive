@@ -2,6 +2,9 @@
 
 namespace LoxFramework
 {
+    /// <summary>
+    /// Scans source code and generates <see cref="Token"/>s for the next part of the interpretation of the source.
+    /// </summary>
     static class Scanner
     {
         private static string _source;
@@ -29,6 +32,12 @@ namespace LoxFramework
             { "while", TokenType.WHILE }
         };
 
+        /// <summary>
+        /// Scans the specified source and returns a collection of <see cref="Token"/>s.
+        /// </summary>
+        /// <param name="source">source code to scan.</param>
+        /// <returns>Collection of <see cref="Token"/>s representing the source.</returns>
+        /// <exception cref="ScannerException">Thrown when scanner is unable to tokenize the source.</exception>
         public static IEnumerable<Token> Scan(string source)
         {
             _source = source;

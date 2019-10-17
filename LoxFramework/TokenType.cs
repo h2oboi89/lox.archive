@@ -1,6 +1,9 @@
 ﻿namespace LoxFramework
 {
-    enum TokenType
+    /// <summary>
+    /// The grammatical type of scanned <see cref="Token"/>s.
+    /// </summary>
+    internal enum TokenType
     {
         // Single-character tokens
         LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,

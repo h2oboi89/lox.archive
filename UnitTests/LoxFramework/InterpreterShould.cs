@@ -35,7 +35,7 @@ namespace UnitTests.LoxFramework
         [TearDown]
         public void TearDown()
         {
-            Interpreter.Status -= OnStatus;
+            Interpreter.Out -= OnStatus;
             Interpreter.Error -= FailOnError;
             Interpreter.Error -= OnError;
         }
@@ -43,7 +43,7 @@ namespace UnitTests.LoxFramework
         [Test]
         public void RunSource()
         {
-            Interpreter.Status += OnStatus;
+            Interpreter.Out += OnStatus;
             Interpreter.Error += FailOnError;
 
             Interpreter.Run("foo bar baz 3.14");

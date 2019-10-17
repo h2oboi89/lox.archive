@@ -4,6 +4,9 @@ using System.IO;
 
 namespace Lox
 {
+    /// <summary>
+    /// Lox interpreter for consoles.
+    /// </summary>
     class Program
     {
         static void Main(string[] args)
@@ -14,7 +17,7 @@ namespace Lox
                 Environment.Exit(1);
             };
 
-            Interpreter.Status += (_, e) => Console.WriteLine(e.Message);
+            Interpreter.Out += (_, e) => Console.WriteLine(e.Message);
 
             if (args.Length > 1)
             {
