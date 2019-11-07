@@ -1,4 +1,4 @@
-# [nlox](https://github.com/h2oboi89/nlox)
+# [lox](https://github.com/h2oboi89/lox)
 
 Lox interpreter written in C# (.NET Framework 4.8)
 
