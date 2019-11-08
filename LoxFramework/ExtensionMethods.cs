@@ -25,7 +25,7 @@ namespace LoxFramework
         }
 
         /// <summary>
-        /// Wrapper for <see cref="Dictionary{TKey, TValue}[TKey key]"/>.
+        /// Wrapper for dictionary key access./>.
         /// Returns null instead of throwing exception.
         /// </summary>
         /// <param name="dict">Dictionary to get value from.</param>

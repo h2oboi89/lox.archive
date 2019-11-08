@@ -1,111 +1,118 @@
 ################################################################################
-# Makefile for building and cleaning the solution
+# Makefile for building and cleaning the solution.
 ################################################################################
-
-# explicitly set shell (required for Windows)
 SHELL := C:\Windows\System32\cmd.exe
+ZIP_TOOL := 7z.exe
+PACKAGE_ROOT := $(shell echo $(USERPROFILE))\.nuget\packages
 
-# default values, overwritten for Release
-# NOTE: Variables using these values should be set using '=' instead of ':=' 
-# 	to allow for recursive expansion if release rule changes default
-#	debug values to release values
-CONFIG := Debug
-VERSION := 0.0
+COMPILER := msbuild.exe
 
-# Tools and related variables
-TDD_TOOL := .\packages\NUnit.ConsoleRunner.3.10.0\tools\nunit3-console.exe
-TDD_DLL = .\UnitTests\bin\$(CONFIG)\UnitTests.dll
+TDD_TOOL := $(PACKAGE_ROOT)\nunit.consolerunner\3.10.0\tools\nunit3-console.exe
 TDD_DIR := .\OpenCover
 
-COVERAGE_TOOL := .\packages\OpenCover.4.7.922\tools\OpenCover.Console.exe 
-COVERAGE_REPORT_TOOL := .\packages\ReportGenerator.4.3.1\tools\net47\ReportGenerator.exe
+COVERAGE_TOOL := $(PACKAGE_ROOT)\opencover\4.7.922\tools\OpenCover.Console.exe
+COVERAGE_REPORT_TOOL := $(PACKAGE_ROOT)\reportgenerator\4.3.6\tools\net47\ReportGenerator.exe
 COVERAGE_REPORT := $(TDD_DIR)\results.xml
 
-DOXYGEN := .\packages\Doxygen.1.8.14\tools\doxygen.exe
-DOXYGEN_CONFIG := .\doxygenConfiguration.txt
-DOXYGEN_DIR := .\Doxygen\html
+GIT_LONG_HASH:=$(shell git rev-parse HEAD)
+GIT_SHORT_HASH:=$(shell git rev-parse --short HEAD)
+SHARED_ASSEMBLY_FILE:=SharedAssemblyInfo.cs
+VERSION_FILE:=version.txt
 
-# Git and version information
-GIT_LONG_HASH := $(shell git rev-parse HEAD)
-GIT_SHORT_HASH := $(shell git rev-parse --short HEAD)
+CONFIG := Debug
+VERSION := 0.0.0.0
+ZIP_TAG := $(GIT_SHORT_HASH)
 
-SHARED_ASSEMBLY_FILE := .\SharedAssemblyInfo.cs
-VERSION_FILE := .\version.txt
-
-# Solution information
 SOLUTION := Lox
-SOLUTION_FILE := $(SOLUTION).sln
+SOLUTION_FILE := .\$(SOLUTION).sln
 
+RELEASE_DIR := .\Release
 
 # Zips a the specified files and move it to the specified location
 # $1 Files to be zipped
 # $2 Name of the zip file
 # $3 Location to place the zip file
+# Pre - If zipping on Windows 'ZIP_TOOL' needs to be defined
 define zip_files
-	@echo _
-	@echo -----------------------------------
-	@if not ["$1"]==[] (7z.exe a -tzip -mx9 $2 $1 && @move $2 $3) ELSE ( @echo Error: No files && exit 1 )
+	if not ["$1"]==[] ($(subst /,\,$(ZIP_TOOL)) a -tzip -mx9 $2 $(subst /,\,$1) && @move $2 $3) ELSE ( echo Error: No files && exit 1 )
 endef
 
-# Runs MSbuild
-# $1 Build target (IE: Clean, Build, Rebuild)
-# $2 Build configuration (IE: Debug, Release)
-define build_solution
-	msbuild.exe $(SOLUTION_FILE) /v:q /nologo /t:$1 /p:Configuration=$2
+# Deletes directory if it exists
+# $1 Directory to delete
+define delete_dir
+	@if EXIST $1 rmdir $1 /s /q;
 endef
 
-# Files that are copied to the artifacts folder for builds.
+# Creates a directory if it does not exist
+# $! Directory to create
+define make_dir
+	@if NOT EXIST $1 mkdir $1;
+endef
+
+# Copies all output files for a specified project to $(RELEASE_DIR)
+# $1 Name of project to copy files for
+define copy_to_release
+    $(call copy_to_folder,$1,$(RELEASE_DIR)\$1)
+	$(call copy_to_folder,$1,$(RELEASE_DIR)\All)
+endef
+
+# Copies contents of bin\<CONFIG> folder to another folder
+# $1 is folder to copy from
+# $2 is folder to copy to
+define copy_to_folder
+	@echo $1
+	@echo $2
+	@(robocopy .\$1\bin\$(CONFIG) $2 /S /NFL /NDL /NJH /NJS /NC /NS /NP) ^& if %ERRORLEVEL% leq 1 exit 0
+endef
+
+# Files that are copied to the artifacts folder.
 # Note: starting with ".\" copies just the file and not the path to the artifacts folder.
-PACKAGE_CONTENTS = \
-	.\Lox\bin\$(CONFIG)\* \
-	
-PACKAGE_CONTENTS_COVERAGE := \
-	.\$(TDD_DIR)\* \
-	
-PACKAGE_CONTENTS_DOXYGEN := \
-	$(DOXYGEN_DIR)\* \
+PACKAGE_CONTENTS_SOLUTION =\
+	$(RELEASE_DIR)\*
+
+PACKAGE_CONTENTS_COVERAGE :=\
+	$(TDD_DIR)\*
+
+TESTS =\
+	.\UnitTests\bin\$(CONFIG)\UnitTests.dll
+
+OPENCOVER_ASSEMBLY_FILTER =\
+	-nunit.framework;-UnitTests
 
 # Default rule.
 .PHONY: all
-all: tdd
+all: build
 
-# This rule restores any pertinent nuget packages for the solution.
-.PHONY: nuget
-nuget:
-	@echo _
-	@echo -----------------------------------
-	@echo Restoring all NuGet packages ...
-	@echo -----------------------------------
-	nuget.exe restore $(SOLUTION_FILE)
-
-# This rule builds the solution using build configuration
+# This rule builds the solution
 .PHONY: build
-build: nuget
+build:
 	@echo _
 	@echo -----------------------------------
 	@echo Building Solution ($(CONFIG)) ...
 	@echo -----------------------------------
-	$(call build_solution,Rebuild,$(CONFIG))
+	$(COMPILER) $(SOLUTION_FILE) -v:m -nologo -t:Rebuild -p:Configuration=$(CONFIG) -restore -m -nr:False
 
-# his rule runs TDD
+# This rule runs nunit and coverage
 .PHONY: tdd
 tdd: build
 	@echo _
 	@echo -----------------------------------
-	@echo Reseting tdd directory ...
+	@echo Running TDD tests w/ coverage ...
 	@echo -----------------------------------
-	@if EXIST $(TDD_DIR) rmdir $(TDD_DIR) /q /s;
-	@mkdir $(TDD_DIR)
+	$(call delete_dir,$(TDD_DIR))
+	@md $(TDD_DIR)
+	$(COVERAGE_TOOL) -target:$(TDD_TOOL) -targetargs:"$(TESTS) --work=$(TDD_DIR)" -register:user -output:$(COVERAGE_REPORT)
+	$(COVERAGE_REPORT_TOOL) -reports:$(COVERAGE_REPORT) -targetdir:$(TDD_DIR) -assemblyFilters:$(OPENCOVER_ASSEMBLY_FILTER) -verbosity:Warning -tag:$(GIT_LONG_HASH)
+
+# This rule copies build output files to $(RELEASE_DIR)
+# NOTE: this will be Release or Debug depending on build configuration
+.PHONY: generate_release_contents
+generate_release_contents: build
 	@echo _
 	@echo -----------------------------------
-	@echo Running tests w/ coverage ...
+	@echo Copying to $(RELEASE_DIR) ...
 	@echo -----------------------------------
-	$(COVERAGE_TOOL) -target:$(TDD_TOOL) -targetargs:"$(TDD_DLL) --work=$(TDD_DIR)" -register:user -output:$(COVERAGE_REPORT)
-	@echo _
-	@echo -----------------------------------
-	@echo Converting coverage report to HTML ...
-	@echo -----------------------------------
-	$(COVERAGE_REPORT_TOOL) -reports:$(COVERAGE_REPORT) -targetdir:$(TDD_DIR) -assemblyFilters:-nunit.framework -verbosity:Warning -tag:$(GIT_LONG_HASH)
+	$(call copy_to_release,Lox)
 
 # This rule generates a shared assembly info file that sets the git hash and version number
 # for all build assemblies (DLLs and EXEs) in the solution.
@@ -119,12 +126,12 @@ set_assembly_info:
 	@echo -----------------------------------
 	@echo using System.Reflection; > $(SHARED_ASSEMBLY_FILE)
 	@echo [assembly: AssemblyInformationalVersion("$(CONFIG):$(GIT_LONG_HASH)")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyVersion("$(VERSION).*")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyFileVersion("$(VERSION).0.0")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyVersion("$(VERSION)")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyFileVersion("$(VERSION)")] >> $(SHARED_ASSEMBLY_FILE)
 
 # This rule clears the contents of the SharedAssemblyInfo.cs file. By doing this
 # we ensure that if someone builds locally using visual studio, the version numbers
-# and git commit will always be 0.0.*.* and empty, respectively.
+# and git commit will always be 0.0.0.0 and empty, respectively.
 .PHONY: clear_assembly_info
 clear_assembly_info:
 	@echo _
@@ -133,64 +140,37 @@ clear_assembly_info:
 	@echo prevent rogue local builds ...
 	@echo -----------------------------------
 	@echo using System.Reflection; > $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyInformationalVersion("")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyVersion("0.0.*")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyInformationalVersion("LOCAL")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyVersion("0.0.0.0")] >> $(SHARED_ASSEMBLY_FILE)
 	@echo [assembly: AssemblyFileVersion("0.0.0.0")] >> $(SHARED_ASSEMBLY_FILE)
-
-# This rule generates Doxygen documentation
-.PHONY: doxygen
-doxygen: build
-	@echo _
-	@echo -----------------------------------
-	@echo Generating doxygen docs ...
-	@echo -----------------------------------
-	$(DOXYGEN) $(DOXYGEN_CONFIG)
 
 # This rule packages a build.
 .PHONY: package
-package: set_assembly_info tdd doxygen clear_assembly_info
+package: generate_release_contents
 	@echo _
 	@echo -----------------------------------
 	@echo Zipping up artifacts ...
 	@echo -----------------------------------
-	@if NOT EXIST artifacts mkdir artifacts;
-	$(call zip_files,$(PACKAGE_CONTENTS),$(SOLUTION)_$(CONFIG)_$(VERSION)_$(GIT_SHORT_HASH).zip,artifacts)
-	$(call zip_files,$(PACKAGE_CONTENTS_DOXYGEN),$(SOLUTION)_$(CONFIG)_Documentation_$(VERSION)_$(GIT_SHORT_HASH).zip,artifacts)
-	$(call zip_files,$(PACKAGE_CONTENTS_COVERAGE),$(SOLUTION)_$(CONFIG)_TDD_$(VERSION)_$(GIT_SHORT_HASH).zip,artifacts)
+	$(call make_dir,artifacts)
+	$(call zip_files,$(PACKAGE_CONTENTS_SOLUTION),$(SOLUTION)_$(CONFIG)_$(ZIP_TAG).zip,artifacts)
 
-# This rule overwrites default debug variable values with release values
-.PHONY: release_config
-release_config:
-	$(eval CONFIG := Release)
-	$(eval VERSION := $(shell type $(VERSION_FILE)))
-
-# This rule creates release package
+# Builds a release build.
 .PHONY: release
-release: release_config package
+release: CONFIG := Release
+release: set_assembly_info tdd package clear_assembly_info
 
-# This rule creates debug package 
+# Builds a debug build.
 .PHONY: debug
-debug: package
-
-# This rule builds and tags a release package in git
-# This rule should only be run once for a final release build
-.PHONY: tag
-tag: release package
-	@echo _
-	@echo -----------------------------------
-	@echo Tagging release ...
-	@echo -----------------------------------
-	$(shell git tag v$(VERSION))
+debug: set_assembly_info tdd package clear_assembly_info
 
 # This rule cleans the project (removes binaries, etc).
 .PHONY: clean
-clean:
+clean: clear_assembly_info
 	@echo _
 	@echo -----------------------------------
 	@echo Cleaning solution and artifacts ...
 	@echo -----------------------------------
-	@if EXIST artifacts rmdir artifacts /s /q;
-	@if EXIST $(TDD_DIR) rmdir $(TDD_DIR) /s /q;
-	@if EXIST $(DOXYGEN_DIR) rmdir $(DOXYGEN_DIR) /s /q;
-	$(call build_solution,Clean,Release)
-	$(call build_solution,Clean,Debug)	
+	$(call delete_dir,artifacts)
+	$(call delete_dir,$(RELEASE_DIR))
+	$(COMPILER) $(SOLUTION_FILE) -v:m -nologo -t:Clean -p:Configuration=Debug -m -nr:False
+	$(COMPILER) $(SOLUTION_FILE) -v:m -nologo -t:Clean -p:Configuration=Release -m -nr:False
