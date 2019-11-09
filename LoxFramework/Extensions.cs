@@ -2,25 +2,22 @@
 
 namespace LoxFramework
 {
-    /// <summary>
-    /// Utility extension methods for various classes.
-    /// </summary>
     static class Extensions
     {
         /// <summary>
-        /// Wrapper for dictionary key access./>.
-        /// Returns null instead of throwing exception.
+        ///     Wrapper for dictionary key access.
+        ///     Returns null instead of throwing exception.
         /// </summary>
         /// <param name="dict">Dictionary to get value from.</param>
         /// <param name="key">The key of the value to get.</param>
-        /// <returns>The value associated with the specified key or null if key does not exist in the dictionary.</returns>
+        /// <returns>Value associated with key if key exists; otherwise null.</returns>
         internal static TokenType? Get(this Dictionary<string, TokenType> dict, string key)
         {
-            try
+            if (dict.ContainsKey(key))
             {
                 return dict[key];
             }
-            catch (KeyNotFoundException)
+            else
             {
                 return null;
             }
