@@ -81,7 +81,7 @@ OPENCOVER_ASSEMBLY_FILTER =\
 
 # Default rule.
 .PHONY: all
-all: build
+all: tdd
 
 # This rule builds the solution
 .PHONY: build
