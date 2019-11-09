@@ -8,12 +8,17 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{8DFB1BC2-DB67-4571-BF80-9019DFA6F8AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoxFramework", "LoxFramework\LoxFramework.csproj", "{88EE3220-FF53-4066-B45C-20B25E1EE5DB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5405AD3C-1E82-4CEE-8073-226275F762BC} = {5405AD3C-1E82-4CEE-8073-226275F762BC}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{588665F8-3D23-4F82-ADE7-9B9A89AFC1CC}"
 	ProjectSection(SolutionItems) = preProject
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 		version.txt = version.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateAst", "GenerateAst\GenerateAst.csproj", "{5405AD3C-1E82-4CEE-8073-226275F762BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +38,10 @@ Global
 		{88EE3220-FF53-4066-B45C-20B25E1EE5DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88EE3220-FF53-4066-B45C-20B25E1EE5DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88EE3220-FF53-4066-B45C-20B25E1EE5DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
