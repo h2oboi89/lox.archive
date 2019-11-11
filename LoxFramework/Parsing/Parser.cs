@@ -1,6 +1,8 @@
 ﻿using LoxFramework.AST;
 using LoxFramework.Scanning;
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace LoxFramework.Parsing
 {
@@ -200,6 +202,18 @@ namespace LoxFramework.Parsing
             }
 
             throw Error(Peek(), "Expect expression.");
+        }
+
+        [Serializable]
+        private class ParseException : Exception
+        {
+            public ParseException() { }
+
+            public ParseException(string message) : base(message) { }
+
+            public ParseException(string message, Exception innerException) : base(message, innerException) { }
+
+            protected ParseException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         }
         #endregion
     }

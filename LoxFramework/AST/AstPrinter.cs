@@ -21,11 +21,7 @@ namespace LoxFramework.AST
 
         public string VisitLiteralExpression(LiteralExpression expression)
         {
-            if (expression.Value == null)
-            {
-                return "nil";
-            }
-            return expression.Value.ToString();
+            return expression.Value?.ToString() ?? "nil";
         }
 
         public string VisitUnaryExpression(UnaryExpression expression)
