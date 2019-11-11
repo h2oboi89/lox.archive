@@ -18,7 +18,7 @@ namespace GenerateAst
             var outputDirectory = args[0];
             var baseName = "Expression";
 
-            DefineAst(outputDirectory, baseName, new string[]
+            DefineAst(baseName, new string[]
             {
                 "Binary     : Expression left, Token operator, Expression right",
                 "Grouping   : Expression expression"  ,
@@ -83,7 +83,7 @@ namespace GenerateAst
             }
         }
 
-        private static void DefineAst(string outputDirectory, string baseName, IEnumerable<string> types)
+        private static void DefineAst(string baseName, IEnumerable<string> types)
         {
             AppendLine("// Generated code, do not modify.");
             AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
