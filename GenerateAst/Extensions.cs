@@ -61,5 +61,16 @@ namespace GenerateAst
 
             return string.Concat(Enumerable.Repeat(str, count));
         }
+
+        /// <summary>
+        ///     Combines string split and trim methods
+        /// </summary>
+        /// <param name="str">This string.</param>
+        /// <param name="split">Character to split on.</param>
+        /// <returns>Trimmmed collection of strings resulting from split.</returns>
+        internal static IEnumerable<string> SplitTrim(this string str, char split)
+        {
+            return str.Split(split).Select(s => s.Trim());
+        }
     }
 }

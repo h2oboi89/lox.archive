@@ -7,6 +7,9 @@ namespace GenerateAst
 {
     class Program
     {
+        const string baseType = "Expression";
+        static readonly string baseName = baseType.ToLower();
+
         static void Main(string[] args)
         {
             if (args.Length != 1)
@@ -16,26 +19,25 @@ namespace GenerateAst
             }
 
             var outputDirectory = args[0];
-            var baseName = "Expression";
 
-            DefineAst(baseName, new string[]
+            DefineAst(new string[]
             {
-                "Binary     : Expression left, Token operator, Expression right",
-                "Grouping   : Expression expression"  ,
-                "Literal    : object value",
-                "Unary      : Token operator, Expression right"
+                $"Binary     : {baseType} left, Token operator, {baseType} right",
+                $"Grouping   : {baseType} {baseName}",
+                $"Literal    : object value",
+                $"Unary      : Token operator, {baseType} right"
             });
 
-            GenerateFile(outputDirectory, baseName);
+            GenerateFile(outputDirectory);
         }
 
-        private static void GenerateFile(string outputDirectory, string baseName)
+        private static void GenerateFile(string outputDirectory)
         {
             var folder = Path.Combine(outputDirectory, "AST");
 
             Directory.CreateDirectory(folder);
 
-            var file = Path.Combine(folder, $"{baseName}.cs");
+            var file = Path.Combine(folder, $"{baseType}.cs");
 
             using (var writer = new StreamWriter(File.OpenWrite(file)))
             {
@@ -83,41 +85,44 @@ namespace GenerateAst
             }
         }
 
-        private static void DefineAst(string baseName, IEnumerable<string> types)
+        private static void DefineAst(IEnumerable<string> types)
         {
             AppendLine("// Generated code, do not modify.");
             AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
             AppendLine("namespace LoxFramework.AST");
             AppendLine("{");
 
-            DefineVisitor(baseName, types);
+            DefineVisitor(types);
 
             AppendLine();
 
-            DefineTypes(baseName, types);
+            DefineTypes(types);
 
             AppendLine("}");
             AppendLine("#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member");
         }
 
-        private static void DefineVisitor(string baseName, IEnumerable<string> types)
+        private static void DefineVisitor(IEnumerable<string> types)
         {
             AppendLine("public interface IVisitor<T>");
             AppendLine("{");
 
             foreach (var type in types)
             {
-                var (typeName, _) = type.Split(':').Select(s => s.Trim());
-                AppendLine($"T Visit{typeName}{baseName}({typeName}{baseName} {baseName.ToLower()});");
+                var (className, _) = type.SplitTrim(':');
+
+                var extendedClass = $"{className}{baseType}";
+
+                AppendLine($"T Visit{extendedClass}({extendedClass} {baseName});");
             }
 
             AppendLine("}");
         }
 
-        private static void DefineTypes(string baseName, IEnumerable<string> types)
+        private static void DefineTypes(IEnumerable<string> types)
         {
             // base class
-            AppendLine($"public abstract class {baseName}");
+            AppendLine($"public abstract class {baseType}");
             AppendLine("{");
             AppendLine($"public abstract T Accept<T>(IVisitor<T> visitor);");
             AppendLine("}");
@@ -127,9 +132,11 @@ namespace GenerateAst
             {
                 AppendLine();
 
-                var (className, fields, _) = type.Split(':').Select(s => s.Trim());
+                var (className, fields, _) = type.SplitTrim(':');
 
-                DefineType(baseName, className, fields);
+                var extendedClass = $"{className}{baseType}";
+
+                DefineType(extendedClass, fields);
             }
         }
 
@@ -148,11 +155,11 @@ namespace GenerateAst
             return str;
         }
 
-        private static void DefineType(string baseName, string className, string fields)
+        private static void DefineType(string className, string fields)
         {
-            var fieldParts = fields.Split(',').Select(s => s.Trim());
+            var fieldParts = fields.SplitTrim(',');
 
-            AppendLine($"public class {className}{baseName} : {baseName}");
+            AppendLine($"public class {className} : {baseType}");
             AppendLine("{");
 
             // fields
@@ -165,7 +172,7 @@ namespace GenerateAst
             AppendLine();
 
             // constructor
-            AppendLine($"public {className}{baseName}({FilterKeywords(fields)})");
+            AppendLine($"public {className}({FilterKeywords(fields)})");
             AppendLine("{");
             foreach (var field in fieldParts)
             {
@@ -179,7 +186,7 @@ namespace GenerateAst
             // visitor pattern
             AppendLine($"public override T Accept<T>(IVisitor<T> visitor)");
             AppendLine("{");
-            AppendLine($"return visitor.Visit{className}{baseName}(this);");
+            AppendLine($"return visitor.Visit{className}(this);");
             AppendLine("}");
 
             AppendLine("}");
