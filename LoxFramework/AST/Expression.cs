@@ -1,5 +1,7 @@
 // Generated code, do not modify.
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+using LoxFramework.Scanning;
+
 namespace LoxFramework.AST
 {
     public interface IVisitor<T>

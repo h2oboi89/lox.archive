@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LoxFramework.Scanning;
+using System.Collections.Generic;
 
 namespace LoxFramework
 {

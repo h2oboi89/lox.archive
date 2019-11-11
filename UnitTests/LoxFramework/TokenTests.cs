@@ -1,10 +1,10 @@
-﻿using LoxFramework;
+﻿using LoxFramework.Scanning;
 using NUnit.Framework;
 
 namespace UnitTests.LoxFramework
 {
     [TestFixture]
-    public class TokenShould
+    public class TokenTests
     {
         [Test]
         public void IntializeProperties()

@@ -1,4 +1,4 @@
-﻿namespace LoxFramework
+﻿namespace LoxFramework.Scanning
 {
     /// <summary>
     /// The grammatical type of scanned <see cref="Token"/>s.

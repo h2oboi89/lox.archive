@@ -1,4 +1,5 @@
 ﻿using LoxFramework;
+using LoxFramework.Scanning;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +7,34 @@ using System.Linq;
 namespace UnitTests.LoxFramework
 {
     [TestFixture]
-    public class ScannerShould
+    public class ScannerTests
     {
+        private string LastError;
+
+        [SetUp]
+        public void SetUp()
+        {
+            Interpreter.Error += OnError;
+            LastError = null;
+        }
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            Interpreter.Error += OnError;
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            Interpreter.Error -= OnError;
+        }
+
+        private void OnError(object sender, InterpreterEventArgs e)
+        {
+            LastError = e.Message;
+        }
+
         private static TokenType ScanToken(string s)
         {
             return ScanTokens(s).First();
@@ -90,13 +117,19 @@ namespace UnitTests.LoxFramework
         {
             Assert.That(ScanTokens("\"foo bar\" baz"), Is.EquivalentTo(new TokenType[] { TokenType.STRING, TokenType.IDENTIFIER, TokenType.EOF }));
             Assert.That(ScanTokens("\"foo \n bar\" baz"), Is.EquivalentTo(new TokenType[] { TokenType.STRING, TokenType.IDENTIFIER, TokenType.EOF }));
-            Assert.That(() => ScanTokens("\" oh noes!"), Throws.TypeOf<ScannerException>().With.Message.EqualTo("Unterminated string."));
+        }
+
+        [Test]
+        public void ScanStrings_OpenEndedString_SetsLastError()
+        {
+            Assert.That(ScanToken("\" oh noes!"), Is.EqualTo(TokenType.EOF));
+            Assert.That(LastError, Does.Contain("Unterminated string."));
         }
 
         [Test]
         public void ScanNumbers()
         {
-            for(var i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 Assert.That(ScanToken($"{i}"), Is.EqualTo(TokenType.NUMBER));
             }
@@ -129,13 +162,15 @@ namespace UnitTests.LoxFramework
         [Test]
         public void RejectInvalidCharacters()
         {
-            Assert.That(() => ScanToken("\\"), Throws.TypeOf<ScannerException>().With.Message.EqualTo("Unexpected character."));
-            Assert.That(() => ScanToken("@"), Throws.TypeOf<ScannerException>().With.Message.EqualTo("Unexpected character."));
-            Assert.That(() => ScanToken("#"), Throws.TypeOf<ScannerException>().With.Message.EqualTo("Unexpected character."));
-            Assert.That(() => ScanToken("$"), Throws.TypeOf<ScannerException>().With.Message.EqualTo("Unexpected character."));
-            Assert.That(() => ScanToken("%"), Throws.TypeOf<ScannerException>().With.Message.EqualTo("Unexpected character."));
-            Assert.That(() => ScanToken("^"), Throws.TypeOf<ScannerException>().With.Message.EqualTo("Unexpected character."));
-            Assert.That(() => ScanToken("&"), Throws.TypeOf<ScannerException>().With.Message.EqualTo("Unexpected character."));
+            var invalidCharacters = new char[] { '\\', '@', '#', '$', '%', '^', '&' };
+
+            foreach (var invalidCharacter in invalidCharacters)
+            {
+                LastError = null;
+
+                Assert.That(ScanToken($"{invalidCharacter}"), Is.EqualTo(TokenType.EOF));
+                Assert.That(LastError, Does.Contain("Unexpected character."));
+            }
         }
     }
 }

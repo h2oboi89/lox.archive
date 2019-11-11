@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LoxFramework
+namespace LoxFramework.Scanning
 {
     /// <summary>
     /// Scans source code and generates <see cref="Token"/>s for the next part of the interpretation of the source.
@@ -37,7 +37,6 @@ namespace LoxFramework
         /// </summary>
         /// <param name="source">source code to scan.</param>
         /// <returns>Collection of <see cref="Token"/>s representing the source.</returns>
-        /// <exception cref="ScannerException">Thrown when scanner is unable to tokenize the source.</exception>
         public static IEnumerable<Token> Scan(string source)
         {
             _source = source;
@@ -94,7 +93,7 @@ namespace LoxFramework
                     }
                     else
                     {
-                        throw new ScannerException(_line, "Unexpected character.");
+                        Interpreter.ScanError(_line, "Unexpected character.");
                     }
                     break;
             }
@@ -194,7 +193,8 @@ namespace LoxFramework
 
             if (IsAtEnd())
             {
-                throw new ScannerException(_line, "Unterminated string.");
+                Interpreter.ScanError(_line, "Unterminated string.");
+                return;
             }
 
             // closing quote

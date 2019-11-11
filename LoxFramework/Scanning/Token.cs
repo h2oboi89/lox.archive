@@ -1,4 +1,4 @@
-﻿namespace LoxFramework
+﻿namespace LoxFramework.Scanning
 {
     /// <summary>
     /// Token serves as the smallest atomic element during scanning.

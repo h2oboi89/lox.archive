@@ -10,12 +10,15 @@ namespace Lox
     /// </summary>
     class Program
     {
+        private static bool InPrompt = false;
+
         static void Main(string[] args)
         {
             Interpreter.Error += (_, e) =>
             {
                 Console.WriteLine(e.Message);
-                Environment.Exit(1);
+
+                if (!InPrompt) Environment.Exit(1);
             };
 
             Interpreter.Out += (_, e) => Console.WriteLine(e.Message);
@@ -31,6 +34,7 @@ namespace Lox
             }
             else
             {
+                InPrompt = true;
                 RunPrompt();
             }
         }
@@ -44,7 +48,7 @@ namespace Lox
         {
             var assemblyName = Assembly.GetExecutingAssembly().GetName();
             Console.WriteLine($"{assemblyName.Name} {assemblyName.Version}");
-            
+
             while (true)
             {
                 Console.Write("> ");
