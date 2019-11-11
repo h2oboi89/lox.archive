@@ -1,5 +1,5 @@
-﻿using LoxFramework;
-using LoxFramework.AST;
+﻿using LoxFramework.AST;
+using LoxFramework.Scanning;
 using System;
 using System.Diagnostics;
 using System.Text;

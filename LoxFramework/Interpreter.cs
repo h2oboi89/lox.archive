@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LoxFramework.Scanning;
+using System;
 
 namespace LoxFramework
 {
@@ -21,7 +22,8 @@ namespace LoxFramework
                 {
                     Out?.Invoke(null, new InterpreterEventArgs(token.ToString()));
                 }
-            } catch (ScannerException e)
+            }
+            catch (ScannerException e)
             {
                 HandleScannerException(e.Line, e.Message);
             }

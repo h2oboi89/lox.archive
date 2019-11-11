@@ -88,6 +88,8 @@ namespace GenerateAst
         {
             AppendLine("// Generated code, do not modify.");
             AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
+            AppendLine("using LoxFramework.Scanning;");
+            AppendLine();
             AppendLine("namespace LoxFramework.AST");
             AppendLine("{");
 

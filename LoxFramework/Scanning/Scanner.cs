@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LoxFramework
+namespace LoxFramework.Scanning
 {
     /// <summary>
     /// Scans source code and generates <see cref="Token"/>s for the next part of the interpretation of the source.

@@ -1,4 +1,4 @@
-﻿using LoxFramework;
+﻿using LoxFramework.Scanning;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,7 +96,7 @@ namespace UnitTests.LoxFramework
         [Test]
         public void ScanNumbers()
         {
-            for(var i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 Assert.That(ScanToken($"{i}"), Is.EqualTo(TokenType.NUMBER));
             }

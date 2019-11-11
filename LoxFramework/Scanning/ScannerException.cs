@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LoxFramework
+namespace LoxFramework.Scanning
 {
     /// <summary>
     /// Exception thrown when <see cref="Scanner"/> encounters an error during scanning.

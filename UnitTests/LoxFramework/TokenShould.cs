@@ -1,4 +1,4 @@
-﻿using LoxFramework;
+﻿using LoxFramework.Scanning;
 using NUnit.Framework;
 
 namespace UnitTests.LoxFramework
