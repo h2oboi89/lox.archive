@@ -66,9 +66,17 @@ namespace GenerateAst
 
         private static void DefineAst(string outputDirectory, string baseName, IEnumerable<string> types)
         {
+            AppendLine("// Generated code, do not modify.");
+            AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
             AppendLine("namespace LoxFramework.AST");
             AppendLine("{");
-            AppendLine($"abstract class {baseName} {{ }}");
+            DefineVisitor(baseName, types);
+            AppendLine();
+            AppendLine($"public abstract class {baseName}");
+            AppendLine("{");
+            AppendLine($"public abstract T Accept<T>(IVisitor<T> visitor);");
+
+            AppendLine("}");
 
             foreach (var type in types)
             {
@@ -78,6 +86,7 @@ namespace GenerateAst
             }
 
             AppendLine("}");
+            AppendLine("#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member");
 
             var folder = Path.Combine(outputDirectory, "AST");
 
@@ -86,6 +95,20 @@ namespace GenerateAst
             var file = Path.Combine(folder, $"{baseName}.cs");
 
             File.WriteAllText(file, FormatOutput());
+        }
+
+        private static void DefineVisitor(string baseName, IEnumerable<string> types)
+        {
+            AppendLine("public interface IVisitor<T>");
+            AppendLine("{");
+
+            foreach (var type in types)
+            {
+                var (typeName, _) = type.Split(':').Select(s => s.Trim());
+                AppendLine($"T Visit{typeName}{baseName}({typeName}{baseName} {baseName.ToLower()});");
+            }
+
+            AppendLine("}");
         }
 
         private static readonly Dictionary<string, string> keywordMap = new Dictionary<string, string>
@@ -107,7 +130,7 @@ namespace GenerateAst
         {
             var fieldParts = fields.Split(',').Select(s => s.Trim());
 
-            AppendLine($"class {className} : {baseName}");
+            AppendLine($"public class {className}{baseName} : {baseName}");
             AppendLine("{");
 
             // fields
@@ -120,13 +143,21 @@ namespace GenerateAst
             AppendLine();
 
             // constructor
-            AppendLine($"public {className}({FilterKeywords(fields)})");
+            AppendLine($"public {className}{baseName}({FilterKeywords(fields)})");
             AppendLine("{");
             foreach (var field in fieldParts)
             {
                 var (_, name, _) = field.Split(' ');
                 AppendLine($"{name.ToUppercaseFirst()} = {FilterKeywords(name)};");
             }
+            AppendLine("}");
+
+            AppendLine();
+
+            // visitor pattern
+            AppendLine($"public override T Accept<T>(IVisitor<T> visitor)");
+            AppendLine("{");
+            AppendLine($"return visitor.Visit{className}{baseName}(this);");
             AppendLine("}");
 
             AppendLine("}");

@@ -1,50 +1,84 @@
+// Generated code, do not modify.
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace LoxFramework.AST
 {
-    abstract class Expression { }
+    public interface IVisitor<T>
+    {
+        T VisitBinaryExpression(BinaryExpression expression);
+        T VisitGroupingExpression(GroupingExpression expression);
+        T VisitLiteralExpression(LiteralExpression expression);
+        T VisitUnaryExpression(UnaryExpression expression);
+    }
     
-    class Binary : Expression
+    public abstract class Expression
+    {
+        public abstract T Accept<T>(IVisitor<T> visitor);
+    }
+    
+    public class BinaryExpression : Expression
     {
         public readonly Expression Left;
         public readonly Token Operator;
         public readonly Expression Right;
         
-        public Binary(Expression left, Token op, Expression right)
+        public BinaryExpression(Expression left, Token op, Expression right)
         {
             Left = left;
             Operator = op;
             Right = right;
         }
+        
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitBinaryExpression(this);
+        }
     }
     
-    class Grouping : Expression
+    public class GroupingExpression : Expression
     {
         public readonly Expression Expression;
         
-        public Grouping(Expression expression)
+        public GroupingExpression(Expression expression)
         {
             Expression = expression;
         }
-    }
-    
-    class Literal : Expression
-    {
-        public readonly object Value;
         
-        public Literal(object value)
+        public override T Accept<T>(IVisitor<T> visitor)
         {
-            Value = value;
+            return visitor.VisitGroupingExpression(this);
         }
     }
     
-    class Unary : Expression
+    public class LiteralExpression : Expression
+    {
+        public readonly object Value;
+        
+        public LiteralExpression(object value)
+        {
+            Value = value;
+        }
+        
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitLiteralExpression(this);
+        }
+    }
+    
+    public class UnaryExpression : Expression
     {
         public readonly Token Operator;
         public readonly Expression Right;
         
-        public Unary(Token op, Expression right)
+        public UnaryExpression(Token op, Expression right)
         {
             Operator = op;
             Right = right;
         }
+        
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitUnaryExpression(this);
+        }
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
