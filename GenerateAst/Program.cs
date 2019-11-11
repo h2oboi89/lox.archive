@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace GenerateAst
 {
@@ -17,33 +16,52 @@ namespace GenerateAst
             }
 
             var outputDirectory = args[0];
+            var baseName = "Expression";
 
-            DefineAst(outputDirectory, "Expression", new string[]
+            DefineAst(outputDirectory, baseName, new string[]
             {
                 "Binary     : Expression left, Token operator, Expression right",
                 "Grouping   : Expression expression"  ,
                 "Literal    : object value",
                 "Unary      : Token operator, Expression right"
             });
+
+            GenerateFile(outputDirectory, baseName);
         }
 
-        private static readonly List<string> output = new List<string>();
+        private static void GenerateFile(string outputDirectory, string baseName)
+        {
+            var folder = Path.Combine(outputDirectory, "AST");
+
+            Directory.CreateDirectory(folder);
+
+            var file = Path.Combine(folder, $"{baseName}.cs");
+
+            using (var writer = new StreamWriter(File.OpenWrite(file)))
+            {
+                foreach (var line in FormatOutput())
+                {
+                    writer.WriteLine(line);
+                }
+            }
+        }
+
+        private static readonly Queue<string> output = new Queue<string>();
 
         private static void AppendLine(string s = null)
         {
-            output.Add(s ?? string.Empty);
+            output.Enqueue(s ?? string.Empty);
         }
 
-        private static string FormatOutput()
+        private static IEnumerable<string> FormatOutput()
         {
-            var sb = new StringBuilder();
-
             var tab = "    ";
             var tabLevel = 0;
 
-            foreach (var line in output)
+            while (output.Count > 0)
             {
-                var indent = string.Empty;
+                var line = output.Dequeue();
+                string indent;
 
                 switch (line)
                 {
@@ -53,15 +71,16 @@ namespace GenerateAst
                     case "}":
                         indent = tab.Repeat(--tabLevel);
                         break;
+                    case "":
+                        indent = string.Empty;
+                        break;
                     default:
                         indent = tab.Repeat(tabLevel);
                         break;
                 }
 
-                sb.AppendLine(indent + line);
+                yield return indent + line;
             }
-
-            return sb.ToString();
         }
 
         private static void DefineAst(string outputDirectory, string baseName, IEnumerable<string> types)
@@ -70,31 +89,15 @@ namespace GenerateAst
             AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
             AppendLine("namespace LoxFramework.AST");
             AppendLine("{");
+
             DefineVisitor(baseName, types);
+
             AppendLine();
-            AppendLine($"public abstract class {baseName}");
-            AppendLine("{");
-            AppendLine($"public abstract T Accept<T>(IVisitor<T> visitor);");
 
-            AppendLine("}");
-
-            foreach (var type in types)
-            {
-                var (className, fields, _) = type.Split(':').Select(s => s.Trim());
-                AppendLine();
-                DefineType(baseName, className, fields);
-            }
+            DefineTypes(baseName, types);
 
             AppendLine("}");
             AppendLine("#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member");
-
-            var folder = Path.Combine(outputDirectory, "AST");
-
-            Directory.CreateDirectory(folder);
-
-            var file = Path.Combine(folder, $"{baseName}.cs");
-
-            File.WriteAllText(file, FormatOutput());
         }
 
         private static void DefineVisitor(string baseName, IEnumerable<string> types)
@@ -109,6 +112,25 @@ namespace GenerateAst
             }
 
             AppendLine("}");
+        }
+
+        private static void DefineTypes(string baseName, IEnumerable<string> types)
+        {
+            // base class
+            AppendLine($"public abstract class {baseName}");
+            AppendLine("{");
+            AppendLine($"public abstract T Accept<T>(IVisitor<T> visitor);");
+            AppendLine("}");
+
+            // extension classes
+            foreach (var type in types)
+            {
+                AppendLine();
+
+                var (className, fields, _) = type.Split(':').Select(s => s.Trim());
+
+                DefineType(baseName, className, fields);
+            }
         }
 
         private static readonly Dictionary<string, string> keywordMap = new Dictionary<string, string>
