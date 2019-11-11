@@ -60,6 +60,13 @@
     <Compile Include="Scanning\Scanner.cs" />
     <Compile Include="Scanning\Token.cs" />
     <Compile Include="Scanning\TokenType.cs" />
+    <Compile Include="AST\AstPrinter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Parsing\Grammer.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utility\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

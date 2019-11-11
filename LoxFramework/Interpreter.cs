@@ -1,4 +1,6 @@
-﻿using LoxFramework.Scanning;
+﻿using LoxFramework.AST;
+using LoxFramework.Parsing;
+using LoxFramework.Scanning;
 using System;
 
 namespace LoxFramework
@@ -8,23 +10,29 @@ namespace LoxFramework
     /// </summary>
     public static class Interpreter
     {
+        private static bool HadError = false;
+
         /// <summary>
         /// Executes the specified source code.
         /// </summary>
         /// <param name="source">Source code to execute.</param>
         public static void Run(string source)
         {
-            var tokens = Scanner.Scan(source);
+            HadError = false;
 
-            foreach (var token in tokens)
-            {
-                Out?.Invoke(null, new InterpreterEventArgs(token.ToString()));
-            }
+            var tokens = Scanner.Scan(source);
+            var parser = new Parser(tokens);
+            var expression = parser.Parse();
+
+            if (HadError) return;
+
+            Out?.Invoke(typeof(Interpreter), new InterpreterEventArgs(new AstPrinter().Print(expression)));
         }
 
         private static void Report(int line, string where, string message)
         {
             Error?.Invoke(typeof(Interpreter), new InterpreterEventArgs($"[line {line}] Error{where}: {message}"));
+            HadError = true;
         }
 
         internal static void ScanError(int line, string message)

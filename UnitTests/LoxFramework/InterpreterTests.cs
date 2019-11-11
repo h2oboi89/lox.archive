@@ -7,65 +7,105 @@ namespace UnitTests.LoxFramework
     [TestFixture]
     public class InterpreterShould
     {
-        List<string> _tokens;
-        string _error;
+        private string Result;
+        private List<string> Errors;
 
         private void OnStatus(object sender, InterpreterEventArgs e)
         {
-            _tokens.Add(e.Message);
-        }
-
-        private void FailOnError(object sender, InterpreterEventArgs e)
-        {
-            Assert.Fail();
+            Result = e.Message;
         }
 
         private void OnError(object sender, InterpreterEventArgs e)
         {
-            _error = e.Message;
+            Errors.Add(e.Message);
+        }
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            Interpreter.Out += OnStatus;
+            Interpreter.Error += OnError;
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            Interpreter.Out -= OnStatus;
+            Interpreter.Error -= OnError;
         }
 
         [SetUp]
         public void Setup()
         {
-            _tokens = new List<string>();
-            _error = null;
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            Interpreter.Out -= OnStatus;
-            Interpreter.Error -= FailOnError;
-            Interpreter.Error -= OnError;
+            Result = null;
+            Errors = new List<string>();
         }
 
         [Test]
-        public void RunSource()
+        public void Run_ValidInputBinary_ReportsAST()
         {
-            Interpreter.Out += OnStatus;
-            Interpreter.Error += FailOnError;
+            Interpreter.Run("1 + 2 * 3");
 
-            Interpreter.Run("foo bar baz 3.14");
-
-            Assert.That(_tokens, Is.EquivalentTo(new string[]
-            {
-                "IDENTIFIER foo ",
-                "IDENTIFIER bar ",
-                "IDENTIFIER baz ",
-                "NUMBER 3.14 3.14",
-                "EOF  "
-            }));
+            Assert.That(Result, Is.EqualTo("(+ 1 (* 2 3))"));
+            Assert.That(Errors, Is.Empty);
         }
 
         [Test]
-        public void RaiseErrorEventWhenScannerReportsError()
+        public void Run_ValidInputGrouping_ReportsAST()
         {
-            Interpreter.Error += OnError;
+            Interpreter.Run("( 1 + 2 )");
 
+            Assert.That(Result, Is.EqualTo("(group (+ 1 2))"));
+            Assert.That(Errors, Is.Empty);
+        }
+
+        [Test]
+        public void Run_ValidInputLiteral_ReportsAST()
+        {
+            Interpreter.Run("\"1\"");
+
+            Assert.That(Result, Is.EqualTo("1"));
+            Assert.That(Errors, Is.Empty);
+        }
+
+        [Test]
+        public void Run_ValidInputUnary_ReportsAST()
+        {
+            Interpreter.Run("-1");
+
+            Assert.That(Result, Is.EqualTo("(- 1)"));
+            Assert.That(Errors, Is.Empty);
+        }
+
+        [Test]
+        public void Run_EmptyInput_ReportsError()
+        {
+            Interpreter.Run("");
+
+            Assert.That(Result, Is.Null);
+            Assert.That(Errors.Count, Is.EqualTo(1));
+            Assert.That(Errors[0], Does.Contain("Expect expression"));
+        }
+
+        [Test]
+        public void Run_InvalidSyntax_ReportsError()
+        {
             Interpreter.Run("@");
 
-            Assert.That(_error, Is.EqualTo("[line 1] Error: Unexpected character."));
+            Assert.That(Result, Is.Null);
+            Assert.That(Errors.Count, Is.EqualTo(2));
+            Assert.That(Errors[0], Does.Contain("Unexpected character"));
+            Assert.That(Errors[1], Does.Contain("Expect expression"));
+        }
+
+        [Test]
+        public void Run_InvalidExpression_ReportsError()
+        {
+            Interpreter.Run("foo bar baz");
+
+            Assert.That(Result, Is.Null);
+            Assert.That(Errors.Count, Is.EqualTo(1));
+            Assert.That(Errors[0], Does.Contain("Expect expression"));
         }
     }
 }
