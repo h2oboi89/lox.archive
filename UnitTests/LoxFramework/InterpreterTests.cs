@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using LoxFramework;
+﻿using LoxFramework;
+using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace UnitTests.LoxFramework
@@ -39,7 +39,7 @@ namespace UnitTests.LoxFramework
             Interpreter.Error -= FailOnError;
             Interpreter.Error -= OnError;
         }
-        
+
         [Test]
         public void RunSource()
         {
@@ -59,7 +59,7 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
-        public void RaiseErrorEventWhenScannerThrowsException()
+        public void RaiseErrorEventWhenScannerReportsError()
         {
             Interpreter.Error += OnError;
 

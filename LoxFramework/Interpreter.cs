@@ -14,29 +14,34 @@ namespace LoxFramework
         /// <param name="source">Source code to execute.</param>
         public static void Run(string source)
         {
-            try
-            {
-                var tokens = Scanner.Scan(source);
+            var tokens = Scanner.Scan(source);
 
-                foreach (var token in tokens)
-                {
-                    Out?.Invoke(null, new InterpreterEventArgs(token.ToString()));
-                }
-            }
-            catch (ScannerException e)
+            foreach (var token in tokens)
             {
-                HandleScannerException(e.Line, e.Message);
+                Out?.Invoke(null, new InterpreterEventArgs(token.ToString()));
             }
-        }
-
-        private static void HandleScannerException(int line, string message)
-        {
-            Report(line, "", message);
         }
 
         private static void Report(int line, string where, string message)
         {
             Error?.Invoke(typeof(Interpreter), new InterpreterEventArgs($"[line {line}] Error{where}: {message}"));
+        }
+
+        internal static void ScanError(int line, string message)
+        {
+            Report(line, "", message);
+        }
+
+        internal static void ParseError(Token token, string message)
+        {
+            if (token.Type == TokenType.EOF)
+            {
+                Report(token.Line, " at end", message);
+            }
+            else
+            {
+                Report(token.Line, $" at {token.Lexeme}'", message);
+            }
         }
 
         /// <summary>
