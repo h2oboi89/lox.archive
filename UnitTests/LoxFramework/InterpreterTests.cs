@@ -42,25 +42,25 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
-        public void Run_ValidInputBinary_ReportsAST()
+        public void Run_BasicArithmetic_ReturnsValue()
         {
             Interpreter.Run("1 + 2 * 3");
 
-            Assert.That(Result, Is.EqualTo("(+ 1 (* 2 3))"));
+            Assert.That(Result, Is.EqualTo("7"));
             Assert.That(Errors, Is.Empty);
         }
 
         [Test]
-        public void Run_ValidInputGrouping_ReportsAST()
+        public void Run_BasicArithmeticWithParens_ReturnsValue()
         {
-            Interpreter.Run("( 1 + 2 )");
+            Interpreter.Run("(1 + 2) * 3");
 
-            Assert.That(Result, Is.EqualTo("(group (+ 1 2))"));
+            Assert.That(Result, Is.EqualTo("9"));
             Assert.That(Errors, Is.Empty);
         }
 
         [Test]
-        public void Run_ValidInputLiteral_ReportsAST()
+        public void Run_LiteralString_ReturnsValue()
         {
             Interpreter.Run("\"1\"");
 
@@ -69,22 +69,21 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
-        public void Run_ValidInputUnary_ReportsAST()
+        public void Run_LiteralNumber_ReturnsValue()
         {
-            Interpreter.Run("-1");
+            Interpreter.Run("1");
 
-            Assert.That(Result, Is.EqualTo("(- 1)"));
+            Assert.That(Result, Is.EqualTo("1"));
             Assert.That(Errors, Is.Empty);
         }
 
         [Test]
-        public void Run_EmptyInput_ReportsError()
+        public void Run_EmptyInput_DoesNothing()
         {
             Interpreter.Run("");
 
             Assert.That(Result, Is.Null);
-            Assert.That(Errors.Count, Is.EqualTo(1));
-            Assert.That(Errors[0], Does.Contain("Expect expression"));
+            Assert.That(Errors.Count, Is.EqualTo(0));
         }
 
         [Test]
