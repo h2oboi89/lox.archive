@@ -30,7 +30,7 @@ namespace UnitTests.LoxFramework
         {
             foreach (var expression in invalidExpressions.Select(e => ScanAndParse(e)))
             {
-                Assert.That(() => interpreter.Evaluate(expression), Throws.TypeOf<RunTimeError>()
+                Assert.That(() => interpreter.Evaluate(expression), Throws.TypeOf<LoxRunTimeException>()
                     .With.Message.Contains(expectedErrorMessage));
             }
         }

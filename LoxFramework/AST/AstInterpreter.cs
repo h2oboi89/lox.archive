@@ -40,14 +40,14 @@ namespace LoxFramework.AST
         {
             if (operand.GetType() == typeof(double)) return;
 
-            throw new RunTimeError(op, "Operand must be a number.");
+            throw new LoxRunTimeException(op, "Operand must be a number.");
         }
 
         private void CheckNumberOperands(Token op, object left, object right)
         {
             if (left.GetType() == typeof(double) && right.GetType() == typeof(double)) return;
 
-            throw new RunTimeError(op, "Operands must be numbers.");
+            throw new LoxRunTimeException(op, "Operands must be numbers.");
         }
 
         public object VisitBinaryExpression(BinaryExpression expression)
@@ -86,7 +86,7 @@ namespace LoxFramework.AST
                     {
                         return (string)left + (string)right;
                     }
-                    throw new RunTimeError(expression.Operator, "Operands must be two numbers or two strings.");
+                    throw new LoxRunTimeException(expression.Operator, "Operands must be two numbers or two strings.");
                 case TokenType.SLASH:
                     CheckNumberOperands(expression.Operator, left, right);
                     return (double)left / (double)right;

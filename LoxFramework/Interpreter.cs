@@ -39,7 +39,7 @@ namespace LoxFramework
 
                 Out?.Invoke(typeof(Interpreter), new InterpreterEventArgs(Stringify(result)));
             }
-            catch (RunTimeError e)
+            catch (LoxRunTimeException e)
             {
                 Report(e.Token.Line, $" at {e.Token.Lexeme}", e.Message);
             }

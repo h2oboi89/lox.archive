@@ -52,7 +52,7 @@
     <Compile Include="AST\AstPrinter.cs" />
     <Compile Include="AST\Expression.cs" />
     <Compile Include="AST\AstInterpreter.cs" />
-    <Compile Include="RunTimeError.cs" />
+    <Compile Include="LoxRunTimeException.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="InternalsVisibleToUnitTests.cs" />
     <Compile Include="Interpreter.cs" />
