@@ -46,6 +46,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="LoxFramework\AstInterpreterTests.cs" />
     <Compile Include="LoxFramework\InterpreterTests.cs" />
     <Compile Include="LoxFramework\ParserTests.cs" />
     <Compile Include="LoxFramework\ScannerTests.cs" />

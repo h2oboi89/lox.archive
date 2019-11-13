@@ -49,7 +49,10 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AST\AstPrinter.cs" />
     <Compile Include="AST\Expression.cs" />
+    <Compile Include="AST\AstInterpreter.cs" />
+    <Compile Include="LoxRunTimeException.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="InternalsVisibleToUnitTests.cs" />
     <Compile Include="Interpreter.cs" />
@@ -59,7 +62,6 @@
     <Compile Include="Scanning\Scanner.cs" />
     <Compile Include="Scanning\Token.cs" />
     <Compile Include="Scanning\TokenType.cs" />
-    <Compile Include="AST\AstPrinter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parsing\Grammer.md" />

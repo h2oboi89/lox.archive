@@ -2,6 +2,7 @@
 using LoxFramework.Parsing;
 using LoxFramework.Scanning;
 using System;
+using System.Linq;
 
 namespace LoxFramework
 {
@@ -11,6 +12,7 @@ namespace LoxFramework
     public static class Interpreter
     {
         private static bool HadError = false;
+        private static readonly AstInterpreter astInterpreter = new AstInterpreter();
 
         /// <summary>
         /// Executes the specified source code.
@@ -18,15 +20,36 @@ namespace LoxFramework
         /// <param name="source">Source code to execute.</param>
         public static void Run(string source)
         {
-            HadError = false;
+            try
+            {
+                HadError = false;
 
-            var tokens = Scanner.Scan(source);
-            var parser = new Parser(tokens);
-            var expression = parser.Parse();
+                var tokens = Scanner.Scan(source);
 
-            if (HadError) return;
+                // check for empty input (EOF token)
+                if (!HadError && tokens.Count() == 1) return;
 
-            Out?.Invoke(typeof(Interpreter), new InterpreterEventArgs(new AstPrinter().Print(expression)));
+                var parser = new Parser(tokens);
+                var expression = parser.Parse();
+
+                // check for parse error
+                if (HadError) return;
+
+                var result = astInterpreter.Evaluate(expression);
+
+                Out?.Invoke(typeof(Interpreter), new InterpreterEventArgs(Stringify(result)));
+            }
+            catch (LoxRunTimeException e)
+            {
+                Report(e.Token.Line, $" at {e.Token.Lexeme}", e.Message);
+            }
+        }
+
+        private static string Stringify(object obj)
+        {
+            if (obj == null) return "nil";
+
+            return obj.ToString();
         }
 
         private static void Report(int line, string where, string message)
