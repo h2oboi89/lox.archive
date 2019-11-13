@@ -1,8 +1,9 @@
-﻿using System.Text;
+﻿using LoxFramework.AST;
+using System.Text;
 
-namespace LoxFramework.AST
+namespace UnitTests.LoxFramework
 {
-    public class AstPrinter : IVisitor<string>
+    class AstPrinter : IVisitor<string>
     {
         public string Print(Expression expression)
         {

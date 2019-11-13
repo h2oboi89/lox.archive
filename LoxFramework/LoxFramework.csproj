@@ -49,7 +49,6 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AST\AstPrinter.cs" />
     <Compile Include="AST\Expression.cs" />
     <Compile Include="AST\AstInterpreter.cs" />
     <Compile Include="LoxRunTimeException.cs" />
