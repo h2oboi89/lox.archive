@@ -106,5 +106,15 @@ namespace UnitTests.LoxFramework
             Assert.That(Errors.Count, Is.EqualTo(1));
             Assert.That(Errors[0], Does.Contain("Expect expression"));
         }
+
+        [Test]
+        public void Run_RunTimeError_ReportsError()
+        {
+            Interpreter.Run("true - 1");
+
+            Assert.That(Result, Is.Null);
+            Assert.That(Errors.Count, Is.EqualTo(1));
+            Assert.That(Errors[0], Does.Contain("Operands must be numbers"));
+        }
     }
 }
