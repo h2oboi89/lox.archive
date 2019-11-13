@@ -226,7 +226,8 @@ namespace UnitTests.LoxFramework
             {
                 { "1 / 2", 0.5 },
                 { "2 / 1", 2 },
-                { "2 / 2", 1 }
+                { "2 / 2", 1 },
+                { "1 / 0", double.PositiveInfinity }
             });
         }
 
