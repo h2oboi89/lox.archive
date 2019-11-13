@@ -49,8 +49,6 @@ namespace LoxFramework
         {
             if (obj == null) return "nil";
 
-            // TODO: remove .0 from integer doubles?
-
             return obj.ToString();
         }
 

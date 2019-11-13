@@ -117,7 +117,7 @@ namespace LoxFramework.AST
             {
                 case TokenType.MINUS:
                     CheckNumberOperand(expression.Operator, right);
-                    return (double)right;
+                    return -(double)right;
                 case TokenType.BANG:
                     return !IsTruthy(right);
             }
