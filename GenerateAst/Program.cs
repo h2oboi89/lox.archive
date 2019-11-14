@@ -6,9 +6,6 @@ namespace GenerateAst
 {
     class Program
     {
-        const string baseType = "Expression";
-        static readonly string baseName = baseType.ToLower();
-
         static void Main(string[] args)
         {
             if (args.Length != 1)
@@ -19,12 +16,12 @@ namespace GenerateAst
 
             var outputDirectory = args[0];
 
-            DefineAst(new string[]
+            DefineAst("Expression", new string[]
             {
-                $"Binary     : {baseType} left, Token operator, {baseType} right",
-                $"Grouping   : {baseType} {baseName}",
+                $"Binary     : Expression left, Token operator, Expression right",
+                $"Grouping   : Expression expression",
                 $"Literal    : object value",
-                $"Unary      : Token operator, {baseType} right"
+                $"Unary      : Token operator, Expression right"
             });
 
             GenerateFile(outputDirectory);
@@ -36,7 +33,7 @@ namespace GenerateAst
 
             Directory.CreateDirectory(folder);
 
-            var file = Path.Combine(folder, $"{baseType}.cs");
+            var file = Path.Combine(folder, "Syntax.cs");
 
             using (var writer = new StreamWriter(File.OpenWrite(file)))
             {
@@ -84,7 +81,7 @@ namespace GenerateAst
             }
         }
 
-        private static void DefineAst(IEnumerable<string> types)
+        private static void DefineAst(string baseName, IEnumerable<string> types)
         {
             AppendLine("// Generated code, do not modify.");
             AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
@@ -93,17 +90,17 @@ namespace GenerateAst
             AppendLine("namespace LoxFramework.AST");
             AppendLine("{");
 
-            DefineVisitor(types);
+            DefineVisitor(baseName, types);
 
             AppendLine();
 
-            DefineTypes(types);
+            DefineTypes(baseName, types);
 
             AppendLine("}");
             AppendLine("#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member");
         }
 
-        private static void DefineVisitor(IEnumerable<string> types)
+        private static void DefineVisitor(string baseName, IEnumerable<string> types)
         {
             AppendLine("public interface IVisitor<T>");
             AppendLine("{");
@@ -112,18 +109,18 @@ namespace GenerateAst
             {
                 var (className, _) = type.SplitTrim(':');
 
-                var extendedClass = $"{className}{baseType}";
+                var extendedClass = $"{className}{baseName}";
 
-                AppendLine($"T Visit{extendedClass}({extendedClass} {baseName});");
+                AppendLine($"T Visit{extendedClass}({extendedClass} {baseName.ToLower()});");
             }
 
             AppendLine("}");
         }
 
-        private static void DefineTypes(IEnumerable<string> types)
+        private static void DefineTypes(string baseName, IEnumerable<string> types)
         {
             // base class
-            AppendLine($"public abstract class {baseType}");
+            AppendLine($"public abstract class {baseName}");
             AppendLine("{");
             AppendLine($"public abstract T Accept<T>(IVisitor<T> visitor);");
             AppendLine("}");
@@ -135,9 +132,9 @@ namespace GenerateAst
 
                 var (className, fields, _) = type.SplitTrim(':');
 
-                var extendedClass = $"{className}{baseType}";
+                var extendedClass = $"{className}{baseName}";
 
-                DefineType(extendedClass, fields);
+                DefineType(baseName, extendedClass, fields);
             }
         }
 
@@ -156,11 +153,11 @@ namespace GenerateAst
             return str;
         }
 
-        private static void DefineType(string className, string fields)
+        private static void DefineType(string baseName, string className, string fields)
         {
             var fieldParts = fields.SplitTrim(',');
 
-            AppendLine($"public class {className} : {baseType}");
+            AppendLine($"public class {className} : {baseName}");
             AppendLine("{");
 
             // fields
