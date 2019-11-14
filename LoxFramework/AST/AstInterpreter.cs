@@ -2,7 +2,7 @@
 
 namespace LoxFramework.AST
 {
-    internal class AstInterpreter : IVisitor<object>
+    internal class AstInterpreter : IExpressionVisitor<object>
     {
         public object Evaluate(Expression expression)
         {

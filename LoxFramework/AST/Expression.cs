@@ -4,7 +4,7 @@ using LoxFramework.Scanning;
 
 namespace LoxFramework.AST
 {
-    public interface IVisitor<T>
+    public interface IExpressionVisitor<T>
     {
         T VisitBinaryExpression(BinaryExpression expression);
         T VisitGroupingExpression(GroupingExpression expression);
@@ -14,7 +14,7 @@ namespace LoxFramework.AST
 
     public abstract class Expression
     {
-        public abstract T Accept<T>(IVisitor<T> visitor);
+        public abstract T Accept<T>(IExpressionVisitor<T> visitor);
     }
 
     public class BinaryExpression : Expression
@@ -30,7 +30,7 @@ namespace LoxFramework.AST
             Right = right;
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.VisitBinaryExpression(this);
         }
@@ -45,7 +45,7 @@ namespace LoxFramework.AST
             Expression = expression;
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.VisitGroupingExpression(this);
         }
@@ -60,7 +60,7 @@ namespace LoxFramework.AST
             Value = value;
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.VisitLiteralExpression(this);
         }
@@ -77,7 +77,7 @@ namespace LoxFramework.AST
             Right = right;
         }
 
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.VisitUnaryExpression(this);
         }

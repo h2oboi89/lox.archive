@@ -3,7 +3,7 @@ using System.Text;
 
 namespace UnitTests.LoxFramework
 {
-    class AstPrinter : IVisitor<string>
+    class AstPrinter : IExpressionVisitor<string>
     {
         public string Print(Expression expression)
         {

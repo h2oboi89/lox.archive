@@ -18,22 +18,30 @@ namespace GenerateAst
 
             DefineAst("Expression", new string[]
             {
-                $"Binary     : Expression left, Token operator, Expression right",
-                $"Grouping   : Expression expression",
-                $"Literal    : object value",
-                $"Unary      : Token operator, Expression right"
+                $"Binary    : Expression left, Token operator, Expression right",
+                $"Grouping  : Expression expression",
+                $"Literal   : object value",
+                $"Unary     : Token operator, Expression right"
             });
 
-            GenerateFile(outputDirectory);
+            GenerateFile(outputDirectory, "Expression");
+
+            DefineAst("Statement", new string[]
+            {
+                "Expression : Expression expression",
+                "Print      : Expression expression"
+            });
+
+            GenerateFile(outputDirectory, "Statement");
         }
 
-        private static void GenerateFile(string outputDirectory)
+        private static void GenerateFile(string outputDirectory, string filename)
         {
             var folder = Path.Combine(outputDirectory, "AST");
 
             Directory.CreateDirectory(folder);
 
-            var file = Path.Combine(folder, "Syntax.cs");
+            var file = Path.Combine(folder, $"{filename}.cs");
 
             using (var writer = new StreamWriter(File.OpenWrite(file)))
             {
@@ -102,7 +110,7 @@ namespace GenerateAst
 
         private static void DefineVisitor(string baseName, IEnumerable<string> types)
         {
-            AppendLine("public interface IVisitor<T>");
+            AppendLine($"public interface I{baseName}Visitor<T>");
             AppendLine("{");
 
             foreach (var type in types)
@@ -122,7 +130,7 @@ namespace GenerateAst
             // base class
             AppendLine($"public abstract class {baseName}");
             AppendLine("{");
-            AppendLine($"public abstract T Accept<T>(IVisitor<T> visitor);");
+            AppendLine($"public abstract T Accept<T>(I{baseName}Visitor<T> visitor);");
             AppendLine("}");
 
             // extension classes
@@ -182,7 +190,7 @@ namespace GenerateAst
             AppendLine();
 
             // visitor pattern
-            AppendLine($"public override T Accept<T>(IVisitor<T> visitor)");
+            AppendLine($"public override T Accept<T>(I{baseName}Visitor<T> visitor)");
             AppendLine("{");
             AppendLine($"return visitor.Visit{className}(this);");
             AppendLine("}");
