@@ -13,6 +13,14 @@ namespace LoxFramework
     {
         private static bool HadError = false;
         private static readonly AstInterpreter astInterpreter = new AstInterpreter();
+        private static bool Initialized = false;
+
+        private static void Initialize()
+        {
+            astInterpreter.Out += (o, e) => Out?.Invoke(typeof(Interpreter), e);
+
+            Initialized = true;
+        }
 
         /// <summary>
         /// Executes the specified source code.
@@ -20,36 +28,25 @@ namespace LoxFramework
         /// <param name="source">Source code to execute.</param>
         public static void Run(string source)
         {
-            try
+            if (!Initialized)
             {
-                HadError = false;
-
-                var tokens = Scanner.Scan(source);
-
-                // check for empty input (EOF token)
-                if (!HadError && tokens.Count() == 1) return;
-
-                var parser = new Parser(tokens);
-                var expression = parser.Parse();
-
-                // check for parse error
-                if (HadError) return;
-
-                var result = astInterpreter.Evaluate(expression);
-
-                Out?.Invoke(typeof(Interpreter), new InterpreterEventArgs(Stringify(result)));
+                Initialize();
             }
-            catch (LoxRunTimeException e)
-            {
-                Report(e.Token.Line, $" at {e.Token.Lexeme}", e.Message);
-            }
-        }
 
-        private static string Stringify(object obj)
-        {
-            if (obj == null) return "nil";
+            HadError = false;
 
-            return obj.ToString();
+            var tokens = Scanner.Scan(source);
+
+            // check for empty input (EOF token)
+            if (!HadError && tokens.Count() == 1) return;
+
+            var parser = new Parser(tokens);
+            var statements = parser.Parse();
+
+            // check for parse error
+            if (HadError) return;
+
+            astInterpreter.Interpret(statements);
         }
 
         private static void Report(int line, string where, string message)
@@ -73,6 +70,11 @@ namespace LoxFramework
             {
                 Report(token.Line, $" at {token.Lexeme}'", message);
             }
+        }
+
+        internal static void InterpretError(LoxRunTimeException e)
+        {
+            Report(e.Token.Line, $" at {e.Token.Lexeme}", e.Message);
         }
 
         /// <summary>

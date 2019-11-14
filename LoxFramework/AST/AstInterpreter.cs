@@ -1,10 +1,35 @@
 ﻿using LoxFramework.Scanning;
+using System;
+using System.Collections.Generic;
 
 namespace LoxFramework.AST
 {
-    internal class AstInterpreter : IExpressionVisitor<object>
+    internal class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {
-        public object Evaluate(Expression expression)
+        public void Interpret(IEnumerable<Statement> statements)
+        {
+            try
+            {
+                foreach (var statement in statements)
+                {
+                    Execute(statement);
+                }
+            }
+            catch (LoxRunTimeException e)
+            {
+                Interpreter.InterpretError(e);
+            }
+        }
+
+        private void Execute(Statement statement)
+        {
+            statement.Accept(this);
+        }
+
+        public event EventHandler<InterpreterEventArgs> Out;
+
+        #region Expressions
+        private object Evaluate(Expression expression)
         {
             return expression.Accept(this);
         }
@@ -125,5 +150,28 @@ namespace LoxFramework.AST
             // unreachable
             return null;
         }
+        #endregion
+
+        #region Statements
+        public object VisitExpressionStatement(ExpressionStatement statement)
+        {
+            Evaluate(statement.Expression);
+            return null;
+        }
+
+        private static string Stringify(object obj)
+        {
+            if (obj == null) return "nil";
+
+            return obj.ToString();
+        }
+
+        public object VisitPrintStatement(PrintStatement statement)
+        {
+            var value = Evaluate(statement.Expression);
+            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value)));
+            return null;
+        }
+        #endregion
     }
 }

@@ -16,16 +16,16 @@ namespace LoxFramework.Parsing
             this.tokens = new List<Token>(tokens);
         }
 
-        public Expression Parse()
+        public List<Statement> Parse()
         {
-            try
+            var statements = new List<Statement>();
+
+            while (!IsAtEnd())
             {
-                return Expression();
+                statements.Add(Statement());
             }
-            catch (ParseException)
-            {
-                return null;
-            }
+
+            return statements;
         }
 
         #region Utility Methods
@@ -110,6 +110,31 @@ namespace LoxFramework.Parsing
         #endregion
 
         #region Grammer Rules
+        private Statement Statement()
+        {
+            if (Match(TokenType.PRINT)) return PrintStatement();
+
+            return StatementExpression();
+        }
+
+        private Statement PrintStatement()
+        {
+            var value = Expression();
+
+            Consume(TokenType.SEMICOLON, "Expect ';' after value.");
+
+            return new PrintStatement(value);
+        }
+
+        private Statement StatementExpression()
+        {
+            var expression = Expression();
+
+            Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+
+            return new ExpressionStatement(expression);
+        }
+
         private Expression Expression()
         {
             return Equality();
