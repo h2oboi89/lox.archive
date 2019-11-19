@@ -18,18 +18,22 @@ namespace GenerateAst
 
             DefineAst("Expression", new string[]
             {
-                $"Binary    : Expression left, Token operator, Expression right",
-                $"Grouping  : Expression expression",
-                $"Literal   : object value",
-                $"Unary     : Token operator, Expression right"
+                "Assignment : Token name, Expression value",
+                "Binary     : Expression left, Token operator, Expression right",
+                "Grouping   : Expression expression",
+                "Literal    : object value",
+                "Unary      : Token operator, Expression right",
+                "Variable   : Token name"
             });
 
             GenerateFile(outputDirectory, "Expression");
 
             DefineAst("Statement", new string[]
             {
+                "Block      : IEnumerable<Statement> statements",
                 "Expression : Expression expression",
-                "Print      : Expression expression"
+                "Print      : Expression expression",
+                "Variable   : Token name, Expression initializer"
             });
 
             GenerateFile(outputDirectory, "Statement");
@@ -94,6 +98,7 @@ namespace GenerateAst
             AppendLine("// Generated code, do not modify.");
             AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
             AppendLine("using LoxFramework.Scanning;");
+            AppendLine("using System.Collections.Generic;");
             AppendLine();
             AppendLine("namespace LoxFramework.AST");
             AppendLine("{");

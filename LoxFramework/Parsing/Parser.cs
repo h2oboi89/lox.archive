@@ -22,7 +22,7 @@ namespace LoxFramework.Parsing
 
             while (!IsAtEnd())
             {
-                statements.Add(Statement());
+                statements.Add(Declaration());
             }
 
             return statements;
@@ -110,9 +110,41 @@ namespace LoxFramework.Parsing
         #endregion
 
         #region Grammer Rules
+        private Statement Declaration()
+        {
+            try
+            {
+                if (Match(TokenType.VAR)) return VariableDeclaration();
+
+                return Statement();
+            }
+            catch (ParseException)
+            {
+                Synchronize();
+                return null;
+            }
+        }
+
+        private Statement VariableDeclaration()
+        {
+            var name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+            Expression intializer = null;
+
+            if (Match(TokenType.EQUAL))
+            {
+                intializer = Expression();
+            }
+
+            Consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+
+            return new VariableStatement(name, intializer);
+        }
+
         private Statement Statement()
         {
             if (Match(TokenType.PRINT)) return PrintStatement();
+            if (Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 
             return StatementExpression();
         }
@@ -126,6 +158,19 @@ namespace LoxFramework.Parsing
             return new PrintStatement(value);
         }
 
+        private IEnumerable<Statement> Block()
+        {
+            var statements = new List<Statement>();
+
+            while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
+            {
+                statements.Add(Declaration());
+            }
+
+            Consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+            return statements;
+        }
+
         private Statement StatementExpression()
         {
             var expression = Expression();
@@ -137,7 +182,28 @@ namespace LoxFramework.Parsing
 
         private Expression Expression()
         {
-            return Equality();
+            return Assignment();
+        }
+
+        private Expression Assignment()
+        {
+            var expression = Equality();
+
+            if (Match(TokenType.EQUAL))
+            {
+                var equals = Previous();
+                var value = Assignment();
+
+                if (expression.GetType() == typeof(VariableExpression))
+                {
+                    var name = ((VariableExpression)expression).Name;
+                    return new AssignmentExpression(name, value);
+                }
+
+                Error(equals, "Invalid assignment target.");
+            }
+
+            return expression;
         }
 
         private Expression Equality()
@@ -217,6 +283,11 @@ namespace LoxFramework.Parsing
             if (Match(TokenType.NUMBER, TokenType.STRING))
             {
                 return new LiteralExpression(Previous().Literal);
+            }
+
+            if (Match(TokenType.IDENTIFIER))
+            {
+                return new VariableExpression(Previous());
             }
 
             if (Match(TokenType.LEFT_PAREN))

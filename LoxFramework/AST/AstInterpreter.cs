@@ -6,6 +6,8 @@ namespace LoxFramework.AST
 {
     internal class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {
+        private Environment environment = new Environment();
+
         public void Interpret(IEnumerable<Statement> statements)
         {
             try
@@ -24,6 +26,25 @@ namespace LoxFramework.AST
         private void Execute(Statement statement)
         {
             statement.Accept(this);
+        }
+
+        private void ExecuteBlock(IEnumerable<Statement> statements, Environment environment)
+        {
+            var enclosingEnvironment = this.environment;
+
+            try
+            {
+                this.environment = environment;
+
+                foreach (var statement in statements)
+                {
+                    Execute(statement);
+                }
+            }
+            finally
+            {
+                this.environment = enclosingEnvironment;
+            }
         }
 
         public event EventHandler<InterpreterEventArgs> Out;
@@ -150,6 +171,19 @@ namespace LoxFramework.AST
             // unreachable
             return null;
         }
+
+        public object VisitVariableExpression(VariableExpression expression)
+        {
+            return environment.Get(expression.Name);
+        }
+
+        public object VisitAssignmentExpression(AssignmentExpression expression)
+        {
+            var value = Evaluate(expression.Value);
+
+            environment.Assign(expression.Name, value);
+            return value;
+        }
         #endregion
 
         #region Statements
@@ -170,6 +204,24 @@ namespace LoxFramework.AST
         {
             var value = Evaluate(statement.Expression);
             Out?.Invoke(this, new InterpreterEventArgs(Stringify(value)));
+            return null;
+        }
+
+        public object VisitVariableStatement(VariableStatement statement)
+        {
+            object value = null;
+            if (statement.Initializer != null)
+            {
+                value = Evaluate(statement.Initializer);
+            }
+
+            environment.Define(statement.Name.Lexeme, value);
+            return null;
+        }
+
+        public object VisitBlockStatement(BlockStatement statement)
+        {
+            ExecuteBlock(statement.Statements, new Environment(environment));
             return null;
         }
         #endregion

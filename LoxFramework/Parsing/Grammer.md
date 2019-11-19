@@ -9,9 +9,13 @@
 | variableDeclaration	| "var" IDENTIFIER ( "=" expression )? ";"				|
 | statement				| expressionStatement									|
 |						| printStatement										|
+|						| block													|
 | expressionStatement	| expression ";"										|			
 | printStatement		| "print" expression ";"								|
-| expression			| equality												|
+| block					| "{" declaration\* "}"									|
+| expression			| assignment											|
+| assignment			| IDENTIFIER "=" assignment								|
+|						| equality												|
 | equality				| comparison ( ( "!=" \| "==" ) comparison )*			|
 | comparison			| addition ( ( ">" \| ">=" \| "<" \| "<=" ) addition )* |
 | addition				| multiplication ( ( "-" \| "+" ) multiplication )*		|

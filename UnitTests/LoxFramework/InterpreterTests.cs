@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace UnitTests.LoxFramework
 {
     [TestFixture]
-    public class InterpreterShould
+    public class InterpreterTests
     {
         private string Result;
         private List<string> Errors;

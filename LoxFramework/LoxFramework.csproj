@@ -52,6 +52,7 @@
     <Compile Include="AST\AstInterpreter.cs" />
     <Compile Include="AST\Expression.cs" />
     <Compile Include="AST\Statement.cs" />
+    <Compile Include="Environment.cs" />
     <Compile Include="LoxRunTimeException.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="InternalsVisibleToUnitTests.cs" />

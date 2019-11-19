@@ -13,13 +13,22 @@ namespace UnitTests.LoxFramework
     {
         private AstInterpreter interpreter;
 
+        private readonly List<string> output = new List<string>();
+
         [SetUp]
         public void SetUp()
         {
             interpreter = new AstInterpreter();
+            interpreter.Out += OnOutput;
+            output.Clear();
         }
 
-        private Expression ScanAndParse(string input)
+        private void OnOutput(object sender, InterpreterEventArgs e)
+        {
+            output.Add(e.Message);
+        }
+
+        private IEnumerable<Statement> ScanAndParse(string input)
         {
             var tokens = Scanner.Scan(input);
             var parser = new Parser(tokens);
@@ -30,16 +39,21 @@ namespace UnitTests.LoxFramework
         {
             foreach (var expression in invalidExpressions.Select(e => ScanAndParse(e)))
             {
-                Assert.That(() => interpreter.Evaluate(expression), Throws.TypeOf<LoxRunTimeException>()
+                Assert.That(() => interpreter.Interpret(expression), Throws.TypeOf<LoxRunTimeException>()
                     .With.Message.Contains(expectedErrorMessage));
             }
         }
 
-        private void TestForSuccess(Dictionary<string, object> expressionAndResults)
+        private void TestForSuccess(Dictionary<string, string> expressionAndResults)
         {
+            var i = 0;
             foreach (var entry in expressionAndResults)
             {
-                Assert.That(interpreter.Evaluate(ScanAndParse(entry.Key)), Is.EqualTo(entry.Value));
+                interpreter.Interpret(ScanAndParse(entry.Key));
+
+                Assert.That(output.Count, Is.EqualTo(i + 1));
+                Assert.That(output[i], Is.EqualTo(entry.Value));
+                i++;
             }
         }
 
@@ -57,11 +71,11 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_GreaterValid_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1 > 2", false },
-                { "2 > 1", true },
-                { "2 > 2", false }
+                { "print 1 > 2", "false" },
+                { "print 2 > 1", "true" },
+                { "print 2 > 2", "false" }
             });
         }
 
@@ -78,11 +92,11 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_GreaterEqualValid_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1 >= 2", false },
-                { "2 >= 1", true },
-                { "2 >= 2", true }
+                { "print 1 >= 2", "false" },
+                { "print 2 >= 1", "true" },
+                { "print 2 >= 2", "true" }
             });
         }
 
@@ -99,11 +113,11 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_LessValid_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1 < 2", true },
-                { "2 < 1", false },
-                { "2 < 2", false }
+                { "print 1 < 2", "true" },
+                { "print 2 < 1", "false" },
+                { "print 2 < 2", "false" }
             });
         }
 
@@ -120,11 +134,11 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_LessEqualValid_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1 <= 2", true },
-                { "2 <= 1", false },
-                { "2 <= 2", true }
+                { "print 1 <= 2", "true" },
+                { "print 2 <= 1", "false" },
+                { "print 2 <= 2", "true" }
             });
         }
 
@@ -132,15 +146,15 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_EqualEqual_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "nil == nil", true },
-                { "nil == 0", false },
-                { "nil == \"a\"", false },
-                { "0 == 0", true },
-                { "0 == 1", false },
-                { "\"a\" == \"a\"", true },
-                { "\"a\" == \"b\"", false }
+                { "print nil == nil", "true" },
+                { "print nil == 0", "false" },
+                { "print nil == \"a\"", "false" },
+                { "print 0 == 0", "true" },
+                { "print 0 == 1", "false" },
+                { "print \"a\" == \"a\"", "true" },
+                { "print \"a\" == \"b\"", "false" }
             });
         }
 
@@ -148,15 +162,15 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_BangEqual_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "nil != nil", false },
-                { "nil != 0", true },
-                { "nil != \"a\"", true },
-                { "0 != 0", false },
-                { "0 != 1", true },
-                { "\"a\" != \"a\"", false },
-                { "\"a\" != \"b\"", true }
+                { "print nil != nil", "false" },
+                { "print nil != 0", "true" },
+                { "print nil != \"a\"", "true" },
+                { "print 0 != 0", "false" },
+                { "print 0 != 1", "true" },
+                { "print \"a\" != \"a\"", "false" },
+                { "print \"a\" != \"b\"", "true" }
             });
         }
 
@@ -173,11 +187,11 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_MinusValid_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1 - 2", -1 },
-                { "2 - 1", 1 },
-                { "2 - 2", 0 }
+                { "print 1 - 2", "-1" },
+                { "print 2 - 1", "1" },
+                { "print 2 - 2", "0" }
             });
         }
 
@@ -198,14 +212,14 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_PlusValid_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1 + 2", 3 },
-                { "2 + 1", 3 },
-                { "2 + 2", 4 },
-                { "\"1\" + \"2\"", "12" },
-                { "\"2\" + \"1\"", "21" },
-                { "\"2\" + \"2\"", "22" }
+                { "print 1 + 2", "3" },
+                { "print 2 + 1", "3" },
+                { "print 2 + 2", "4" },
+                { "print \"1\" + \"2\"", "12" },
+                { "print \"2\" + \"1\"", "21" },
+                { "print \"2\" + \"2\"", "22" }
             });
         }
 
@@ -222,12 +236,12 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_SlashValid_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1 / 2", 0.5 },
-                { "2 / 1", 2 },
-                { "2 / 2", 1 },
-                { "1 / 0", double.PositiveInfinity }
+                { "print 1 / 2", "0.5" },
+                { "print 2 / 1", "2" },
+                { "print 2 / 2", "1" },
+                { "print 1 / 0", double.PositiveInfinity.ToString() }
             });
         }
 
@@ -244,11 +258,11 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitBinaryExpression_StarValid_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1 * 2", 2 },
-                { "2 * 1", 2 },
-                { "2 * 2", 4 }
+                { "print 1 * 2", "2" },
+                { "print 2 * 1", "2" },
+                { "print 2 * 2", "4" }
             });
         }
         #endregion
@@ -257,10 +271,10 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitGroupingExpression_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1 + 2 * 3", 7 },
-                { "(1 + 2) * 3", 9 }
+                { "print 1 + 2 * 3", "7" },
+                { "print (1 + 2) * 3", "9" }
             });
         }
         #endregion
@@ -269,10 +283,10 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitLiteralExpression_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "1", 1 },
-                { "\"a\"", "a" }
+                { "print 1", "1" },
+                { "print \"a\"", "a" }
             });
         }
         #endregion
@@ -289,11 +303,11 @@ namespace UnitTests.LoxFramework
         [Test]
         public void VisitUnaryExpression_Valid_ReturnsValue()
         {
-            TestForSuccess(new Dictionary<string, object>
+            TestForSuccess(new Dictionary<string, string>
             {
-                { "-1", -1.0d },
-                { "!true", false },
-                { "!false", true }
+                { "print -1", "-1.0d" },
+                { "print !true", "false" },
+                { "print !false", "true" }
             });
         }
         #endregion

@@ -1,20 +1,40 @@
 // Generated code, do not modify.
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 using LoxFramework.Scanning;
+using System.Collections.Generic;
 
 namespace LoxFramework.AST
 {
     public interface IExpressionVisitor<T>
     {
+        T VisitAssignmentExpression(AssignmentExpression expression);
         T VisitBinaryExpression(BinaryExpression expression);
         T VisitGroupingExpression(GroupingExpression expression);
         T VisitLiteralExpression(LiteralExpression expression);
         T VisitUnaryExpression(UnaryExpression expression);
+        T VisitVariableExpression(VariableExpression expression);
     }
 
     public abstract class Expression
     {
         public abstract T Accept<T>(IExpressionVisitor<T> visitor);
+    }
+
+    public class AssignmentExpression : Expression
+    {
+        public readonly Token Name;
+        public readonly Expression Value;
+
+        public AssignmentExpression(Token name, Expression value)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
+        {
+            return visitor.VisitAssignmentExpression(this);
+        }
     }
 
     public class BinaryExpression : Expression
@@ -80,6 +100,21 @@ namespace LoxFramework.AST
         public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.VisitUnaryExpression(this);
+        }
+    }
+
+    public class VariableExpression : Expression
+    {
+        public readonly Token Name;
+
+        public VariableExpression(Token name)
+        {
+            Name = name;
+        }
+
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
+        {
+            return visitor.VisitVariableExpression(this);
         }
     }
 }
