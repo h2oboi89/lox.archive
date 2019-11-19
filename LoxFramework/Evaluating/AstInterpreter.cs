@@ -1,8 +1,9 @@
-﻿using LoxFramework.Scanning;
+﻿using LoxFramework.AST;
+using LoxFramework.Scanning;
 using System;
 using System.Collections.Generic;
 
-namespace LoxFramework.AST
+namespace LoxFramework.Evaluating
 {
     internal class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {

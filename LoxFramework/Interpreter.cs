@@ -1,4 +1,4 @@
-﻿using LoxFramework.AST;
+﻿using LoxFramework.Evaluating;
 using LoxFramework.Parsing;
 using LoxFramework.Scanning;
 using System;
@@ -40,8 +40,7 @@ namespace LoxFramework
             // check for empty input (EOF token)
             if (!HadError && tokens.Count() == 1) return;
 
-            var parser = new Parser(tokens);
-            var statements = parser.Parse();
+            var statements = Parser.Parse(tokens);
 
             // check for parse error
             if (HadError) return;

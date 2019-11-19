@@ -49,14 +49,14 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AST\AstInterpreter.cs" />
+    <Compile Include="Evaluating\AstInterpreter.cs" />
     <Compile Include="AST\Expression.cs" />
     <Compile Include="AST\Statement.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="LoxRunTimeException.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Interpreter.cs" />
-    <Compile Include="InterpreterEvent.cs" />
+    <Compile Include="InterpreterEventArgs.cs" />
     <Compile Include="Parsing\Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanning\Scanner.cs" />

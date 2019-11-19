@@ -11,12 +11,17 @@ namespace LoxFramework.Parsing
         private readonly List<Token> tokens;
         private int current = 0;
 
-        public Parser(IEnumerable<Token> tokens)
+        private Parser(IEnumerable<Token> tokens)
         {
             this.tokens = new List<Token>(tokens);
         }
 
-        public List<Statement> Parse()
+        public static IEnumerable<Statement> Parse(IEnumerable<Token> tokens)
+        {
+            return new Parser(tokens).Parse();
+        }
+
+        private IEnumerable<Statement> Parse()
         {
             var statements = new List<Statement>();
 
