@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LoxFramework.AST
 {
-    public interface IStatementVisitor<T>
+    interface IStatementVisitor<T>
     {
         T VisitBlockStatement(BlockStatement statement);
         T VisitExpressionStatement(ExpressionStatement statement);
@@ -13,12 +13,12 @@ namespace LoxFramework.AST
         T VisitVariableStatement(VariableStatement statement);
     }
 
-    public abstract class Statement
+    abstract class Statement
     {
         public abstract T Accept<T>(IStatementVisitor<T> visitor);
     }
 
-    public class BlockStatement : Statement
+    class BlockStatement : Statement
     {
         public readonly IEnumerable<Statement> Statements;
 
@@ -33,7 +33,7 @@ namespace LoxFramework.AST
         }
     }
 
-    public class ExpressionStatement : Statement
+    class ExpressionStatement : Statement
     {
         public readonly Expression Expression;
 
@@ -48,7 +48,7 @@ namespace LoxFramework.AST
         }
     }
 
-    public class PrintStatement : Statement
+    class PrintStatement : Statement
     {
         public readonly Expression Expression;
 
@@ -63,7 +63,7 @@ namespace LoxFramework.AST
         }
     }
 
-    public class VariableStatement : Statement
+    class VariableStatement : Statement
     {
         public readonly Token Name;
         public readonly Expression Initializer;

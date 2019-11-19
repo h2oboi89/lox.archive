@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LoxFramework.Evaluating
 {
-    internal class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
+    class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {
         private Environment environment = new Environment();
 

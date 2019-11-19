@@ -115,7 +115,7 @@ namespace GenerateAst
 
         private static void DefineVisitor(string baseName, IEnumerable<string> types)
         {
-            AppendLine($"public interface I{baseName}Visitor<T>");
+            AppendLine($"interface I{baseName}Visitor<T>");
             AppendLine("{");
 
             foreach (var type in types)
@@ -133,7 +133,7 @@ namespace GenerateAst
         private static void DefineTypes(string baseName, IEnumerable<string> types)
         {
             // base class
-            AppendLine($"public abstract class {baseName}");
+            AppendLine($"abstract class {baseName}");
             AppendLine("{");
             AppendLine($"public abstract T Accept<T>(I{baseName}Visitor<T> visitor);");
             AppendLine("}");
@@ -170,7 +170,7 @@ namespace GenerateAst
         {
             var fieldParts = fields.SplitTrim(',');
 
-            AppendLine($"public class {className} : {baseName}");
+            AppendLine($"class {className} : {baseName}");
             AppendLine("{");
 
             // fields

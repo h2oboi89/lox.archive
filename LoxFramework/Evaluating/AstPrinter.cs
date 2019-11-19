@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UnitTests.LoxFramework
+namespace LoxFramework.Evaluating
 {
     class AstPrinter : IExpressionVisitor<string>, IStatementVisitor<string>
     {

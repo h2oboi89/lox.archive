@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LoxFramework.AST
 {
-    public interface IExpressionVisitor<T>
+    interface IExpressionVisitor<T>
     {
         T VisitAssignmentExpression(AssignmentExpression expression);
         T VisitBinaryExpression(BinaryExpression expression);
@@ -15,12 +15,12 @@ namespace LoxFramework.AST
         T VisitVariableExpression(VariableExpression expression);
     }
 
-    public abstract class Expression
+    abstract class Expression
     {
         public abstract T Accept<T>(IExpressionVisitor<T> visitor);
     }
 
-    public class AssignmentExpression : Expression
+    class AssignmentExpression : Expression
     {
         public readonly Token Name;
         public readonly Expression Value;
@@ -37,7 +37,7 @@ namespace LoxFramework.AST
         }
     }
 
-    public class BinaryExpression : Expression
+    class BinaryExpression : Expression
     {
         public readonly Expression Left;
         public readonly Token Operator;
@@ -56,7 +56,7 @@ namespace LoxFramework.AST
         }
     }
 
-    public class GroupingExpression : Expression
+    class GroupingExpression : Expression
     {
         public readonly Expression Expression;
 
@@ -71,7 +71,7 @@ namespace LoxFramework.AST
         }
     }
 
-    public class LiteralExpression : Expression
+    class LiteralExpression : Expression
     {
         public readonly object Value;
 
@@ -86,7 +86,7 @@ namespace LoxFramework.AST
         }
     }
 
-    public class UnaryExpression : Expression
+    class UnaryExpression : Expression
     {
         public readonly Token Operator;
         public readonly Expression Right;
@@ -103,7 +103,7 @@ namespace LoxFramework.AST
         }
     }
 
-    public class VariableExpression : Expression
+    class VariableExpression : Expression
     {
         public readonly Token Name;
 
