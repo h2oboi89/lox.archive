@@ -3,7 +3,10 @@
 ## Grammer
 | Rule					| Goes to												|
 |-----------------------|-------------------------------------------------------|
-| program				| statement\* EOF										|
+| program				| declaration\* EOF										|
+| declaration			| variableDeclaration									|
+|						| statement												|
+| variableDeclaration	| "var" IDENTIFIER ( "=" expression )? ";"				|
 | statement				| expressionStatement									|
 |						| printStatement										|
 | expressionStatement	| expression ";"										|			
@@ -15,8 +18,10 @@
 | multiplication		| unary ( ( "/" \| "\*" ) unary )*						|
 | unary					| ( "!" \| "-" ) unary									|
 |						| primary												|
-| primary				| NUMBER \| STRING \| "false" \| "true" \| "nil"		|
+| primary				| "true" \| "false" \| "nil"							|
+|						| NUMBER \| STRING										|
 |						| "(" expression ")"									|
+|						| IDENTIFIER											|
 
 ## Rules
 | Grammar notation	| Code representation				|
