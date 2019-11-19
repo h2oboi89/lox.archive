@@ -55,7 +55,6 @@
     <Compile Include="Environment.cs" />
     <Compile Include="LoxRunTimeException.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="InternalsVisibleToUnitTests.cs" />
     <Compile Include="Interpreter.cs" />
     <Compile Include="InterpreterEvent.cs" />
     <Compile Include="Parsing\Parser.cs" />

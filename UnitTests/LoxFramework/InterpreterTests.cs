@@ -44,7 +44,7 @@ namespace UnitTests.LoxFramework
         [Test]
         public void Run_BasicArithmetic_ReturnsValue()
         {
-            Interpreter.Run("1 + 2 * 3");
+            Interpreter.Run("print 1 + 2 * 3;");
 
             Assert.That(Result, Is.EqualTo("7"));
             Assert.That(Errors, Is.Empty);
@@ -53,7 +53,7 @@ namespace UnitTests.LoxFramework
         [Test]
         public void Run_BasicArithmeticWithParens_ReturnsValue()
         {
-            Interpreter.Run("(1 + 2) * 3");
+            Interpreter.Run("print (1 + 2) * 3;");
 
             Assert.That(Result, Is.EqualTo("9"));
             Assert.That(Errors, Is.Empty);
