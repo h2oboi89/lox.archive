@@ -190,7 +190,8 @@ namespace LoxFramework.Evaluating
         #region Statements
         public object VisitExpressionStatement(ExpressionStatement statement)
         {
-            Evaluate(statement.Expression);
+            var value = Evaluate(statement.Expression);
+            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value), true));
             return null;
         }
 

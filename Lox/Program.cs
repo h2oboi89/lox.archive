@@ -21,7 +21,12 @@ namespace Lox
                 if (!InPrompt) Environment.Exit(1);
             };
 
-            Interpreter.Out += (_, e) => Console.WriteLine(e.Message);
+            Interpreter.Out += (_, e) =>
+            {
+                if (e.Optional && !InPrompt) return;
+
+                Console.WriteLine(e.Message);
+            };
 
             if (args.Length > 1)
             {
