@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace LoxFramework
+namespace LoxFramework.Evaluating
 {
     [Serializable]
     internal class LoxRunTimeException : Exception

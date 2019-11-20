@@ -1,7 +1,7 @@
 ﻿using LoxFramework.Scanning;
 using System.Collections.Generic;
 
-namespace LoxFramework
+namespace LoxFramework.Evaluating
 {
     class Environment
     {
