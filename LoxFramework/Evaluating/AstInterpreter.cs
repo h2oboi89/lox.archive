@@ -9,6 +9,11 @@ namespace LoxFramework.Evaluating
     {
         private Environment environment = new Environment();
 
+        public void Reset()
+        {
+            environment = new Environment();
+        }
+
         public void Interpret(IEnumerable<Statement> statements)
         {
             try
@@ -198,6 +203,11 @@ namespace LoxFramework.Evaluating
         private static string Stringify(object obj)
         {
             if (obj == null) return "nil";
+
+            if (obj.GetType() == typeof(bool))
+            {
+                return (bool)obj ? "true" : "false";
+            }
 
             return obj.ToString();
         }

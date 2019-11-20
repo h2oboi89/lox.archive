@@ -11,9 +11,17 @@ namespace LoxFramework
     /// </summary>
     public static class Interpreter
     {
-        private static bool HadError = false;
         private static readonly AstInterpreter astInterpreter = new AstInterpreter();
+        private static bool HadError = false;
         private static bool Initialized = false;
+
+        /// <summary>
+        /// R
+        /// </summary>
+        public static void Reset()
+        {
+            astInterpreter.Reset();
+        }
 
         private static void Initialize()
         {
@@ -28,10 +36,7 @@ namespace LoxFramework
         /// <param name="source">Source code to execute.</param>
         public static void Run(string source)
         {
-            if (!Initialized)
-            {
-                Initialize();
-            }
+            if (!Initialized) Initialize();
 
             HadError = false;
 
