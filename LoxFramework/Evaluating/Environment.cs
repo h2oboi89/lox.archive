@@ -13,9 +13,14 @@ namespace LoxFramework.Evaluating
             _enclosing = enclosing;
         }
 
-        public void Define(string name, object value)
+        public void Define(Token name, object value)
         {
-            values.Add(name, value);
+            if (values.ContainsKey(name.Lexeme))
+            {
+                throw new LoxRunTimeException(name, $"Variable '{name.Lexeme}' already declared in this scope.");
+            }
+
+            values.Add(name.Lexeme, value);
         }
 
         public void Assign(Token name, object value)

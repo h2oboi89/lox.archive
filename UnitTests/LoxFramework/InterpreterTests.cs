@@ -213,6 +213,7 @@ namespace UnitTests.LoxFramework
         {
             TestException("a;", "Undefined variable 'a'.");
             TestException("a = 1;", "Undefined variable 'a'.");
+            TestException("var a = 1; var a = 2;", "Variable 'a' already declared in this scope.");
 
             TestStatement("var a; print a;", "nil");
             TestStatement("var a; a = 2;", "2");

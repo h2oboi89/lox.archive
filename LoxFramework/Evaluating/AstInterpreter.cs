@@ -227,7 +227,7 @@ namespace LoxFramework.Evaluating
                 value = Evaluate(statement.Initializer);
             }
 
-            environment.Define(statement.Name.Lexeme, value);
+            environment.Define(statement.Name, value);
             return null;
         }
 
