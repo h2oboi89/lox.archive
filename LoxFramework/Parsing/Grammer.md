@@ -15,6 +15,7 @@
 |						| ifStatement												|
 |						| printStatement											|
 |						| whileStatement											|
+|						| breakStatement											|
 |						| block														|
 |						|															|
 | expressionStatement	| expression ";"											|
@@ -26,6 +27,8 @@
 | printStatement		| "print" expression ";"									|
 |						|															|
 | whileStatement		| "while" "(" expression ")" statement						|
+|						|															|
+| breakStatement		| "break" ";"												|
 |						|															|
 | block					| "{" declaration\* "}"										|
 |						|															|

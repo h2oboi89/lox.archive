@@ -8,6 +8,7 @@ namespace LoxFramework.AST
     interface IStatementVisitor<T>
     {
         T VisitBlockStatement(BlockStatement statement);
+        T VisitBreakStatement(BreakStatement statement);
         T VisitExpressionStatement(ExpressionStatement statement);
         T VisitIfStatement(IfStatement statement);
         T VisitPrintStatement(PrintStatement statement);
@@ -32,6 +33,16 @@ namespace LoxFramework.AST
         public override T Accept<T>(IStatementVisitor<T> visitor)
         {
             return visitor.VisitBlockStatement(this);
+        }
+    }
+
+    class BreakStatement : Statement
+    {
+        public BreakStatement() { }
+
+        public override T Accept<T>(IStatementVisitor<T> visitor)
+        {
+            return visitor.VisitBreakStatement(this);
         }
     }
 

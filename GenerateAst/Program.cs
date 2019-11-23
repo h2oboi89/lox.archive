@@ -1,13 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 
 namespace GenerateAst
 {
     class Program
     {
+        private static string GetExecutingDirectoryName()
+        {
+            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
+            return new FileInfo(location.AbsolutePath).Directory.FullName;
+        }
+
         static void Main(string[] args)
         {
+            if (Debugger.IsAttached)
+            {
+                args = new string[] { GetExecutingDirectoryName() };
+            }
+
             if (args.Length != 1)
             {
                 Console.Error.WriteLine("Usage: GenerateAst <output directory>)");
@@ -30,6 +43,7 @@ namespace GenerateAst
             GenerateType("Statement", outputDirectory, new string[]
             {
                 "Block      : IEnumerable<Statement> statements",
+                "Break      : ",
                 "Expression : Expression expression",
                 "If         : Expression condition, Statement thenBranch, Statement elseBranch",
                 "Print      : Expression expression",
@@ -108,29 +122,41 @@ namespace GenerateAst
 
         private static void DefineType(string baseName, string className, string fields)
         {
-            var fieldParts = fields.SplitTrim(',');
 
             output.Enqueue($"class {className} : {baseName}");
             output.Enqueue("{");
 
-            // fields
-            foreach (var field in fieldParts)
-            {
-                var (type, name, _) = field.Split(' ');
-                output.Enqueue($"public readonly {type} {name.ToUppercaseFirst()};");
-            }
+            var fieldParts = fields.SplitTrim(',');
 
-            output.Enqueue();
+            if (fields.Length > 0)
+            {
+                // fields
+                foreach (var field in fieldParts)
+                {
+                    var (type, name, _) = field.Split(' ');
+                    output.Enqueue($"public readonly {type} {name.ToUppercaseFirst()};");
+                }
+
+                output.Enqueue();
+            }
 
             // constructor
-            output.Enqueue($"public {className}({KeywordFilter.Filter(fields)})");
-            output.Enqueue("{");
-            foreach (var field in fieldParts)
+            var constructor = $"public {className}({KeywordFilter.Filter(fields)})";
+            if (fields.Length > 0)
             {
-                var (_, name, _) = field.Split(' ');
-                output.Enqueue($"{name.ToUppercaseFirst()} = {KeywordFilter.Filter(name)};");
+                output.Enqueue(constructor);
+                output.Enqueue("{");
+                foreach (var field in fieldParts)
+                {
+                    var (_, name, _) = field.Split(' ');
+                    output.Enqueue($"{name.ToUppercaseFirst()} = {KeywordFilter.Filter(name)};");
+                }
+                output.Enqueue("}");
             }
-            output.Enqueue("}");
+            else
+            {
+                output.Enqueue(constructor + " { }");
+            }
 
             output.Enqueue();
 
@@ -152,7 +178,7 @@ namespace GenerateAst
 
             var file = Path.Combine(folder, $"{filename}.cs");
 
-            using (var writer = new StreamWriter(File.OpenWrite(file)))
+            using (var writer = new StreamWriter(File.Create(file)))
             {
                 foreach (var line in output.Publish())
                 {

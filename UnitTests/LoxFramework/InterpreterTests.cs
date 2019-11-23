@@ -339,5 +339,15 @@ namespace UnitTests.LoxFramework
 
             TestStatement("var i = 3; for(; i > 0;) i = i - 1;", "2", "1", "0");
         }
+
+        [Test]
+        public void Break()
+        {
+            TestStatement("while(true) { print 1; break; }", "1");
+
+            TestStatement("for(;;) { print 1; break; }", "1");
+
+            TestException("break;", "No enclosing loop out of which to break.");
+        }
     }
 }
