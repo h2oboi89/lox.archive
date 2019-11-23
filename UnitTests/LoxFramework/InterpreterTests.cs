@@ -76,17 +76,10 @@ namespace UnitTests.LoxFramework
 
             Assert.That(Errors, Is.Empty);
 
-            if (expected.Length == 0)
+            Assert.That(Results.Count, Is.EqualTo(expected.Length));
+            for (var i = 0; i < expected.Length; i++)
             {
-                Assert.That(Results, Is.Empty);
-            }
-            else
-            {
-                Assert.That(Results.Count, Is.EqualTo(expected.Length));
-                for (var i = 0; i < expected.Length; i++)
-                {
-                    Assert.That(Results[i], Is.EqualTo(expected[i]));
-                }
+                Assert.That(Results[i], Is.EqualTo(expected[i]));
             }
         }
 
