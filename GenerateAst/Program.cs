@@ -22,6 +22,7 @@ namespace GenerateAst
                 "Binary     : Expression left, Token operator, Expression right",
                 "Grouping   : Expression expression",
                 "Literal    : object value",
+                "Logical    : Expression left, Token operator, Expression right",
                 "Unary      : Token operator, Expression right",
                 "Variable   : Token name"
             });
@@ -30,8 +31,10 @@ namespace GenerateAst
             {
                 "Block      : IEnumerable<Statement> statements",
                 "Expression : Expression expression",
+                "If         : Expression condition, Statement thenBranch, Statement elseBranch",
                 "Print      : Expression expression",
-                "Variable   : Token name, Expression initializer"
+                "Variable   : Token name, Expression initializer",
+                "While      : Expression condition, Statement body"
             });
         }
 

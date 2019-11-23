@@ -161,6 +161,22 @@ namespace LoxFramework.Evaluating
             return expression.Value;
         }
 
+        public object VisitLogicalExpression(LogicalExpression expression)
+        {
+            var left = Evaluate(expression.Left);
+
+            if (expression.Operator.Type == TokenType.OR)
+            {
+                if (IsTruthy(left)) return left;
+            }
+            else
+            {
+                if (!IsTruthy(left)) return left;
+            }
+
+            return Evaluate(expression.Right);
+        }
+
         public object VisitUnaryExpression(UnaryExpression expression)
         {
             var right = Evaluate(expression.Right);
@@ -193,13 +209,6 @@ namespace LoxFramework.Evaluating
         #endregion
 
         #region Statements
-        public object VisitExpressionStatement(ExpressionStatement statement)
-        {
-            var value = Evaluate(statement.Expression);
-            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value), true));
-            return null;
-        }
-
         private static string Stringify(object obj)
         {
             if (obj == null) return "nil";
@@ -210,6 +219,32 @@ namespace LoxFramework.Evaluating
             }
 
             return obj.ToString();
+        }
+
+        public object VisitBlockStatement(BlockStatement statement)
+        {
+            ExecuteBlock(statement.Statements, new Environment(environment));
+            return null;
+        }
+
+        public object VisitExpressionStatement(ExpressionStatement statement)
+        {
+            var value = Evaluate(statement.Expression);
+            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value), true));
+            return null;
+        }
+
+        public object VisitIfStatement(IfStatement statement)
+        {
+            if (IsTruthy(Evaluate(statement.Condition)))
+            {
+                Execute(statement.ThenBranch);
+            }
+            else if (statement.ElseBranch != null)
+            {
+                Execute(statement.ElseBranch);
+            }
+            return null;
         }
 
         public object VisitPrintStatement(PrintStatement statement)
@@ -231,9 +266,12 @@ namespace LoxFramework.Evaluating
             return null;
         }
 
-        public object VisitBlockStatement(BlockStatement statement)
+        public object VisitWhileStatement(WhileStatement statement)
         {
-            ExecuteBlock(statement.Statements, new Environment(environment));
+            while (IsTruthy(Evaluate(statement.Condition)))
+            {
+                Execute(statement.Body);
+            }
             return null;
         }
         #endregion

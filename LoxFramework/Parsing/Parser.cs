@@ -148,10 +148,86 @@ namespace LoxFramework.Parsing
 
         private Statement Statement()
         {
+            if (Match(TokenType.FOR)) return ForStatement();
+            if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
+            if (Match(TokenType.WHILE)) return WhileStatement();
             if (Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 
-            return StatementExpression();
+            return ExpressionStatement();
+        }
+
+        private Statement ForStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+            Statement initializer;
+            if (Match(TokenType.SEMICOLON))
+            {
+                initializer = null;
+            }
+            else if (Match(TokenType.VAR))
+            {
+                initializer = VariableDeclaration();
+            }
+            else
+            {
+                initializer = ExpressionStatement();
+            }
+
+            Expression condition = null;
+            if (!Check(TokenType.SEMICOLON))
+            {
+                condition = Expression();
+            }
+            Consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+            Expression increment = null;
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                increment = Expression();
+            }
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+
+            var body = Statement();
+
+            if (increment != null)
+            {
+                body = new BlockStatement(new Statement[]
+                {
+                    body, new ExpressionStatement(increment)
+                });
+            }
+
+            if (condition == null) condition = new LiteralExpression(true);
+            body = new WhileStatement(condition, body);
+
+            if (initializer != null)
+            {
+                body = new BlockStatement(new Statement[]
+                {
+                    initializer, body
+                });
+            }
+
+            return body;
+        }
+
+        private Statement IfStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+            var condition = Expression();
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+
+            var thenBranch = Statement();
+            Statement elseBranch = null;
+
+            if (Match(TokenType.ELSE))
+            {
+                elseBranch = Statement();
+            }
+
+            return new IfStatement(condition, thenBranch, elseBranch);
         }
 
         private Statement PrintStatement()
@@ -161,6 +237,17 @@ namespace LoxFramework.Parsing
             Consume(TokenType.SEMICOLON, "Expect ';' after value.");
 
             return new PrintStatement(value);
+        }
+
+        private Statement WhileStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
+            var condition = Expression();
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+
+            var body = Statement();
+
+            return new WhileStatement(condition, body);
         }
 
         private IEnumerable<Statement> Block()
@@ -176,7 +263,7 @@ namespace LoxFramework.Parsing
             return statements;
         }
 
-        private Statement StatementExpression()
+        private Statement ExpressionStatement()
         {
             var expression = Expression();
 
@@ -192,7 +279,7 @@ namespace LoxFramework.Parsing
 
         private Expression Assignment()
         {
-            var expression = Equality();
+            var expression = Or();
 
             if (Match(TokenType.EQUAL))
             {
@@ -206,6 +293,34 @@ namespace LoxFramework.Parsing
                 }
 
                 Error(equals, "Invalid assignment target.");
+            }
+
+            return expression;
+        }
+
+        private Expression Or()
+        {
+            var expression = And();
+
+            while (Match(TokenType.OR))
+            {
+                var op = Previous();
+                var right = And();
+                expression = new LogicalExpression(expression, op, right);
+            }
+
+            return expression;
+        }
+
+        private Expression And()
+        {
+            var expression = Equality();
+
+            while (Match(TokenType.AND))
+            {
+                var op = Previous();
+                var right = Equality();
+                expression = new LogicalExpression(expression, op, right);
             }
 
             return expression;

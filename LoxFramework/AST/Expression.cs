@@ -11,6 +11,7 @@ namespace LoxFramework.AST
         T VisitBinaryExpression(BinaryExpression expression);
         T VisitGroupingExpression(GroupingExpression expression);
         T VisitLiteralExpression(LiteralExpression expression);
+        T VisitLogicalExpression(LogicalExpression expression);
         T VisitUnaryExpression(UnaryExpression expression);
         T VisitVariableExpression(VariableExpression expression);
     }
@@ -83,6 +84,25 @@ namespace LoxFramework.AST
         public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.VisitLiteralExpression(this);
+        }
+    }
+
+    class LogicalExpression : Expression
+    {
+        public readonly Expression Left;
+        public readonly Token Operator;
+        public readonly Expression Right;
+
+        public LogicalExpression(Expression left, Token op, Expression right)
+        {
+            Left = left;
+            Operator = op;
+            Right = right;
+        }
+
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
+        {
+            return visitor.VisitLogicalExpression(this);
         }
     }
 

@@ -51,6 +51,7 @@ namespace UnitTests.LoxFramework
             Reset();
         }
 
+        #region test helper methods
         private void TestFile(string filename, IEnumerable<string> expected)
         {
             var file = Path.Combine(TEST_FILE_DIRECTORY, filename);
@@ -67,7 +68,7 @@ namespace UnitTests.LoxFramework
             }
         }
 
-        private void TestStatement(string statement, string expected = null)
+        private void TestStatement(string statement, params string[] expected)
         {
             Reset();
 
@@ -75,14 +76,10 @@ namespace UnitTests.LoxFramework
 
             Assert.That(Errors, Is.Empty);
 
-            if (expected == null)
+            Assert.That(Results.Count, Is.EqualTo(expected.Length));
+            for (var i = 0; i < expected.Length; i++)
             {
-                Assert.That(Results, Is.Empty);
-            }
-            else
-            {
-                Assert.That(Results.Count, Is.EqualTo(1));
-                Assert.That(Results[0], Is.EqualTo(expected));
+                Assert.That(Results[i], Is.EqualTo(expected[i]));
             }
         }
 
@@ -97,6 +94,7 @@ namespace UnitTests.LoxFramework
             Assert.That(Errors.Count, Is.EqualTo(1));
             Assert.That(Errors[0], Does.EndWith(expected));
         }
+        #endregion
 
         [Test]
         public void Comments_AreIgnored()
@@ -280,6 +278,66 @@ namespace UnitTests.LoxFramework
             TestException("(", "Expect expression.");
 
             TestException("( true;", "Expect ')' after expression.");
+        }
+
+        [Test]
+        public void IfStatement()
+        {
+            TestException("if;", "Expect '(' after 'if'.");
+            TestException("if ( true;", "Expect ')' after condition.");
+
+            TestStatement("if (true) print true;", "true");
+            TestStatement("if (false) print true;");
+            TestStatement("if (true) print true; else print false;", "true");
+            TestStatement("if (false) print true; else print false;", "false");
+        }
+
+        [Test]
+        public void LogicalStatements()
+        {
+            TestStatement("print \"hi\" or 2;", "hi");
+            TestStatement("print nil or \"yes\";", "yes");
+
+            TestStatement("if (false and false) print true;");
+            TestStatement("if (false and true) print true;");
+            TestStatement("if (true and false) print true;");
+            TestStatement("if (true and true) print true;", "true");
+
+            TestStatement("if (true and true and false) print true;");
+            TestStatement("if (true and true and true) print true;", "true");
+
+            TestStatement("if (false or false) print true;");
+            TestStatement("if (false or true) print true;", "true");
+            TestStatement("if (true or false) print true;", "true");
+            TestStatement("if (true or true) print true;", "true");
+
+            TestStatement("if (false or false or false) print true;");
+            TestStatement("if (false or false or true) print true;", "true");
+        }
+
+        [Test]
+        public void WhileStatement()
+        {
+            TestException("while;", "Expect '(' after 'while'.");
+            TestException("while ( true;", "Expect ')' after condition.");
+
+            TestStatement("var i = 3; while(i > 0) i = i - 1; print i;", "2", "1", "0", "0");
+        }
+
+        [Test]
+        public void ForStatement()
+        {
+            TestException("for;", "Expect '(' after 'for'.");
+            TestException("for(var i = 0; i < 3)", "Expect ';' after loop condition.");
+            TestException("for(; ; i = i + 1;", "Expect ')' after for clauses.");
+
+            TestStatement("for(var i = 3; i > 0; i = i - 1) print i;", "3", "2", "2", "1", "1", "0");
+
+            TestStatement("var i; for(i = 3; i > 0; i = i - 1) print i;", "3", "3", "2", "2", "1", "1", "0");
+
+            TestStatement("for(var i = 3; i > 0;) i = i - 1;", "2", "1", "0");
+
+            TestStatement("var i = 3; for(; i > 0;) i = i - 1;", "2", "1", "0");
         }
     }
 }
