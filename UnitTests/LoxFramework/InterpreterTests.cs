@@ -196,9 +196,18 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
-        public void StringConcatenation()
+        public void DecimalNumbers()
         {
-            TestStatement(@"""1"" + ""1"";", "11");
+            TestStatement("1.5 + 2.5;", "4");
+        }
+
+        [Test]
+        public void InvalidOperatorOperands_ThrowsException()
+        {
+            TestException("-true;", "Operand must be a number.");
+            TestException("1 < true;", "Operands must be numbers.");
+            TestException("true > 1;", "Operands must be numbers.");
+            TestException("1 + true;", "Operands must be two numbers or two strings.");
         }
 
         [Test]
@@ -206,6 +215,18 @@ namespace UnitTests.LoxFramework
         {
             TestStatement("1 + 2 * 3;", "7");
             TestStatement("(1 + 2) * 3;", "9");
+        }
+
+        [Test]
+        public void MultilineString()
+        {
+            TestStatement("var a =\"a\nb\"; print a;", "a\nb");
+        }
+
+        [Test]
+        public void StringConcatenation()
+        {
+            TestStatement(@"""1"" + ""1"";", "11");
         }
 
         [Test]
@@ -219,6 +240,8 @@ namespace UnitTests.LoxFramework
             TestStatement("var a; a = 2;", "2");
             TestStatement("var a = 1; print a;", "1");
             TestStatement("var a = 1; a = 2;", "2");
+
+            TestStatement("var abc_ABC_123 = 3; print abc_ABC_123;", "3");
         }
 
         [Test]
@@ -243,6 +266,20 @@ namespace UnitTests.LoxFramework
             };
 
             TestFile("VariableScope.lox", expected);
+        }
+
+        [Test]
+        public void InvalidSyntax_ThrowsException()
+        {
+            TestException("@", "Unexpected character.");
+
+            TestException(@"""abc", "Unterminated string.");
+
+            TestException("true = 3;", "Invalid assignment target.");
+
+            TestException("(", "Expect expression.");
+
+            TestException("( true;", "Expect ')' after expression.");
         }
     }
 }
