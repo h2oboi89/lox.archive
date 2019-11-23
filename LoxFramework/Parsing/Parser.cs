@@ -210,7 +210,7 @@ namespace LoxFramework.Parsing
 
         private Expression Assignment()
         {
-            var expression = Equality();
+            var expression = Or();
 
             if (Match(TokenType.EQUAL))
             {
@@ -224,6 +224,34 @@ namespace LoxFramework.Parsing
                 }
 
                 Error(equals, "Invalid assignment target.");
+            }
+
+            return expression;
+        }
+
+        private Expression Or()
+        {
+            var expression = And();
+
+            while (Match(TokenType.OR))
+            {
+                var op = Previous();
+                var right = And();
+                expression = new LogicalExpression(expression, op, right);
+            }
+
+            return expression;
+        }
+
+        private Expression And()
+        {
+            var expression = Equality();
+
+            while (Match(TokenType.AND))
+            {
+                var op = Previous();
+                var right = Equality();
+                expression = new LogicalExpression(expression, op, right);
             }
 
             return expression;

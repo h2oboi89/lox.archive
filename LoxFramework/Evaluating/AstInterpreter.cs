@@ -161,6 +161,22 @@ namespace LoxFramework.Evaluating
             return expression.Value;
         }
 
+        public object VisitLogicalExpression(LogicalExpression expression)
+        {
+            var left = Evaluate(expression.Left);
+
+            if (expression.Operator.Type == TokenType.OR)
+            {
+                if (IsTruthy(left)) return left;
+            }
+            else
+            {
+                if (!IsTruthy(left)) return left;
+            }
+
+            return Evaluate(expression.Right);
+        }
+
         public object VisitUnaryExpression(UnaryExpression expression)
         {
             var right = Evaluate(expression.Right);
@@ -218,7 +234,7 @@ namespace LoxFramework.Evaluating
             {
                 Execute(statement.ThenBranch);
             }
-            else
+            else if (statement.ElseBranch != null)
             {
                 Execute(statement.ElseBranch);
             }

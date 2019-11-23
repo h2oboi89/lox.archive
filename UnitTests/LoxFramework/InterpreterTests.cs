@@ -51,6 +51,7 @@ namespace UnitTests.LoxFramework
             Reset();
         }
 
+        #region test helper methods
         private void TestFile(string filename, IEnumerable<string> expected)
         {
             var file = Path.Combine(TEST_FILE_DIRECTORY, filename);
@@ -97,6 +98,7 @@ namespace UnitTests.LoxFramework
             Assert.That(Errors.Count, Is.EqualTo(1));
             Assert.That(Errors[0], Does.EndWith(expected));
         }
+        #endregion
 
         [Test]
         public void Comments_AreIgnored()
@@ -280,6 +282,41 @@ namespace UnitTests.LoxFramework
             TestException("(", "Expect expression.");
 
             TestException("( true;", "Expect ')' after expression.");
+        }
+
+        [Test]
+        public void IfStatement()
+        {
+            TestException("if;", "Expect '(' after 'if'.");
+            TestException("if ( true;", "Expect ')' after condition.");
+
+            TestStatement("if (true) print true;", "true");
+            TestStatement("if (false) print true;");
+            TestStatement("if (true) print true; else print false;", "true");
+            TestStatement("if (false) print true; else print false;", "false");
+        }
+
+        [Test]
+        public void LogicalStatements()
+        {
+            TestStatement("print \"hi\" or 2;", "hi");
+            TestStatement("print nil or \"yes\";", "yes");
+
+            TestStatement("if (false and false) print true;");
+            TestStatement("if (false and true) print true;");
+            TestStatement("if (true and false) print true;");
+            TestStatement("if (true and true) print true;", "true");
+
+            TestStatement("if (true and true and false) print true;");
+            TestStatement("if (true and true and true) print true;", "true");
+
+            TestStatement("if (false or false) print true;");
+            TestStatement("if (false or true) print true;", "true");
+            TestStatement("if (true or false) print true;", "true");
+            TestStatement("if (true or true) print true;", "true");
+
+            TestStatement("if (false or false or false) print true;");
+            TestStatement("if (false or false or true) print true;", "true");
         }
     }
 }

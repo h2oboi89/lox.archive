@@ -22,6 +22,7 @@ namespace GenerateAst
                 "Binary     : Expression left, Token operator, Expression right",
                 "Grouping   : Expression expression",
                 "Literal    : object value",
+                "Logical    : Expression left, Token operator, Expression right",
                 "Unary      : Token operator, Expression right",
                 "Variable   : Token name"
             });
