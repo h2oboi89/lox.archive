@@ -9,6 +9,7 @@ namespace LoxFramework.AST
     {
         T VisitBlockStatement(BlockStatement statement);
         T VisitExpressionStatement(ExpressionStatement statement);
+        T VisitIfStatement(IfStatement statement);
         T VisitPrintStatement(PrintStatement statement);
         T VisitVariableStatement(VariableStatement statement);
     }
@@ -45,6 +46,25 @@ namespace LoxFramework.AST
         public override T Accept<T>(IStatementVisitor<T> visitor)
         {
             return visitor.VisitExpressionStatement(this);
+        }
+    }
+
+    class IfStatement : Statement
+    {
+        public readonly Expression Condition;
+        public readonly Statement ThenBranch;
+        public readonly Statement ElseBranch;
+
+        public IfStatement(Expression condition, Statement thenBranch, Statement elseBranch)
+        {
+            Condition = condition;
+            ThenBranch = thenBranch;
+            ElseBranch = elseBranch;
+        }
+
+        public override T Accept<T>(IStatementVisitor<T> visitor)
+        {
+            return visitor.VisitIfStatement(this);
         }
     }
 

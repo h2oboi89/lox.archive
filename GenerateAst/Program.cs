@@ -30,6 +30,7 @@ namespace GenerateAst
             {
                 "Block      : IEnumerable<Statement> statements",
                 "Expression : Expression expression",
+                "If         : Expression condition, Statement thenBranch, Statement elseBranch",
                 "Print      : Expression expression",
                 "Variable   : Token name, Expression initializer"
             });

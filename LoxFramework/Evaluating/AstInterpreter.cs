@@ -193,13 +193,6 @@ namespace LoxFramework.Evaluating
         #endregion
 
         #region Statements
-        public object VisitExpressionStatement(ExpressionStatement statement)
-        {
-            var value = Evaluate(statement.Expression);
-            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value), true));
-            return null;
-        }
-
         private static string Stringify(object obj)
         {
             if (obj == null) return "nil";
@@ -210,6 +203,26 @@ namespace LoxFramework.Evaluating
             }
 
             return obj.ToString();
+        }
+
+        public object VisitExpressionStatement(ExpressionStatement statement)
+        {
+            var value = Evaluate(statement.Expression);
+            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value), true));
+            return null;
+        }
+
+        public object VisitIfStatement(IfStatement statement)
+        {
+            if (IsTruthy(Evaluate(statement.Condition)))
+            {
+                Execute(statement.ThenBranch);
+            }
+            else
+            {
+                Execute(statement.ElseBranch);
+            }
+            return null;
         }
 
         public object VisitPrintStatement(PrintStatement statement)

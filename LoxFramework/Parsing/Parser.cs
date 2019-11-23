@@ -148,10 +148,28 @@ namespace LoxFramework.Parsing
 
         private Statement Statement()
         {
+            if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
             if (Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 
             return StatementExpression();
+        }
+
+        private Statement IfStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+            var condition = Expression();
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+
+            var thenBranch = Statement();
+            Statement elseBranch = null;
+
+            if (Match(TokenType.ELSE))
+            {
+                elseBranch = Statement();
+            }
+
+            return new IfStatement(condition, thenBranch, elseBranch);
         }
 
         private Statement PrintStatement()
