@@ -48,6 +48,8 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="KeywordFilter.cs" />
+    <Compile Include="OutputQueue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
