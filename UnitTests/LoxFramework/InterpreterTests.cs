@@ -13,9 +13,12 @@ namespace UnitTests.LoxFramework
         private static readonly string TEST_FILE_DIRECTORY = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LoxFramework", "TestFiles");
         private readonly List<string> Results = new List<string>();
         private readonly List<string> Errors = new List<string>();
+        private bool showOptional = false;
 
         private void OnOut(object sender, InterpreterEventArgs e)
         {
+            if (e.Optional && !showOptional) return;
+
             Results.Add(e.Message);
         }
 
@@ -49,6 +52,7 @@ namespace UnitTests.LoxFramework
         public void Setup()
         {
             Reset();
+            showOptional = false;
         }
 
         #region test helper methods
@@ -105,12 +109,16 @@ namespace UnitTests.LoxFramework
         [Test]
         public void Comments_GoToEndOfLine()
         {
+            showOptional = true;
+
             TestStatement("// this is a comment \n 1 + 2;", "3");
         }
 
         [Test]
         public void LogicValidation()
         {
+            showOptional = true;
+
             TestStatement("1 != 2;", "true");
             TestStatement("1 != 1;", "false");
 
@@ -137,6 +145,8 @@ namespace UnitTests.LoxFramework
         [Test]
         public void Truthiness()
         {
+            showOptional = true;
+
             TestStatement("!nil;", "true");
             TestStatement("!!nil;", "false");
 
@@ -152,6 +162,8 @@ namespace UnitTests.LoxFramework
         [Test]
         public void Equality()
         {
+            showOptional = true;
+
             TestStatement("nil == nil;", "true");
 
             TestStatement("nil == 0;", "false");
@@ -174,6 +186,8 @@ namespace UnitTests.LoxFramework
         [Test]
         public void Unary()
         {
+            showOptional = true;
+
             TestStatement("-1;", "-1");
             TestStatement("-(-1);", "1");
             TestStatement("!true;", "false");
@@ -183,6 +197,8 @@ namespace UnitTests.LoxFramework
         [Test]
         public void ArithmeticValidation()
         {
+            showOptional = true;
+
             TestStatement("1 + 2;", "3");
             TestStatement("1 + -2;", "-1");
             TestStatement("1 - 2;", "-1");
@@ -196,6 +212,8 @@ namespace UnitTests.LoxFramework
         [Test]
         public void DecimalNumbers()
         {
+            showOptional = true;
+
             TestStatement("1.5 + 2.5;", "4");
         }
 
@@ -211,6 +229,8 @@ namespace UnitTests.LoxFramework
         [Test]
         public void ParenthesesGrouping()
         {
+            showOptional = true;
+
             TestStatement("1 + 2 * 3;", "7");
             TestStatement("(1 + 2) * 3;", "9");
         }
@@ -224,12 +244,16 @@ namespace UnitTests.LoxFramework
         [Test]
         public void StringConcatenation()
         {
+            showOptional = true;
+
             TestStatement(@"""1"" + ""1"";", "11");
         }
 
         [Test]
         public void Variables()
         {
+            showOptional = true;
+
             TestException("a;", "Undefined variable 'a'.");
             TestException("a = 1;", "Undefined variable 'a'.");
             TestException("var a = 1; var a = 2;", "Variable 'a' already declared in this scope.");
@@ -245,6 +269,8 @@ namespace UnitTests.LoxFramework
         [Test]
         public void Variables_Scope()
         {
+            showOptional = true;
+
             var expected = new string[]
             {
                 "first",
@@ -321,7 +347,7 @@ namespace UnitTests.LoxFramework
             TestException("while;", "Expect '(' after 'while'.");
             TestException("while ( true;", "Expect ')' after condition.");
 
-            TestStatement("var i = 3; while(i > 0) i = i - 1; print i;", "2", "1", "0", "0");
+            TestStatement("var i = 0; while(i < 3) { print i; i = i + 1; }", "0", "1", "2");
         }
 
         [Test]
@@ -331,13 +357,13 @@ namespace UnitTests.LoxFramework
             TestException("for(var i = 0; i < 3)", "Expect ';' after loop condition.");
             TestException("for(; ; i = i + 1;", "Expect ')' after for clauses.");
 
-            TestStatement("for(var i = 3; i > 0; i = i - 1) print i;", "3", "2", "2", "1", "1", "0");
+            TestStatement("for(var i = 0; i < 3; i = i + 1) print i;", "0", "1", "2");
 
-            TestStatement("var i; for(i = 3; i > 0; i = i - 1) print i;", "3", "3", "2", "2", "1", "1", "0");
+            TestStatement("var i; for(i = 0; i < 3; i = i + 1) print i;", "0", "1", "2");
 
-            TestStatement("for(var i = 3; i > 0;) i = i - 1;", "2", "1", "0");
+            TestStatement("for(var i = 0; i < 3;) { print i; i = i + 1; }", "0", "1", "2");
 
-            TestStatement("var i = 3; for(; i > 0;) i = i - 1;", "2", "1", "0");
+            TestStatement("var i = 0; for(; i < 3;) { print i; i = i + 1; }", "0", "1", "2");
         }
 
         [Test]
@@ -346,6 +372,8 @@ namespace UnitTests.LoxFramework
             TestStatement("while(true) { print 1; break; }", "1");
 
             TestStatement("for(;;) { print 1; break; }", "1");
+
+            TestStatement("for(var i = 0; i < 3; i = i + 1) { print i; for(;;) { break; } }", "0", "1", "2");
 
             TestException("break;", "No enclosing loop out of which to break.");
         }
