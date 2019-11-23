@@ -148,12 +148,69 @@ namespace LoxFramework.Parsing
 
         private Statement Statement()
         {
+            if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
             if (Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 
-            return StatementExpression();
+            return ExpressionStatement();
+        }
+
+        private Statement ForStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+            Statement initializer;
+            if (Match(TokenType.SEMICOLON))
+            {
+                initializer = null;
+            }
+            else if (Match(TokenType.VAR))
+            {
+                initializer = VariableDeclaration();
+            }
+            else
+            {
+                initializer = ExpressionStatement();
+            }
+
+            Expression condition = null;
+            if (!Check(TokenType.SEMICOLON))
+            {
+                condition = Expression();
+            }
+            Consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+            Expression increment = null;
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                increment = Expression();
+            }
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+
+            var body = Statement();
+
+            if (increment != null)
+            {
+                body = new BlockStatement(new Statement[]
+                {
+                    body, new ExpressionStatement(increment)
+                });
+            }
+
+            if (condition == null) condition = new LiteralExpression(true);
+            body = new WhileStatement(condition, body);
+
+            if (initializer != null)
+            {
+                body = new BlockStatement(new Statement[]
+                {
+                    initializer, body
+                });
+            }
+
+            return body;
         }
 
         private Statement IfStatement()
@@ -206,7 +263,7 @@ namespace LoxFramework.Parsing
             return statements;
         }
 
-        private Statement StatementExpression()
+        private Statement ExpressionStatement()
         {
             var expression = Expression();
 

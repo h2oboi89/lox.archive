@@ -330,5 +330,21 @@ namespace UnitTests.LoxFramework
 
             TestStatement("var i = 3; while(i > 0) i = i - 1; print i;", "2", "1", "0", "0");
         }
+
+        [Test]
+        public void ForStatement()
+        {
+            TestException("for;", "Expect '(' after 'for'.");
+            TestException("for(var i = 0; i < 3)", "Expect ';' after loop condition.");
+            TestException("for(; ; i = i + 1;", "Expect ')' after for clauses.");
+
+            TestStatement("for(var i = 3; i > 0; i = i - 1) print i;", "3", "2", "2", "1", "1", "0");
+
+            TestStatement("var i; for(i = 3; i > 0; i = i - 1) print i;", "3", "3", "2", "2", "1", "1", "0");
+
+            TestStatement("for(var i = 3; i > 0;) i = i - 1;", "2", "1", "0");
+
+            TestStatement("var i = 3; for(; i > 0;) i = i - 1;", "2", "1", "0");
+        }
     }
 }

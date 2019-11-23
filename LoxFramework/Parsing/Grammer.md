@@ -11,6 +11,7 @@
 | variableDeclaration	| "var" IDENTIFIER ( "=" expression )? ";"					|
 |						|															|
 | statement				| expressionStatement										|
+|						| forStatement												|
 |						| ifStatement												|
 |						| printStatement											|
 |						| whileStatement											|
@@ -18,11 +19,13 @@
 |						|															|
 | expressionStatement	| expression ";"											|
 |						|															|
+| forStatement			| "for" "(" ( variableDeclaration \| expressionStatement \| ";" ) expression? ";" expression? ")" statement |
+|						|															|
 | ifStatement			| "if" "(" expression ")" statement ( "else" statement )?	|
 |						|															|
 | printStatement		| "print" expression ";"									|
 |						|															|
-| whileStatement		| "while" "(" expression ")" statement
+| whileStatement		| "while" "(" expression ")" statement						|
 |						|															|
 | block					| "{" declaration\* "}"										|
 |						|															|
