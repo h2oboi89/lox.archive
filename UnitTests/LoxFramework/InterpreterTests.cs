@@ -68,7 +68,7 @@ namespace UnitTests.LoxFramework
             }
         }
 
-        private void TestStatement(string statement, string expected = null)
+        private void TestStatement(string statement, params string[] expected)
         {
             Reset();
 
@@ -76,14 +76,17 @@ namespace UnitTests.LoxFramework
 
             Assert.That(Errors, Is.Empty);
 
-            if (expected == null)
+            if (expected.Length == 0)
             {
                 Assert.That(Results, Is.Empty);
             }
             else
             {
-                Assert.That(Results.Count, Is.EqualTo(1));
-                Assert.That(Results[0], Is.EqualTo(expected));
+                Assert.That(Results.Count, Is.EqualTo(expected.Length));
+                for (var i = 0; i < expected.Length; i++)
+                {
+                    Assert.That(Results[i], Is.EqualTo(expected[i]));
+                }
             }
         }
 
@@ -317,6 +320,15 @@ namespace UnitTests.LoxFramework
 
             TestStatement("if (false or false or false) print true;");
             TestStatement("if (false or false or true) print true;", "true");
+        }
+
+        [Test]
+        public void WhileStatement()
+        {
+            TestException("while;", "Expect '(' after 'while'.");
+            TestException("while ( true;", "Expect ')' after condition.");
+
+            TestStatement("var i = 3; while(i > 0) i = i - 1; print i;", "2", "1", "0", "0");
         }
     }
 }

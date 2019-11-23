@@ -221,6 +221,12 @@ namespace LoxFramework.Evaluating
             return obj.ToString();
         }
 
+        public object VisitBlockStatement(BlockStatement statement)
+        {
+            ExecuteBlock(statement.Statements, new Environment(environment));
+            return null;
+        }
+
         public object VisitExpressionStatement(ExpressionStatement statement)
         {
             var value = Evaluate(statement.Expression);
@@ -260,9 +266,12 @@ namespace LoxFramework.Evaluating
             return null;
         }
 
-        public object VisitBlockStatement(BlockStatement statement)
+        public object VisitWhileStatement(WhileStatement statement)
         {
-            ExecuteBlock(statement.Statements, new Environment(environment));
+            while (IsTruthy(Evaluate(statement.Condition)))
+            {
+                Execute(statement.Body);
+            }
             return null;
         }
         #endregion
