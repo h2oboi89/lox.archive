@@ -46,10 +46,8 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="LoxFramework\AstInterpreterTests.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="LoxFramework\InterpreterTests.cs" />
-    <Compile Include="LoxFramework\ParserTests.cs" />
-    <Compile Include="LoxFramework\ScannerTests.cs" />
     <Compile Include="LoxFramework\TokenTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -75,6 +73,11 @@
     <PackageReference Include="ReportGenerator">
       <Version>4.3.6</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LoxFramework\TestFiles\VariableScope.lox">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

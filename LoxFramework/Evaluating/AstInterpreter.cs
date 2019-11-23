@@ -1,10 +1,62 @@
-﻿using LoxFramework.Scanning;
+﻿using LoxFramework.AST;
+using LoxFramework.Scanning;
+using System;
+using System.Collections.Generic;
 
-namespace LoxFramework.AST
+namespace LoxFramework.Evaluating
 {
-    internal class AstInterpreter : IVisitor<object>
+    class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {
-        public object Evaluate(Expression expression)
+        private Environment environment = new Environment();
+
+        public void Reset()
+        {
+            environment = new Environment();
+        }
+
+        public void Interpret(IEnumerable<Statement> statements)
+        {
+            try
+            {
+                foreach (var statement in statements)
+                {
+                    Execute(statement);
+                }
+            }
+            catch (LoxRunTimeException e)
+            {
+                Interpreter.InterpretError(e);
+            }
+        }
+
+        private void Execute(Statement statement)
+        {
+            statement.Accept(this);
+        }
+
+        private void ExecuteBlock(IEnumerable<Statement> statements, Environment environment)
+        {
+            var enclosingEnvironment = this.environment;
+
+            try
+            {
+                this.environment = environment;
+
+                foreach (var statement in statements)
+                {
+                    Execute(statement);
+                }
+            }
+            finally
+            {
+                this.environment = enclosingEnvironment;
+            }
+        }
+
+        public event EventHandler<InterpreterEventArgs> Out;
+
+        #region Expressions
+        private object Evaluate(Expression expression)
         {
             return expression.Accept(this);
         }
@@ -125,5 +177,65 @@ namespace LoxFramework.AST
             // unreachable
             return null;
         }
+
+        public object VisitVariableExpression(VariableExpression expression)
+        {
+            return environment.Get(expression.Name);
+        }
+
+        public object VisitAssignmentExpression(AssignmentExpression expression)
+        {
+            var value = Evaluate(expression.Value);
+
+            environment.Assign(expression.Name, value);
+            return value;
+        }
+        #endregion
+
+        #region Statements
+        public object VisitExpressionStatement(ExpressionStatement statement)
+        {
+            var value = Evaluate(statement.Expression);
+            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value), true));
+            return null;
+        }
+
+        private static string Stringify(object obj)
+        {
+            if (obj == null) return "nil";
+
+            if (obj.GetType() == typeof(bool))
+            {
+                return (bool)obj ? "true" : "false";
+            }
+
+            return obj.ToString();
+        }
+
+        public object VisitPrintStatement(PrintStatement statement)
+        {
+            var value = Evaluate(statement.Expression);
+            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value)));
+            return null;
+        }
+
+        public object VisitVariableStatement(VariableStatement statement)
+        {
+            object value = null;
+            if (statement.Initializer != null)
+            {
+                value = Evaluate(statement.Initializer);
+            }
+
+            environment.Define(statement.Name, value);
+            return null;
+        }
+
+        public object VisitBlockStatement(BlockStatement statement)
+        {
+            ExecuteBlock(statement.Statements, new Environment(environment));
+            return null;
+        }
+        #endregion
     }
 }

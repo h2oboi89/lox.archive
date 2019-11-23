@@ -1,4 +1,4 @@
-﻿using LoxFramework.AST;
+﻿using LoxFramework.Evaluating;
 using LoxFramework.Parsing;
 using LoxFramework.Scanning;
 using System;
@@ -11,8 +11,24 @@ namespace LoxFramework
     /// </summary>
     public static class Interpreter
     {
-        private static bool HadError = false;
         private static readonly AstInterpreter astInterpreter = new AstInterpreter();
+        private static bool HadError = false;
+        private static bool Initialized = false;
+
+        /// <summary>
+        /// R
+        /// </summary>
+        public static void Reset()
+        {
+            astInterpreter.Reset();
+        }
+
+        private static void Initialize()
+        {
+            astInterpreter.Out += (o, e) => Out?.Invoke(typeof(Interpreter), e);
+
+            Initialized = true;
+        }
 
         /// <summary>
         /// Executes the specified source code.
@@ -20,36 +36,21 @@ namespace LoxFramework
         /// <param name="source">Source code to execute.</param>
         public static void Run(string source)
         {
-            try
-            {
-                HadError = false;
+            if (!Initialized) Initialize();
 
-                var tokens = Scanner.Scan(source);
+            HadError = false;
 
-                // check for empty input (EOF token)
-                if (!HadError && tokens.Count() == 1) return;
+            var tokens = Scanner.Scan(source);
 
-                var parser = new Parser(tokens);
-                var expression = parser.Parse();
+            // check for empty input (EOF token)
+            if (!HadError && tokens.Count() == 1) return;
 
-                // check for parse error
-                if (HadError) return;
+            var statements = Parser.Parse(tokens);
 
-                var result = astInterpreter.Evaluate(expression);
+            // check for parse error
+            if (HadError) return;
 
-                Out?.Invoke(typeof(Interpreter), new InterpreterEventArgs(Stringify(result)));
-            }
-            catch (LoxRunTimeException e)
-            {
-                Report(e.Token.Line, $" at {e.Token.Lexeme}", e.Message);
-            }
-        }
-
-        private static string Stringify(object obj)
-        {
-            if (obj == null) return "nil";
-
-            return obj.ToString();
+            astInterpreter.Interpret(statements);
         }
 
         private static void Report(int line, string where, string message)
@@ -73,6 +74,11 @@ namespace LoxFramework
             {
                 Report(token.Line, $" at {token.Lexeme}'", message);
             }
+        }
+
+        internal static void InterpretError(LoxRunTimeException e)
+        {
+            Report(e.Token.Line, $" at {e.Token.Lexeme}", e.Message);
         }
 
         /// <summary>

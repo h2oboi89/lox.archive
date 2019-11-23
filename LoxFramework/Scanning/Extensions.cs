@@ -1,7 +1,6 @@
-﻿using LoxFramework.Scanning;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace LoxFramework
+namespace LoxFramework.Scanning
 {
     static class Extensions
     {

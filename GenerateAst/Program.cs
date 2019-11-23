@@ -6,9 +6,6 @@ namespace GenerateAst
 {
     class Program
     {
-        const string baseType = "Expression";
-        static readonly string baseName = baseType.ToLower();
-
         static void Main(string[] args)
         {
             if (args.Length != 1)
@@ -19,178 +16,146 @@ namespace GenerateAst
 
             var outputDirectory = args[0];
 
-            DefineAst(new string[]
+            GenerateType("Expression", outputDirectory, new string[]
             {
-                $"Binary     : {baseType} left, Token operator, {baseType} right",
-                $"Grouping   : {baseType} {baseName}",
-                $"Literal    : object value",
-                $"Unary      : Token operator, {baseType} right"
+                "Assignment : Token name, Expression value",
+                "Binary     : Expression left, Token operator, Expression right",
+                "Grouping   : Expression expression",
+                "Literal    : object value",
+                "Unary      : Token operator, Expression right",
+                "Variable   : Token name"
             });
 
-            GenerateFile(outputDirectory);
-        }
-
-        private static void GenerateFile(string outputDirectory)
-        {
-            var folder = Path.Combine(outputDirectory, "AST");
-
-            Directory.CreateDirectory(folder);
-
-            var file = Path.Combine(folder, $"{baseType}.cs");
-
-            using (var writer = new StreamWriter(File.OpenWrite(file)))
+            GenerateType("Statement", outputDirectory, new string[]
             {
-                foreach (var line in FormatOutput())
-                {
-                    writer.WriteLine(line);
-                }
-            }
+                "Block      : IEnumerable<Statement> statements",
+                "Expression : Expression expression",
+                "Print      : Expression expression",
+                "Variable   : Token name, Expression initializer"
+            });
         }
 
-        private static readonly Queue<string> output = new Queue<string>();
+        private static readonly OutputQueue output = new OutputQueue();
 
-        private static void AppendLine(string s = null)
+        private static void GenerateType(string baseName, string outputDirectory, IEnumerable<string> types)
         {
-            output.Enqueue(s ?? string.Empty);
+            DefineAst(baseName, types);
+
+            GenerateFile(outputDirectory, baseName);
         }
 
-        private static IEnumerable<string> FormatOutput()
+        #region AST Definition
+        private static void DefineAst(string baseName, IEnumerable<string> types)
         {
-            var tab = "    ";
-            var tabLevel = 0;
+            output.Enqueue("// Generated code, do not modify.");
+            output.Enqueue("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
+            output.Enqueue("using LoxFramework.Scanning;");
+            output.Enqueue("using System.Collections.Generic;");
+            output.Enqueue();
+            output.Enqueue("namespace LoxFramework.AST");
+            output.Enqueue("{");
 
-            while (output.Count > 0)
-            {
-                var line = output.Dequeue();
-                string indent;
+            DefineVisitor(baseName, types);
 
-                switch (line)
-                {
-                    case "{":
-                        indent = tab.Repeat(tabLevel++);
-                        break;
-                    case "}":
-                        indent = tab.Repeat(--tabLevel);
-                        break;
-                    case "":
-                        indent = string.Empty;
-                        break;
-                    default:
-                        indent = tab.Repeat(tabLevel);
-                        break;
-                }
+            output.Enqueue();
 
-                yield return indent + line;
-            }
+            DefineTypes(baseName, types);
+
+            output.Enqueue("}");
+            output.Enqueue("#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member");
         }
 
-        private static void DefineAst(IEnumerable<string> types)
+        private static void DefineVisitor(string baseName, IEnumerable<string> types)
         {
-            AppendLine("// Generated code, do not modify.");
-            AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
-            AppendLine("using LoxFramework.Scanning;");
-            AppendLine();
-            AppendLine("namespace LoxFramework.AST");
-            AppendLine("{");
-
-            DefineVisitor(types);
-
-            AppendLine();
-
-            DefineTypes(types);
-
-            AppendLine("}");
-            AppendLine("#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member");
-        }
-
-        private static void DefineVisitor(IEnumerable<string> types)
-        {
-            AppendLine("public interface IVisitor<T>");
-            AppendLine("{");
+            output.Enqueue($"interface I{baseName}Visitor<T>");
+            output.Enqueue("{");
 
             foreach (var type in types)
             {
                 var (className, _) = type.SplitTrim(':');
 
-                var extendedClass = $"{className}{baseType}";
+                var extendedClass = $"{className}{baseName}";
 
-                AppendLine($"T Visit{extendedClass}({extendedClass} {baseName});");
+                output.Enqueue($"T Visit{extendedClass}({extendedClass} {baseName.ToLower()});");
             }
 
-            AppendLine("}");
+            output.Enqueue("}");
         }
 
-        private static void DefineTypes(IEnumerable<string> types)
+        private static void DefineTypes(string baseName, IEnumerable<string> types)
         {
             // base class
-            AppendLine($"public abstract class {baseType}");
-            AppendLine("{");
-            AppendLine($"public abstract T Accept<T>(IVisitor<T> visitor);");
-            AppendLine("}");
+            output.Enqueue($"abstract class {baseName}");
+            output.Enqueue("{");
+            output.Enqueue($"public abstract T Accept<T>(I{baseName}Visitor<T> visitor);");
+            output.Enqueue("}");
 
             // extension classes
             foreach (var type in types)
             {
-                AppendLine();
+                output.Enqueue();
 
                 var (className, fields, _) = type.SplitTrim(':');
 
-                var extendedClass = $"{className}{baseType}";
+                var extendedClass = $"{className}{baseName}";
 
-                DefineType(extendedClass, fields);
+                DefineType(baseName, extendedClass, fields);
             }
         }
 
-        private static readonly Dictionary<string, string> keywordMap = new Dictionary<string, string>
-        {
-            { "operator", "op" }
-        };
-
-        private static string FilterKeywords(string str)
-        {
-            foreach (KeyValuePair<string, string> entry in keywordMap)
-            {
-                str = str.Replace(entry.Key, entry.Value);
-            }
-
-            return str;
-        }
-
-        private static void DefineType(string className, string fields)
+        private static void DefineType(string baseName, string className, string fields)
         {
             var fieldParts = fields.SplitTrim(',');
 
-            AppendLine($"public class {className} : {baseType}");
-            AppendLine("{");
+            output.Enqueue($"class {className} : {baseName}");
+            output.Enqueue("{");
 
             // fields
             foreach (var field in fieldParts)
             {
                 var (type, name, _) = field.Split(' ');
-                AppendLine($"public readonly {type} {name.ToUppercaseFirst()};");
+                output.Enqueue($"public readonly {type} {name.ToUppercaseFirst()};");
             }
 
-            AppendLine();
+            output.Enqueue();
 
             // constructor
-            AppendLine($"public {className}({FilterKeywords(fields)})");
-            AppendLine("{");
+            output.Enqueue($"public {className}({KeywordFilter.Filter(fields)})");
+            output.Enqueue("{");
             foreach (var field in fieldParts)
             {
                 var (_, name, _) = field.Split(' ');
-                AppendLine($"{name.ToUppercaseFirst()} = {FilterKeywords(name)};");
+                output.Enqueue($"{name.ToUppercaseFirst()} = {KeywordFilter.Filter(name)};");
             }
-            AppendLine("}");
+            output.Enqueue("}");
 
-            AppendLine();
+            output.Enqueue();
 
             // visitor pattern
-            AppendLine($"public override T Accept<T>(IVisitor<T> visitor)");
-            AppendLine("{");
-            AppendLine($"return visitor.Visit{className}(this);");
-            AppendLine("}");
+            output.Enqueue($"public override T Accept<T>(I{baseName}Visitor<T> visitor)");
+            output.Enqueue("{");
+            output.Enqueue($"return visitor.Visit{className}(this);");
+            output.Enqueue("}");
 
-            AppendLine("}");
+            output.Enqueue("}");
+        }
+        #endregion
+
+        private static void GenerateFile(string outputDirectory, string filename)
+        {
+            var folder = Path.Combine(outputDirectory, "AST");
+
+            Directory.CreateDirectory(folder);
+
+            var file = Path.Combine(folder, $"{filename}.cs");
+
+            using (var writer = new StreamWriter(File.OpenWrite(file)))
+            {
+                foreach (var line in output.Publish())
+                {
+                    writer.WriteLine(line);
+                }
+            }
         }
     }
 }
