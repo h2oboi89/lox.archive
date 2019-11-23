@@ -105,6 +105,10 @@
         /// </summary>
         AND,
         /// <summary>
+        /// break token
+        /// </summary>
+        BREAK,
+        /// <summary>
         /// class token
         /// </summary>
         CLASS,

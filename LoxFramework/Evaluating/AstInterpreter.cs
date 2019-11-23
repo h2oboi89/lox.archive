@@ -227,6 +227,11 @@ namespace LoxFramework.Evaluating
             return null;
         }
 
+        public object VisitBreakStatement(BreakStatement statement)
+        {
+            throw new LoxBreakException();
+        }
+
         public object VisitExpressionStatement(ExpressionStatement statement)
         {
             var value = Evaluate(statement.Expression);
@@ -270,7 +275,11 @@ namespace LoxFramework.Evaluating
         {
             while (IsTruthy(Evaluate(statement.Condition)))
             {
-                Execute(statement.Body);
+                try
+                {
+                    Execute(statement.Body);
+                }
+                catch (LoxBreakException) { break; }
             }
             return null;
         }

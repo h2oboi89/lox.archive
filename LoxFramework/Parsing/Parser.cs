@@ -10,6 +10,7 @@ namespace LoxFramework.Parsing
     {
         private readonly List<Token> tokens;
         private int current = 0;
+        private bool inLoop = false;
 
         private Parser(IEnumerable<Token> tokens)
         {
@@ -88,6 +89,15 @@ namespace LoxFramework.Parsing
             return new ParseException();
         }
 
+        private Statement LoopBody()
+        {
+            inLoop = true;
+            var body = Statement();
+            inLoop = false;
+
+            return body;
+        }
+
         private void Synchronize()
         {
             Advance();
@@ -148,6 +158,7 @@ namespace LoxFramework.Parsing
 
         private Statement Statement()
         {
+            if (Match(TokenType.BREAK)) return BreakStatement();
             if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
@@ -155,6 +166,15 @@ namespace LoxFramework.Parsing
             if (Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 
             return ExpressionStatement();
+        }
+
+        private Statement BreakStatement()
+        {
+            if (!inLoop) throw Error(Previous(), "No enclosing loop out of which to break.");
+
+            Consume(TokenType.SEMICOLON, "Expect ';' after 'break'.");
+
+            return new BreakStatement();
         }
 
         private Statement ForStatement()
@@ -189,7 +209,7 @@ namespace LoxFramework.Parsing
             }
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
 
-            var body = Statement();
+            var body = LoopBody();
 
             if (increment != null)
             {
@@ -245,7 +265,7 @@ namespace LoxFramework.Parsing
             var condition = Expression();
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
 
-            var body = Statement();
+            var body = LoopBody();
 
             return new WhileStatement(condition, body);
         }
