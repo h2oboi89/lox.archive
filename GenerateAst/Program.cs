@@ -48,7 +48,8 @@ namespace GenerateAst
                 "If         : Expression condition, Statement thenBranch, Statement elseBranch",
                 "Print      : Expression expression",
                 "Variable   : Token name, Expression initializer",
-                "While      : Expression condition, Statement body"
+                "While      : Expression condition, Statement body",
+                "For        : Statement initializer, Expression condition, Expression increment, Statement body",
             });
         }
 

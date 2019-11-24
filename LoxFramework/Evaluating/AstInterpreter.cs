@@ -239,6 +239,29 @@ namespace LoxFramework.Evaluating
             return null;
         }
 
+        public object VisitForStatement(ForStatement statement)
+        {
+            if (statement.Initializer != null)
+            {
+                Execute(statement.Initializer);
+            }
+
+            while (IsTruthy(Evaluate(statement.Condition)))
+            {
+                try
+                {
+                    Execute(statement.Body);
+                }
+                catch (LoxBreakException) { break; }
+
+                if (statement.Increment != null)
+                {
+                    Evaluate(statement.Increment);
+                }
+            }
+            return null;
+        }
+
         public object VisitIfStatement(IfStatement statement)
         {
             if (IsTruthy(Evaluate(statement.Condition)))

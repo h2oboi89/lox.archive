@@ -14,6 +14,7 @@ namespace LoxFramework.AST
         T VisitPrintStatement(PrintStatement statement);
         T VisitVariableStatement(VariableStatement statement);
         T VisitWhileStatement(WhileStatement statement);
+        T VisitForStatement(ForStatement statement);
     }
 
     abstract class Statement
@@ -126,6 +127,27 @@ namespace LoxFramework.AST
         public override T Accept<T>(IStatementVisitor<T> visitor)
         {
             return visitor.VisitWhileStatement(this);
+        }
+    }
+
+    class ForStatement : Statement
+    {
+        public readonly Statement Initializer;
+        public readonly Expression Condition;
+        public readonly Expression Increment;
+        public readonly Statement Body;
+
+        public ForStatement(Statement initializer, Expression condition, Expression increment, Statement body)
+        {
+            Initializer = initializer;
+            Condition = condition;
+            Increment = increment;
+            Body = body;
+        }
+
+        public override T Accept<T>(IStatementVisitor<T> visitor)
+        {
+            return visitor.VisitForStatement(this);
         }
     }
 }

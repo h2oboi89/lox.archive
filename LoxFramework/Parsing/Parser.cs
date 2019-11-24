@@ -195,10 +195,14 @@ namespace LoxFramework.Parsing
                 initializer = ExpressionStatement();
             }
 
-            Expression condition = null;
+            Expression condition;
             if (!Check(TokenType.SEMICOLON))
             {
                 condition = Expression();
+            }
+            else
+            {
+                condition = new LiteralExpression(true);
             }
             Consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
 
@@ -211,26 +215,7 @@ namespace LoxFramework.Parsing
 
             var body = LoopBody();
 
-            if (increment != null)
-            {
-                body = new BlockStatement(new Statement[]
-                {
-                    body, new ExpressionStatement(increment)
-                });
-            }
-
-            if (condition == null) condition = new LiteralExpression(true);
-            body = new WhileStatement(condition, body);
-
-            if (initializer != null)
-            {
-                body = new BlockStatement(new Statement[]
-                {
-                    initializer, body
-                });
-            }
-
-            return body;
+            return new ForStatement(initializer, condition, increment, body);
         }
 
         private Statement IfStatement()
