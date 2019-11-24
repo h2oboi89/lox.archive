@@ -52,7 +52,7 @@ endef
 # Copies all output files for a specified project to $(RELEASE_DIR)
 # $1 Name of project to copy files for
 define copy_to_release
-    $(call copy_to_folder,$1,$(RELEASE_DIR)\$1)
+	$(call copy_to_folder,$1,$(RELEASE_DIR)\$1)
 	$(call copy_to_folder,$1,$(RELEASE_DIR)\All)
 endef
 
