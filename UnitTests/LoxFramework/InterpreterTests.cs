@@ -267,6 +267,19 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
+        public void VariablesInInteractiveMode()
+        {
+            Interpreter.Reset(true);
+
+            Interpreter.Run("var a = 1; var a = 2; print a;");
+
+            Assert.That(Errors, Is.Empty);
+
+            Assert.That(Results.Count, Is.EqualTo(1));
+            Assert.That(Results[0], Is.EqualTo("2"));
+        }
+
+        [Test]
         public void Variables_Scope()
         {
             showOptional = true;
@@ -386,6 +399,17 @@ namespace UnitTests.LoxFramework
             TestStatement("var i = 0; while(i < 3) { i = i + 1; if (i == 2) continue; print i; }", "1", "3");
 
             TestException("continue;", "No enclosing loop out of which to continue.");
+        }
+
+        [Test]
+        public void FibonnaciLoop()
+        {
+            var expected = new string[] {
+                "0", "1", "1", "2", "3", "5", "8", "13", "21", "34", "55",
+                "89", "144", "233", "377", "610", "987", "1597", "2584", "4181", "6765"
+            };
+
+            TestFile("FibonnaciLoop.lox", expected);
         }
     }
 }

@@ -16,13 +16,14 @@ namespace LoxFramework
         private static bool Initialized = false;
 
         /// <summary>
-        /// Reset environment 
+        /// Reset interpreter environment (mainly used for testing) 
         /// </summary>
-        public static void Reset()
+        /// <param name="interactive">If true then variables can be redeclared; otherwise that throws a run time exception</param>
+        public static void Reset(bool interactive = false)
         {
             if (Initialized)
             {
-                astInterpreter.Reset();
+                astInterpreter.Reset(interactive);
             }
         }
 

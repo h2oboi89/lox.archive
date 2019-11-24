@@ -75,6 +75,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="LoxFramework\TestFiles\FibonnaciLoop.lox">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="LoxFramework\TestFiles\VariableScope.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

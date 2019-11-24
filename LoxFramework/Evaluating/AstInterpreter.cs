@@ -13,9 +13,9 @@ namespace LoxFramework.Evaluating
         public AstInterpreter(bool interactive)
         {
             this.interactive = interactive;
-            Reset();
+            Reset(interactive);
         }
-        public void Reset()
+        public void Reset(bool interactive)
         {
             environment = new Environment(interactive: interactive);
         }
