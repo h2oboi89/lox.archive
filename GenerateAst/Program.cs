@@ -46,10 +46,9 @@ namespace GenerateAst
                 "Break      : ",
                 "Expression : Expression expression",
                 "If         : Expression condition, Statement thenBranch, Statement elseBranch",
+                "Loop       : Statement initializer, Expression condition, Expression increment, Statement body",
                 "Print      : Expression expression",
-                "Variable   : Token name, Expression initializer",
-                "While      : Expression condition, Statement body",
-                "For        : Statement initializer, Expression condition, Expression increment, Statement body",
+                "Variable   : Token name, Expression initializer"
             });
         }
 

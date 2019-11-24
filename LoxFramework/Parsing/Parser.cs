@@ -215,7 +215,7 @@ namespace LoxFramework.Parsing
 
             var body = LoopBody();
 
-            return new ForStatement(initializer, condition, increment, body);
+            return new LoopStatement(initializer, condition, increment, body);
         }
 
         private Statement IfStatement()
@@ -252,7 +252,7 @@ namespace LoxFramework.Parsing
 
             var body = LoopBody();
 
-            return new WhileStatement(condition, body);
+            return new LoopStatement(null, condition, null, body);
         }
 
         private IEnumerable<Statement> Block()

@@ -342,7 +342,7 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
-        public void WhileStatement()
+        public void WhileLoop()
         {
             TestException("while;", "Expect '(' after 'while'.");
             TestException("while ( true;", "Expect ')' after condition.");
@@ -351,7 +351,7 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
-        public void ForStatement()
+        public void ForLoop()
         {
             TestException("for;", "Expect '(' after 'for'.");
             TestException("for(var i = 0; i < 3)", "Expect ';' after loop condition.");

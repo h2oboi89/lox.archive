@@ -239,7 +239,20 @@ namespace LoxFramework.Evaluating
             return null;
         }
 
-        public object VisitForStatement(ForStatement statement)
+        public object VisitIfStatement(IfStatement statement)
+        {
+            if (IsTruthy(Evaluate(statement.Condition)))
+            {
+                Execute(statement.ThenBranch);
+            }
+            else if (statement.ElseBranch != null)
+            {
+                Execute(statement.ElseBranch);
+            }
+            return null;
+        }
+
+        public object VisitLoopStatement(LoopStatement statement)
         {
             if (statement.Initializer != null)
             {
@@ -262,19 +275,6 @@ namespace LoxFramework.Evaluating
             return null;
         }
 
-        public object VisitIfStatement(IfStatement statement)
-        {
-            if (IsTruthy(Evaluate(statement.Condition)))
-            {
-                Execute(statement.ThenBranch);
-            }
-            else if (statement.ElseBranch != null)
-            {
-                Execute(statement.ElseBranch);
-            }
-            return null;
-        }
-
         public object VisitPrintStatement(PrintStatement statement)
         {
             var value = Evaluate(statement.Expression);
@@ -291,19 +291,6 @@ namespace LoxFramework.Evaluating
             }
 
             environment.Define(statement.Name, value);
-            return null;
-        }
-
-        public object VisitWhileStatement(WhileStatement statement)
-        {
-            while (IsTruthy(Evaluate(statement.Condition)))
-            {
-                try
-                {
-                    Execute(statement.Body);
-                }
-                catch (LoxBreakException) { break; }
-            }
             return null;
         }
         #endregion
