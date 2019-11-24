@@ -11,20 +11,25 @@ namespace LoxFramework
     /// </summary>
     public static class Interpreter
     {
-        private static readonly AstInterpreter astInterpreter = new AstInterpreter();
+        private static AstInterpreter astInterpreter;
         private static bool HadError = false;
         private static bool Initialized = false;
 
         /// <summary>
-        /// R
+        /// Reset environment 
         /// </summary>
         public static void Reset()
         {
-            astInterpreter.Reset();
+            if (Initialized)
+            {
+                astInterpreter.Reset();
+            }
         }
 
-        private static void Initialize()
+        private static void Initialize(bool interactive)
         {
+            astInterpreter = new AstInterpreter(interactive);
+
             astInterpreter.Out += (o, e) => Out?.Invoke(typeof(Interpreter), e);
 
             Initialized = true;
@@ -34,9 +39,10 @@ namespace LoxFramework
         /// Executes the specified source code.
         /// </summary>
         /// <param name="source">Source code to execute.</param>
-        public static void Run(string source)
+        /// <param name="interactive">True if running from prompt; otherwise false.</param>
+        public static void Run(string source, bool interactive = false)
         {
-            if (!Initialized) Initialize();
+            if (!Initialized) Initialize(interactive);
 
             HadError = false;
 

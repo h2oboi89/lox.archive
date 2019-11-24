@@ -377,5 +377,15 @@ namespace UnitTests.LoxFramework
 
             TestException("break;", "No enclosing loop out of which to break.");
         }
+
+        [Test]
+        public void Continue()
+        {
+            TestStatement("for(var i = 0; i < 3; i = i + 1) { if (i == 2) continue; print i; }", "0", "1");
+
+            TestStatement("var i = 0; while(i < 3) { i = i + 1; if (i == 2) continue; print i; }", "1", "3");
+
+            TestException("continue;", "No enclosing loop out of which to continue.");
+        }
     }
 }

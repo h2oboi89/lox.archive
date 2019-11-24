@@ -8,19 +8,31 @@ namespace LoxFramework.Evaluating
         private readonly Environment _enclosing;
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
 
-        public Environment(Environment enclosing = null)
+        public bool Interactive { get; private set; }
+
+        public Environment(Environment enclosing = null, bool interactive = false)
         {
             _enclosing = enclosing;
+            Interactive = interactive;
         }
 
         public void Define(Token name, object value)
         {
             if (values.ContainsKey(name.Lexeme))
             {
-                throw new LoxRunTimeException(name, $"Variable '{name.Lexeme}' already declared in this scope.");
+                if (Interactive)
+                {
+                    values[name.Lexeme] = value;
+                }
+                else
+                {
+                    throw new LoxRunTimeException(name, $"Variable '{name.Lexeme}' already declared in this scope.");
+                }
             }
-
-            values.Add(name.Lexeme, value);
+            else
+            {
+                values.Add(name.Lexeme, value);
+            }
         }
 
         public void Assign(Token name, object value)

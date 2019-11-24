@@ -44,6 +44,7 @@ namespace GenerateAst
             {
                 "Block      : IEnumerable<Statement> statements",
                 "Break      : ",
+                "Continue   : ",
                 "Expression : Expression expression",
                 "If         : Expression condition, Statement thenBranch, Statement elseBranch",
                 "Loop       : Statement initializer, Expression condition, Expression increment, Statement body",

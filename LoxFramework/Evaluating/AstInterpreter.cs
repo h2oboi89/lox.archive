@@ -7,11 +7,17 @@ namespace LoxFramework.Evaluating
 {
     class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {
-        private Environment environment = new Environment();
+        private readonly bool interactive;
+        private Environment environment;
 
+        public AstInterpreter(bool interactive)
+        {
+            this.interactive = interactive;
+            Reset();
+        }
         public void Reset()
         {
-            environment = new Environment();
+            environment = new Environment(interactive: interactive);
         }
 
         public void Interpret(IEnumerable<Statement> statements)
@@ -223,13 +229,18 @@ namespace LoxFramework.Evaluating
 
         public object VisitBlockStatement(BlockStatement statement)
         {
-            ExecuteBlock(statement.Statements, new Environment(environment));
+            ExecuteBlock(statement.Statements, new Environment(environment, interactive));
             return null;
         }
 
         public object VisitBreakStatement(BreakStatement statement)
         {
             throw new LoxBreakException();
+        }
+
+        public object VisitContinueStatement(ContinueStatement statement)
+        {
+            throw new LoxContinueException();
         }
 
         public object VisitExpressionStatement(ExpressionStatement statement)
@@ -266,10 +277,13 @@ namespace LoxFramework.Evaluating
                     Execute(statement.Body);
                 }
                 catch (LoxBreakException) { break; }
-
-                if (statement.Increment != null)
+                catch (LoxContinueException) { continue; }
+                finally
                 {
-                    Evaluate(statement.Increment);
+                    if (statement.Increment != null)
+                    {
+                        Evaluate(statement.Increment);
+                    }
                 }
             }
             return null;

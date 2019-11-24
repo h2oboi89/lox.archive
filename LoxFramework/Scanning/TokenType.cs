@@ -113,6 +113,10 @@
         /// </summary>
         CLASS,
         /// <summary>
+        /// continue token
+        /// </summary>
+        CONTINUE,
+        /// <summary>
         /// else token
         /// </summary>
         ELSE,

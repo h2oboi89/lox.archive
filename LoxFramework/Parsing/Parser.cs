@@ -159,6 +159,7 @@ namespace LoxFramework.Parsing
         private Statement Statement()
         {
             if (Match(TokenType.BREAK)) return BreakStatement();
+            if (Match(TokenType.CONTINUE)) return ContinueStatement();
             if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
@@ -175,6 +176,15 @@ namespace LoxFramework.Parsing
             Consume(TokenType.SEMICOLON, "Expect ';' after 'break'.");
 
             return new BreakStatement();
+        }
+
+        private Statement ContinueStatement()
+        {
+            if (!inLoop) throw Error(Previous(), "No enclosing loop out of which to continue.");
+
+            Consume(TokenType.SEMICOLON, "Expect ';' after 'break'.");
+
+            return new ContinueStatement();
         }
 
         private Statement ForStatement()

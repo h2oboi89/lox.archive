@@ -9,6 +9,7 @@ namespace LoxFramework.AST
     {
         T VisitBlockStatement(BlockStatement statement);
         T VisitBreakStatement(BreakStatement statement);
+        T VisitContinueStatement(ContinueStatement statement);
         T VisitExpressionStatement(ExpressionStatement statement);
         T VisitIfStatement(IfStatement statement);
         T VisitLoopStatement(LoopStatement statement);
@@ -43,6 +44,16 @@ namespace LoxFramework.AST
         public override T Accept<T>(IStatementVisitor<T> visitor)
         {
             return visitor.VisitBreakStatement(this);
+        }
+    }
+
+    class ContinueStatement : Statement
+    {
+        public ContinueStatement() { }
+
+        public override T Accept<T>(IStatementVisitor<T> visitor)
+        {
+            return visitor.VisitContinueStatement(this);
         }
     }
 

@@ -17,6 +17,7 @@ namespace LoxFramework.Scanning
             { "and", TokenType.AND },
             { "break", TokenType.BREAK },
             { "class", TokenType.CLASS },
+            { "continue", TokenType.CONTINUE },
             { "else", TokenType.ELSE },
             { "false", TokenType.FALSE },
             { "for", TokenType.FOR },

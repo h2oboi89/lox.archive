@@ -57,7 +57,7 @@ namespace Lox
             while (true)
             {
                 Console.Write("> ");
-                Interpreter.Run(Console.ReadLine());
+                Interpreter.Run(Console.ReadLine(), true);
             }
         }
     }
