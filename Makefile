@@ -44,7 +44,7 @@ define delete_dir
 endef
 
 # Creates a directory if it does not exist
-# $! Directory to create
+# $1 Directory to create
 define make_dir
 	@if NOT EXIST $1 mkdir $1;
 endef
