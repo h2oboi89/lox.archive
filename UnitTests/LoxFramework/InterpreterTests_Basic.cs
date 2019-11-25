@@ -120,6 +120,8 @@ namespace UnitTests.LoxFramework
             showOptional = true;
 
             TestStatement("1.5 + 2.5;", "4");
+            TestStatement("1 + 2.5;", "3.5");
+            TestStatement("1.5 + 2;", "3.5");
         }
 
         [Test]
