@@ -53,10 +53,11 @@
     <Compile Include="AST\Expression.cs" />
     <Compile Include="AST\Statement.cs" />
     <Compile Include="Evaluating\Environment.cs" />
-    <Compile Include="Evaluating\ILoxCallable.cs" />
     <Compile Include="Evaluating\LoxBreakException.cs" />
+    <Compile Include="Evaluating\LoxCallable.cs" />
     <Compile Include="Evaluating\LoxContinueException.cs" />
     <Compile Include="Evaluating\LoxRunTimeException.cs" />
+    <Compile Include="Globals\Clock.cs" />
     <Compile Include="Scanning\Extensions.cs" />
     <Compile Include="Interpreter.cs" />
     <Compile Include="InterpreterEventArgs.cs" />
