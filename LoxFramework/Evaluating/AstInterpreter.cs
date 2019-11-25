@@ -1,5 +1,5 @@
 ﻿using LoxFramework.AST;
-using LoxFramework.Globals;
+using LoxFramework.Evaluating.Globals;
 using LoxFramework.Scanning;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace LoxFramework.Evaluating
     class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {
         private readonly bool interactive;
-        private Environment globals;
+        public Environment Globals { get; private set; }
         private Environment environment;
 
         public AstInterpreter(bool interactive)
@@ -18,18 +18,23 @@ namespace LoxFramework.Evaluating
             Reset(interactive);
         }
 
+        private Token GlobalName(string name)
+        {
+            return new Token(TokenType.FUN, name, null, -1);
+        }
+
         private void SetupGlobals(bool interactive)
         {
-            globals = new Environment(interactive: interactive);
+            Globals = new Environment(interactive: interactive);
 
-            globals.Define(new Token(TokenType.FUN, "clock", null, -1), new Clock());
+            Globals.Define(GlobalName("clock"), new Clock());
         }
 
         public void Reset(bool interactive)
         {
             SetupGlobals(interactive);
 
-            environment = globals;
+            environment = Globals;
         }
 
         public void Interpret(IEnumerable<Statement> statements)
@@ -52,7 +57,7 @@ namespace LoxFramework.Evaluating
             statement.Accept(this);
         }
 
-        private void ExecuteBlock(IEnumerable<Statement> statements, Environment environment)
+        internal void ExecuteBlock(IEnumerable<Statement> statements, Environment environment)
         {
             var enclosingEnvironment = this.environment;
 
@@ -283,6 +288,13 @@ namespace LoxFramework.Evaluating
         {
             var value = Evaluate(statement.Expression);
             Out?.Invoke(this, new InterpreterEventArgs(Stringify(value), true));
+            return null;
+        }
+
+        public object VisitFunctionStatement(FunctionStatement statement)
+        {
+            var function = new LoxFunction(statement);
+            environment.Define(statement.Name, function);
             return null;
         }
 

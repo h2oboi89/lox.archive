@@ -11,6 +11,7 @@ namespace LoxFramework.AST
         T VisitBreakStatement(BreakStatement statement);
         T VisitContinueStatement(ContinueStatement statement);
         T VisitExpressionStatement(ExpressionStatement statement);
+        T VisitFunctionStatement(FunctionStatement statement);
         T VisitIfStatement(IfStatement statement);
         T VisitLoopStatement(LoopStatement statement);
         T VisitPrintStatement(PrintStatement statement);
@@ -69,6 +70,25 @@ namespace LoxFramework.AST
         public override T Accept<T>(IStatementVisitor<T> visitor)
         {
             return visitor.VisitExpressionStatement(this);
+        }
+    }
+
+    class FunctionStatement : Statement
+    {
+        public readonly Token Name;
+        public readonly IEnumerable<Token> Parameters;
+        public readonly IEnumerable<Statement> Body;
+
+        public FunctionStatement(Token name, IEnumerable<Token> parameters, IEnumerable<Statement> body)
+        {
+            Name = name;
+            Parameters = parameters;
+            Body = body;
+        }
+
+        public override T Accept<T>(IStatementVisitor<T> visitor)
+        {
+            return visitor.VisitFunctionStatement(this);
         }
     }
 

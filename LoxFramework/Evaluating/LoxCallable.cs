@@ -14,10 +14,5 @@ namespace LoxFramework.Evaluating
         public virtual int Arity() { return 0; }
 
         public abstract object Call(AstInterpreter interpreter, IEnumerable<object> arguments);
-
-        public override string ToString()
-        {
-            return "<native function>";
-        }
     }
 }

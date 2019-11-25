@@ -157,20 +157,6 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
-        public void InvalidSyntax_ThrowsException()
-        {
-            TestException("@", "Unexpected character.");
-
-            TestException(@"""abc", "Unterminated string.");
-
-            TestException("true = 3;", "Invalid assignment target.");
-
-            TestException("(", "Expect expression.");
-
-            TestException("( true;", "Expect ')' after expression.");
-        }
-
-        [Test]
         public void IfStatement()
         {
             TestException("if;", "Expect '(' after 'if'.");

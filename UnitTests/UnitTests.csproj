@@ -47,7 +47,9 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="LoxFramework\InterpreterTests_InvalidSyntax.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Basic.cs" />
+    <Compile Include="LoxFramework\InterpreterTests_Functions.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Globals.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Loops.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Variables.cs" />
@@ -79,6 +81,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LoxFramework\TestFiles\FibonnaciLoop.lox">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LoxFramework\TestFiles\HelloWorld.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="LoxFramework\TestFiles\VariableScope.lox">

@@ -47,6 +47,7 @@ namespace GenerateAst
                 "Break      : ",
                 "Continue   : ",
                 "Expression : Expression expression",
+                "Function   : Token name, IEnumerable<Token> parameters, IEnumerable<Statement> body" ,
                 "If         : Expression condition, Statement thenBranch, Statement elseBranch",
                 "Loop       : Statement initializer, Expression condition, Expression increment, Statement body",
                 "Print      : Expression expression",

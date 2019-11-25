@@ -131,6 +131,7 @@ namespace LoxFramework.Parsing
         {
             try
             {
+                if (Match(TokenType.FUN)) return FunctionDeclaration("function");
                 if (Match(TokenType.VAR)) return VariableDeclaration();
 
                 return Statement();
@@ -140,6 +141,36 @@ namespace LoxFramework.Parsing
                 Synchronize();
                 return null;
             }
+        }
+
+        private Statement FunctionDeclaration(string kind)
+        {
+            var name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
+
+            Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
+
+            var parameters = new List<Token>();
+
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                do
+                {
+                    if (parameters.Count >= MAX_ARGUMENT_COUNT)
+                    {
+                        Error(Peek(), $"Cannot have more than {MAX_ARGUMENT_COUNT} paramters.");
+                    }
+
+                    parameters.Add(Consume(TokenType.IDENTIFIER, "Expect paramter name."));
+                } while (Match(TokenType.COMMA));
+            }
+
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+
+            Consume(TokenType.LEFT_BRACE, $"Expect '{{' before {kind} body.");
+
+            var body = Block();
+
+            return new FunctionStatement(name, parameters, body);
         }
 
         private Statement VariableDeclaration()

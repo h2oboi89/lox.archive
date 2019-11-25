@@ -5,8 +5,15 @@
 |-----------------------|-----------------------------------------------------------|
 | program				| declaration\* EOF											|
 |						|															|
-| declaration			| variableDeclaration										|
+| declaration			| functionDeclaration										|
+|						| variableDeclaration										|
 |						| statement													|
+|						|															|
+| functionDeclaration	| "fun" function											|
+|						|															|
+| function				| IDENTIFIER "(" parameters? ")" block						|
+|						|															|
+| parameters			| IDENTIFIER ( "," IDENTIFIER )*							|
 |						|															|
 | variableDeclaration	| "var" IDENTIFIER ( "=" expression )? ";"					|
 |						|															|

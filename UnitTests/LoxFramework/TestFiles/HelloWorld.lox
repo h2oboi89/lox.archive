@@ -1,0 +1,5 @@
+﻿fun hello(first, last) {
+  print "Hello, " + first + " " + last + "!";
+}
+
+hello("Lox", "World");

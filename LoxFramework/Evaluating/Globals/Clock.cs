@@ -1,10 +1,9 @@
-﻿using LoxFramework.Evaluating;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace LoxFramework.Globals
+namespace LoxFramework.Evaluating.Globals
 {
-    class Clock : LoxCallable
+    class Clock : BuiltInLoxFunction
     {
         public override object Call(AstInterpreter interpreter, IEnumerable<object> arguments)
         {
