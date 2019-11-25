@@ -8,6 +8,8 @@ namespace LoxFramework.Parsing
 {
     class Parser
     {
+        private const byte MAX_ARGUMENT_COUNT = byte.MaxValue;
+
         private readonly List<Token> tokens;
         private int current = 0;
         private bool inLoop = false;
@@ -406,7 +408,47 @@ namespace LoxFramework.Parsing
                 return new UnaryExpression(op, right);
             }
 
-            return Primary();
+            return Call();
+        }
+
+        private Expression Call()
+        {
+            var expression = Primary();
+
+            while (true)
+            {
+                if (Match(TokenType.LEFT_PAREN))
+                {
+                    expression = FinishCall(expression);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return expression;
+        }
+
+        private Expression FinishCall(Expression callee)
+        {
+            var arguments = new List<Expression>();
+
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                do
+                {
+                    if (arguments.Count >= MAX_ARGUMENT_COUNT)
+                    {
+                        Error(Peek(), $"Cannot have more than {MAX_ARGUMENT_COUNT} arguments.");
+                    }
+                    arguments.Add(Expression());
+                } while (Match(TokenType.COMMA));
+            }
+
+            var paren = Consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.");
+
+            return new CallExpression(callee, paren, arguments);
         }
 
         private Expression Primary()

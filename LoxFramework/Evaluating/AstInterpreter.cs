@@ -157,6 +157,30 @@ namespace LoxFramework.Evaluating
             return null;
         }
 
+        public object VisitCallExpression(CallExpression expression)
+        {
+            var callee = Evaluate(expression.Callee);
+
+            var arguments = new List<object>();
+
+            foreach (var argument in expression.Arguments)
+            {
+                arguments.Add(Evaluate(argument));
+            }
+
+            if (!(callee is ILoxCallable function))
+            {
+                throw new LoxRunTimeException(expression.Paren, "Can only call functions and classes.");
+            }
+
+            if (arguments.Count != function.Arity())
+            {
+                throw new LoxRunTimeException(expression.Paren, $"Expected {function.Arity()} arguments but got {arguments.Count}.");
+            }
+
+            return function.Call(this, arguments);
+        }
+
         public object VisitGroupingExpression(GroupingExpression expression)
         {
             return Evaluate(expression.Expression);

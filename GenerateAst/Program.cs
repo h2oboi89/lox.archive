@@ -33,6 +33,7 @@ namespace GenerateAst
             {
                 "Assignment : Token name, Expression value",
                 "Binary     : Expression left, Token operator, Expression right",
+                "Call       : Expression callee, Token paren, IEnumerable<Expression> arguments",
                 "Grouping   : Expression expression",
                 "Literal    : object value",
                 "Logical    : Expression left, Token operator, Expression right",
