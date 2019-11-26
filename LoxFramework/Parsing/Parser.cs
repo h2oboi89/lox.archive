@@ -116,7 +116,6 @@ namespace LoxFramework.Parsing
                     case TokenType.FOR:
                     case TokenType.IF:
                     case TokenType.WHILE:
-                    case TokenType.PRINT:
                     case TokenType.RETURN:
                         return;
                 }
@@ -195,7 +194,6 @@ namespace LoxFramework.Parsing
             if (Match(TokenType.CONTINUE)) return ContinueStatement();
             if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
-            if (Match(TokenType.PRINT)) return PrintStatement();
             if (Match(TokenType.RETURN)) return ReturnStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
             if (Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
@@ -277,15 +275,6 @@ namespace LoxFramework.Parsing
             }
 
             return new IfStatement(condition, thenBranch, elseBranch);
-        }
-
-        private Statement PrintStatement()
-        {
-            var value = Expression();
-
-            Consume(TokenType.SEMICOLON, "Expect ';' after value.");
-
-            return new PrintStatement(value);
         }
 
         private Statement ReturnStatement()

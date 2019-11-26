@@ -6,6 +6,14 @@ namespace UnitTests.LoxFramework
     public partial class InterpreterTests
     {
         [Test]
+        public void ExpressionValues_CanBeOptionallyDisplayed()
+        {
+            showOptional = true;
+
+            TestStatement("1 + 2;", "3");
+        }
+
+        [Test]
         public void Comments_AreIgnored()
         {
             TestStatement("// this is a comment");
@@ -14,114 +22,100 @@ namespace UnitTests.LoxFramework
         [Test]
         public void Comments_GoToEndOfLine()
         {
-            showOptional = true;
-
-            TestStatement("// this is a comment \n 1 + 2;", "3");
+            TestStatement("// this is a comment \n print(1 + 2);", "3");
         }
 
         [Test]
         public void LogicValidation()
         {
-            showOptional = true;
+            TestStatement("print(1 != 2);", "true");
+            TestStatement("print(1 != 1);", "false");
 
-            TestStatement("1 != 2;", "true");
-            TestStatement("1 != 1;", "false");
+            TestStatement("print(1 == 2);", "false");
+            TestStatement("print(2 == 2);", "true");
 
-            TestStatement("1 == 2;", "false");
-            TestStatement("2 == 2;", "true");
+            TestStatement("print(1 < 2);", "true");
+            TestStatement("print(2 < 1);", "false");
+            TestStatement("print(2 < 2);", "false");
 
-            TestStatement("1 < 2;", "true");
-            TestStatement("2 < 1;", "false");
-            TestStatement("2 < 2;", "false");
+            TestStatement("print(1 <= 2);", "true");
+            TestStatement("print(2 <= 1);", "false");
+            TestStatement("print(2 <= 2);", "true");
 
-            TestStatement("1 <= 2;", "true");
-            TestStatement("2 <= 1;", "false");
-            TestStatement("2 <= 2;", "true");
+            TestStatement("print(1 > 2);", "false");
+            TestStatement("print(2 > 1);", "true");
+            TestStatement("print(2 > 2);", "false");
 
-            TestStatement("1 > 2;", "false");
-            TestStatement("2 > 1;", "true");
-            TestStatement("2 > 2;", "false");
-
-            TestStatement("1 >= 2;", "false");
-            TestStatement("2 >= 1;", "true");
-            TestStatement("2 >= 2;", "true");
+            TestStatement("print(1 >= 2);", "false");
+            TestStatement("print(2 >= 1);", "true");
+            TestStatement("print(2 >= 2);", "true");
         }
 
         [Test]
         public void Truthiness()
         {
-            showOptional = true;
+            TestStatement("print(!nil);", "true");
+            TestStatement("print(!!nil);", "false");
 
-            TestStatement("!nil;", "true");
-            TestStatement("!!nil;", "false");
+            TestStatement("print(false);", "false");
+            TestStatement("print(true);", "true");
 
-            TestStatement("false;", "false");
-            TestStatement("true;", "true");
-
-            TestStatement("!1;", "false");
-            TestStatement("!!1;", "true");
-            TestStatement(@"!""a"";", "false");
-            TestStatement(@"!!""a"";", "true");
+            TestStatement("print(!1);", "false");
+            TestStatement("print(!!1);", "true");
+            TestStatement(@"print(!""a"");", "false");
+            TestStatement(@"print(!!""a"");", "true");
         }
 
         [Test]
         public void Equality()
         {
-            showOptional = true;
+            TestStatement("print(nil == nil);", "true");
 
-            TestStatement("nil == nil;", "true");
+            TestStatement("print(nil == 0);", "false");
+            TestStatement(@"print(nil == ""a"");", "false");
 
-            TestStatement("nil == 0;", "false");
-            TestStatement(@"nil == ""a"";", "false");
+            TestStatement("print(false == false);", "true");
+            TestStatement("print(false == true);", "false");
+            TestStatement("print(true == false);", "false");
+            TestStatement("print(true == true);", "true");
 
-            TestStatement("false == false;", "true");
-            TestStatement("false == true;", "false");
-            TestStatement("true == false;", "false");
-            TestStatement("true == true;", "true");
+            TestStatement("print(false != false);", "false");
+            TestStatement("print(false != true);", "true");
+            TestStatement("print(true != false);", "true");
+            TestStatement("print(true != true);", "false");
 
-            TestStatement("false != false;", "false");
-            TestStatement("false != true;", "true");
-            TestStatement("true != false;", "true");
-            TestStatement("true != true;", "false");
-
-            TestStatement("0 == 0;", "true");
-            TestStatement(@"""a"" == ""b"";", "false");
+            TestStatement("print(0 == 0);", "true");
+            TestStatement(@"print(""a"" == ""b"");", "false");
         }
 
         [Test]
         public void Unary()
         {
-            showOptional = true;
-
-            TestStatement("-1;", "-1");
-            TestStatement("-(-1);", "1");
-            TestStatement("!true;", "false");
-            TestStatement("!false;", "true");
+            TestStatement("print(-1);", "-1");
+            TestStatement("print(-(-1));", "1");
+            TestStatement("print(!true);", "false");
+            TestStatement("print(!false);", "true");
         }
 
         [Test]
         public void ArithmeticValidation()
         {
-            showOptional = true;
-
-            TestStatement("1 + 2;", "3");
-            TestStatement("1 + -2;", "-1");
-            TestStatement("1 - 2;", "-1");
-            TestStatement("1 - -2;", "3");
-            TestStatement("1 * 2;", "2");
-            TestStatement("-3 * 2;", "-6");
-            TestStatement("1 / 2;", "0.5");
-            TestStatement("1 / 0;", double.PositiveInfinity.ToString());
+            TestStatement("print(1 + 2);", "3");
+            TestStatement("print(1 + -2);", "-1");
+            TestStatement("print(1 - 2);", "-1");
+            TestStatement("print(1 - -2);", "3");
+            TestStatement("print(1 * 2);", "2");
+            TestStatement("print(-3 * 2);", "-6");
+            TestStatement("print(1 / 2);", "0.5");
+            TestStatement("print(1 / 0);", double.PositiveInfinity.ToString());
         }
 
         [Test]
         public void DecimalNumbers()
         {
-            showOptional = true;
-
-            TestStatement("1.5 + 2.5;", "4");
-            TestStatement("1 + 2.5;", "3.5");
-            TestStatement("1.5 + 2;", "3.5");
+            TestStatement("print(1.5 + 2.5);", "4");
+            TestStatement("print(1 + 2.5);", "3.5");
+            TestStatement("print(1.5 + 2);", "3.5");
         }
 
         [Test]
@@ -136,24 +130,21 @@ namespace UnitTests.LoxFramework
         [Test]
         public void ParenthesesGrouping()
         {
-            showOptional = true;
-
-            TestStatement("1 + 2 * 3;", "7");
-            TestStatement("(1 + 2) * 3;", "9");
+            TestStatement("print(1 + 2 * 3);", "7");
+            TestStatement("print((1 + 2) * 3);", "9");
         }
 
         [Test]
         public void MultilineString()
         {
-            TestStatement("var a =\"a\nb\"; print a;", "a\nb");
+            TestStatement("var a =\"a\nb\"; print(a);", "a\nb");
         }
 
         [Test]
         public void StringConcatenation()
         {
-            showOptional = true;
 
-            TestStatement(@"""1"" + ""1"";", "11");
+            TestStatement(@"print(""1"" + ""1"");", "11");
         }
 
         [Test]
@@ -162,42 +153,33 @@ namespace UnitTests.LoxFramework
             TestException("if;", "Expect '(' after 'if'.");
             TestException("if ( true;", "Expect ')' after condition.");
 
-            TestStatement("if (true) print true;", "true");
-            TestStatement("if (false) print true;");
-            TestStatement("if (true) print true; else print false;", "true");
-            TestStatement("if (false) print true; else print false;", "false");
-        }
-
-        [Test]
-        public void PrintStatement()
-        {
-            TestException("print 1", "Expect ';' after value.");
-
-            TestStatement("print 1;", "1");
-            TestStatement("print 1 + 2;", "3");
+            TestStatement("if (true) print(true);", "true");
+            TestStatement("if (false) print(true);");
+            TestStatement("if (true) print(true); else print(false);", "true");
+            TestStatement("if (false) print(true); else print(false);", "false");
         }
 
         [Test]
         public void LogicalStatements()
         {
-            TestStatement("print \"hi\" or 2;", "hi");
-            TestStatement("print nil or \"yes\";", "yes");
+            TestStatement("print(\"hi\" or 2);", "hi");
+            TestStatement("print(nil or \"yes\");", "yes");
 
-            TestStatement("if (false and false) print true;");
-            TestStatement("if (false and true) print true;");
-            TestStatement("if (true and false) print true;");
-            TestStatement("if (true and true) print true;", "true");
+            TestStatement("if (false and false) print(true);");
+            TestStatement("if (false and true) print(true);");
+            TestStatement("if (true and false) print(true);");
+            TestStatement("if (true and true) print(true);", "true");
 
-            TestStatement("if (true and true and false) print true;");
-            TestStatement("if (true and true and true) print true;", "true");
+            TestStatement("if (true and true and false) print(true);");
+            TestStatement("if (true and true and true) print(true);", "true");
 
-            TestStatement("if (false or false) print true;");
-            TestStatement("if (false or true) print true;", "true");
-            TestStatement("if (true or false) print true;", "true");
-            TestStatement("if (true or true) print true;", "true");
+            TestStatement("if (false or false) print(true);");
+            TestStatement("if (false or true) print(true);", "true");
+            TestStatement("if (true or false) print(true);", "true");
+            TestStatement("if (true or true) print(true);", "true");
 
-            TestStatement("if (false or false or false) print true;");
-            TestStatement("if (false or false or true) print true;", "true");
+            TestStatement("if (false or false or false) print(true);");
+            TestStatement("if (false or false or true) print(true);", "true");
         }
     }
 }

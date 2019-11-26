@@ -11,7 +11,7 @@ namespace UnitTests.LoxFramework
             TestException("while;", "Expect '(' after 'while'.");
             TestException("while ( true;", "Expect ')' after condition.");
 
-            TestStatement("var i = 0; while(i < 3) { print i; i = i + 1; }", "0", "1", "2");
+            TestStatement("var i = 0; while(i < 3) { print(i); i = i + 1; }", "0", "1", "2");
         }
 
         [Test]
@@ -21,23 +21,23 @@ namespace UnitTests.LoxFramework
             TestException("for(var i = 0; i < 3)", "Expect ';' after loop condition.");
             TestException("for(; ; i = i + 1;", "Expect ')' after for clauses.");
 
-            TestStatement("for(var i = 0; i < 3; i = i + 1) print i;", "0", "1", "2");
+            TestStatement("for(var i = 0; i < 3; i = i + 1) print(i);", "0", "1", "2");
 
-            TestStatement("var i; for(i = 0; i < 3; i = i + 1) print i;", "0", "1", "2");
+            TestStatement("var i; for(i = 0; i < 3; i = i + 1) print(i);", "0", "1", "2");
 
-            TestStatement("for(var i = 0; i < 3;) { print i; i = i + 1; }", "0", "1", "2");
+            TestStatement("for(var i = 0; i < 3;) { print(i); i = i + 1; }", "0", "1", "2");
 
-            TestStatement("var i = 0; for(; i < 3;) { print i; i = i + 1; }", "0", "1", "2");
+            TestStatement("var i = 0; for(; i < 3;) { print(i); i = i + 1; }", "0", "1", "2");
         }
 
         [Test]
         public void Break()
         {
-            TestStatement("while(true) { print 1; break; }", "1");
+            TestStatement("while(true) { print(1); break; }", "1");
 
-            TestStatement("for(;;) { print 1; break; }", "1");
+            TestStatement("for(;;) { print(1); break; }", "1");
 
-            TestStatement("for(var i = 0; i < 3; i = i + 1) { print i; for(;;) { break; } }", "0", "1", "2");
+            TestStatement("for(var i = 0; i < 3; i = i + 1) { print(i); for(;;) { break; } }", "0", "1", "2");
 
             TestException("break;", "No enclosing loop out of which to break.");
 
@@ -47,9 +47,9 @@ namespace UnitTests.LoxFramework
         [Test]
         public void Continue()
         {
-            TestStatement("for(var i = 0; i < 3; i = i + 1) { if (i == 2) continue; print i; }", "0", "1");
+            TestStatement("for(var i = 0; i < 3; i = i + 1) { if (i == 2) continue; print(i); }", "0", "1");
 
-            TestStatement("var i = 0; while(i < 3) { i = i + 1; if (i == 2) continue; print i; }", "1", "3");
+            TestStatement("var i = 0; while(i < 3) { i = i + 1; if (i == 2) continue; print(i); }", "1", "3");
 
             TestException("continue;", "No enclosing loop out of which to continue.");
 

@@ -8,6 +8,12 @@ namespace UnitTests.LoxFramework
     public partial class InterpreterTests
     {
         [Test]
+        public void FunctionToString()
+        {
+            TestStatement("fun a() { return; } print(a);", "<function a>");
+        }
+
+        [Test]
         public void HelloFunction()
         {
             TestFile("HelloWorld.lox", new string[] { "Hello, Lox World!" });
