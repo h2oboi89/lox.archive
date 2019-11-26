@@ -8,19 +8,18 @@ namespace LoxFramework.Evaluating
         private readonly Environment _enclosing;
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
 
-        public bool Interactive { get; private set; }
+        public static bool PromptMode = false;
 
-        public Environment(Environment enclosing = null, bool interactive = false)
+        public Environment(Environment enclosing = null)
         {
             _enclosing = enclosing;
-            Interactive = interactive;
         }
 
         public void Define(Token name, object value)
         {
             if (values.ContainsKey(name.Lexeme))
             {
-                if (Interactive)
+                if (PromptMode)
                 {
                     values[name.Lexeme] = value;
                 }

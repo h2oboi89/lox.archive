@@ -7,13 +7,11 @@ namespace LoxFramework.Evaluating
 {
     class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {
-        private readonly bool interactive;
         private Environment environment;
 
-        public AstInterpreter(bool interactive)
+        public AstInterpreter()
         {
-            this.interactive = interactive;
-            Reset(interactive);
+            Reset();
         }
 
         private Token GlobalFunctionName(string name)
@@ -21,16 +19,12 @@ namespace LoxFramework.Evaluating
             return new Token(TokenType.FUN, name, null, -1);
         }
 
-        private void SetupGlobals(bool interactive)
+        public void Reset()
         {
-            environment = new Environment(interactive: interactive);
+            environment = new Environment();
 
             environment.Define(GlobalFunctionName("clock"), new Globals.Clock());
-        }
-
-        public void Reset(bool interactive)
-        {
-            SetupGlobals(interactive);
+            environment.Define(GlobalFunctionName("reset"), new Globals.Reset());
         }
 
         public void Interpret(IEnumerable<Statement> statements)
@@ -271,7 +265,7 @@ namespace LoxFramework.Evaluating
 
         public object VisitBlockStatement(BlockStatement statement)
         {
-            ExecuteBlock(statement.Statements, new Environment(environment, interactive));
+            ExecuteBlock(statement.Statements, new Environment(environment));
 
             return null;
         }

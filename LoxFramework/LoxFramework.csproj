@@ -53,6 +53,7 @@
     <Compile Include="AST\Expression.cs" />
     <Compile Include="AST\Statement.cs" />
     <Compile Include="Evaluating\Environment.cs" />
+    <Compile Include="Evaluating\Globals\Reset.cs" />
     <Compile Include="Evaluating\LoxBreakException.cs" />
     <Compile Include="Evaluating\LoxCallable.cs" />
     <Compile Include="Evaluating\LoxContinueException.cs" />
