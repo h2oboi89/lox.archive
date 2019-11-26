@@ -157,10 +157,10 @@ namespace LoxFramework.Parsing
                 {
                     if (parameters.Count >= MAX_ARGUMENT_COUNT)
                     {
-                        Error(Peek(), $"Cannot have more than {MAX_ARGUMENT_COUNT} paramters.");
+                        Error(Peek(), $"Cannot have more than {MAX_ARGUMENT_COUNT} parameters.");
                     }
 
-                    parameters.Add(Consume(TokenType.IDENTIFIER, "Expect paramter name."));
+                    parameters.Add(Consume(TokenType.IDENTIFIER, "Expect parameter name."));
                 } while (Match(TokenType.COMMA));
             }
 
@@ -216,7 +216,7 @@ namespace LoxFramework.Parsing
         {
             if (!inLoop) throw Error(Previous(), "No enclosing loop out of which to continue.");
 
-            Consume(TokenType.SEMICOLON, "Expect ';' after 'break'.");
+            Consume(TokenType.SEMICOLON, "Expect ';' after 'continue'.");
 
             return new ContinueStatement();
         }

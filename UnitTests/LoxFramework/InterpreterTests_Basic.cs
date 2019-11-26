@@ -169,6 +169,15 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
+        public void PrintStatement()
+        {
+            TestException("print 1", "Expect ';' after value.");
+
+            TestStatement("print 1;", "1");
+            TestStatement("print 1 + 2;", "3");
+        }
+
+        [Test]
         public void LogicalStatements()
         {
             TestStatement("print \"hi\" or 2;", "hi");

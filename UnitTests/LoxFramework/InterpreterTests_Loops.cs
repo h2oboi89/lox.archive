@@ -40,6 +40,8 @@ namespace UnitTests.LoxFramework
             TestStatement("for(var i = 0; i < 3; i = i + 1) { print i; for(;;) { break; } }", "0", "1", "2");
 
             TestException("break;", "No enclosing loop out of which to break.");
+
+            TestException("while(true) break", "Expect ';' after 'break'.");
         }
 
         [Test]
@@ -50,6 +52,8 @@ namespace UnitTests.LoxFramework
             TestStatement("var i = 0; while(i < 3) { i = i + 1; if (i == 2) continue; print i; }", "1", "3");
 
             TestException("continue;", "No enclosing loop out of which to continue.");
+
+            TestException("while(true) continue", "Expect ';' after 'continue'.");
         }
 
         [Test]

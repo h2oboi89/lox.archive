@@ -61,5 +61,12 @@ namespace UnitTests.LoxFramework
 
             TestFile("VariableScope.lox", expected);
         }
+
+        [Test]
+        public void InvalidVariableSyntex_ThrowsException()
+        {
+            TestException("var 1;", "Expect variable name.");
+            TestException("var a", "Expect ';' after variable declaration.");
+        }
     }
 }

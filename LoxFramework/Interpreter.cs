@@ -79,13 +79,13 @@ namespace LoxFramework
             }
             else
             {
-                Report(token.Line, $" at {token.Lexeme}'", message);
+                Report(token.Line, $" at '{token.Lexeme}'", message);
             }
         }
 
         internal static void InterpretError(LoxRunTimeException e)
         {
-            Report(e.Token.Line, $" at {e.Token.Lexeme}", e.Message);
+            Report(e.Token.Line, $" at '{e.Token.Lexeme}'", e.Message);
         }
 
         /// <summary>
