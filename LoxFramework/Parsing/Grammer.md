@@ -21,9 +21,12 @@
 |						| forStatement												|
 |						| ifStatement												|
 |						| printStatement											|
+|						| returnStatement											|
 |						| whileStatement											|
 |						| breakStatement											|
 |						| block														|
+|						|															|
+| returnStatement		| "return" expression? ";"									|
 |						|															|
 | expressionStatement	| expression ";"											|
 |						|															|
@@ -42,7 +45,7 @@
 | expression			| assignment												|
 |						|															|
 | assignment			| IDENTIFIER "=" assignment									|
-|						| logc_or													|
+|						| logic_or													|
 |						|															|
 | logic_or				| logic_and ( "or" logic_and )*								|
 |						|															|

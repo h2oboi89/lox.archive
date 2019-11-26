@@ -27,7 +27,14 @@ namespace LoxFramework.Evaluating
                 environment.Define(parameter.Value, arguments.ElementAt(parameter.Index));
             }
 
-            interpreter.ExecuteBlock(declaration.Body, environment);
+            try
+            {
+                interpreter.ExecuteBlock(declaration.Body, environment);
+            }
+            catch (LoxReturn returnValue)
+            {
+                return returnValue.Value;
+            }
             return null;
         }
 

@@ -54,7 +54,7 @@ namespace LoxFramework.Evaluating
 
         private void Execute(Statement statement)
         {
-            statement.Accept(this);
+            statement?.Accept(this);
         }
 
         internal void ExecuteBlock(IEnumerable<Statement> statements, Environment environment)
@@ -81,7 +81,7 @@ namespace LoxFramework.Evaluating
         #region Expressions
         private object Evaluate(Expression expression)
         {
-            return expression.Accept(this);
+            return expression?.Accept(this);
         }
 
         private bool IsTruthy(object obj)
@@ -90,10 +90,12 @@ namespace LoxFramework.Evaluating
             {
                 return false;
             }
-            if (obj.GetType() == typeof(bool))
+
+            if (obj is bool bObj)
             {
-                return (bool)obj;
+                return bObj;
             }
+
             return true;
         }
 
@@ -103,6 +105,7 @@ namespace LoxFramework.Evaluating
             {
                 return true;
             }
+
             if (a == null)
             {
                 return false;
@@ -113,14 +116,14 @@ namespace LoxFramework.Evaluating
 
         private void CheckNumberOperand(Token op, object operand)
         {
-            if (operand.GetType() == typeof(double)) return;
+            if (operand is double) return;
 
             throw new LoxRunTimeException(op, "Operand must be a number.");
         }
 
         private void CheckNumberOperands(Token op, object left, object right)
         {
-            if (left.GetType() == typeof(double) && right.GetType() == typeof(double)) return;
+            if (left is double && right is double) return;
 
             throw new LoxRunTimeException(op, "Operands must be numbers.");
         }
@@ -152,15 +155,16 @@ namespace LoxFramework.Evaluating
                     CheckNumberOperands(expression.Operator, left, right);
                     return (double)left - (double)right;
                 case TokenType.PLUS:
-                    if (left.GetType() == typeof(double) && right.GetType() == typeof(double))
+                    if (left is double dLeft && right is double dRight)
                     {
-                        return (double)left + (double)right;
+                        return dLeft + dRight;
                     }
 
-                    if (left.GetType() == typeof(string) && right.GetType() == typeof(string))
+                    if (left is string sLeft && right is string sRight)
                     {
-                        return (string)left + (string)right;
+                        return sLeft + sRight;
                     }
+
                     throw new LoxRunTimeException(expression.Operator, "Operands must be two numbers or two strings.");
                 case TokenType.SLASH:
                     CheckNumberOperands(expression.Operator, left, right);
@@ -251,6 +255,7 @@ namespace LoxFramework.Evaluating
             var value = Evaluate(expression.Value);
 
             environment.Assign(expression.Name, value);
+
             return value;
         }
         #endregion
@@ -260,9 +265,9 @@ namespace LoxFramework.Evaluating
         {
             if (obj == null) return "nil";
 
-            if (obj.GetType() == typeof(bool))
+            if (obj is bool bObj)
             {
-                return (bool)obj ? "true" : "false";
+                return bObj ? "true" : "false";
             }
 
             return obj.ToString();
@@ -271,6 +276,7 @@ namespace LoxFramework.Evaluating
         public object VisitBlockStatement(BlockStatement statement)
         {
             ExecuteBlock(statement.Statements, new Environment(environment, interactive));
+
             return null;
         }
 
@@ -287,14 +293,18 @@ namespace LoxFramework.Evaluating
         public object VisitExpressionStatement(ExpressionStatement statement)
         {
             var value = Evaluate(statement.Expression);
+
             Out?.Invoke(this, new InterpreterEventArgs(Stringify(value), true));
+
             return null;
         }
 
         public object VisitFunctionStatement(FunctionStatement statement)
         {
             var function = new LoxFunction(statement);
+
             environment.Define(statement.Name, function);
+
             return null;
         }
 
@@ -308,15 +318,13 @@ namespace LoxFramework.Evaluating
             {
                 Execute(statement.ElseBranch);
             }
+
             return null;
         }
 
         public object VisitLoopStatement(LoopStatement statement)
         {
-            if (statement.Initializer != null)
-            {
-                Execute(statement.Initializer);
-            }
+            Execute(statement.Initializer);
 
             while (IsTruthy(Evaluate(statement.Condition)))
             {
@@ -328,31 +336,35 @@ namespace LoxFramework.Evaluating
                 catch (LoxContinueException) { continue; }
                 finally
                 {
-                    if (statement.Increment != null)
-                    {
-                        Evaluate(statement.Increment);
-                    }
+                    Evaluate(statement.Increment);
                 }
             }
+
             return null;
         }
 
         public object VisitPrintStatement(PrintStatement statement)
         {
             var value = Evaluate(statement.Expression);
+
             Out?.Invoke(this, new InterpreterEventArgs(Stringify(value)));
+
             return null;
+        }
+
+        public object VisitReturnStatement(ReturnStatement statement)
+        {
+            var value = Evaluate(statement.Value);
+
+            throw new LoxReturn(value);
         }
 
         public object VisitVariableStatement(VariableStatement statement)
         {
-            object value = null;
-            if (statement.Initializer != null)
-            {
-                value = Evaluate(statement.Initializer);
-            }
+            var value = Evaluate(statement.Initializer);
 
             environment.Define(statement.Name, value);
+
             return null;
         }
         #endregion

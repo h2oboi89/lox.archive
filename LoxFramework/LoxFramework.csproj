@@ -57,6 +57,7 @@
     <Compile Include="Evaluating\LoxCallable.cs" />
     <Compile Include="Evaluating\LoxContinueException.cs" />
     <Compile Include="Evaluating\LoxFunction.cs" />
+    <Compile Include="Evaluating\LoxReturn.cs" />
     <Compile Include="Evaluating\LoxRunTimeException.cs" />
     <Compile Include="Evaluating\Globals\BuiltInLoxFunction.cs" />
     <Compile Include="Evaluating\Globals\Clock.cs" />

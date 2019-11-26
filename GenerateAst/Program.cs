@@ -51,6 +51,7 @@ namespace GenerateAst
                 "If         : Expression condition, Statement thenBranch, Statement elseBranch",
                 "Loop       : Statement initializer, Expression condition, Expression increment, Statement body",
                 "Print      : Expression expression",
+                "Return     : Token keyword, Expression value",
                 "Variable   : Token name, Expression initializer"
             });
         }

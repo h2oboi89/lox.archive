@@ -196,6 +196,7 @@ namespace LoxFramework.Parsing
             if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
+            if (Match(TokenType.RETURN)) return ReturnStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
             if (Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 
@@ -287,6 +288,20 @@ namespace LoxFramework.Parsing
             return new PrintStatement(value);
         }
 
+        private Statement ReturnStatement()
+        {
+            var keyword = Previous();
+            Expression value = null;
+
+            if (!Check(TokenType.SEMICOLON))
+            {
+                value = Expression();
+            }
+            Consume(TokenType.SEMICOLON, "Expect ';' after a return value.");
+
+            return new ReturnStatement(keyword, value);
+        }
+
         private Statement WhileStatement()
         {
             Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
@@ -334,10 +349,9 @@ namespace LoxFramework.Parsing
                 var equals = Previous();
                 var value = Assignment();
 
-                if (expression.GetType() == typeof(VariableExpression))
+                if (expression is VariableExpression variableExpression)
                 {
-                    var name = ((VariableExpression)expression).Name;
-                    return new AssignmentExpression(name, value);
+                    return new AssignmentExpression(variableExpression.Name, value);
                 }
 
                 Error(equals, "Invalid assignment target.");

@@ -15,6 +15,7 @@ namespace LoxFramework.AST
         T VisitIfStatement(IfStatement statement);
         T VisitLoopStatement(LoopStatement statement);
         T VisitPrintStatement(PrintStatement statement);
+        T VisitReturnStatement(ReturnStatement statement);
         T VisitVariableStatement(VariableStatement statement);
     }
 
@@ -144,6 +145,23 @@ namespace LoxFramework.AST
         public override T Accept<T>(IStatementVisitor<T> visitor)
         {
             return visitor.VisitPrintStatement(this);
+        }
+    }
+
+    class ReturnStatement : Statement
+    {
+        public readonly Token Keyword;
+        public readonly Expression Value;
+
+        public ReturnStatement(Token keyword, Expression value)
+        {
+            Keyword = keyword;
+            Value = value;
+        }
+
+        public override T Accept<T>(IStatementVisitor<T> visitor)
+        {
+            return visitor.VisitReturnStatement(this);
         }
     }
 
