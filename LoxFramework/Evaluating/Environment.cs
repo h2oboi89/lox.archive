@@ -51,16 +51,19 @@ namespace LoxFramework.Evaluating
             throw new LoxRunTimeException(name, $"Undefined variable '{name.Lexeme}'.");
         }
 
-        public object Get(Token name)
+        public object this[Token name]
         {
-            if (values.ContainsKey(name.Lexeme))
+            get
             {
-                return values[name.Lexeme];
+                if (values.ContainsKey(name.Lexeme))
+                {
+                    return values[name.Lexeme];
+                }
+
+                if (_enclosing != null) return _enclosing[name];
+
+                throw new LoxRunTimeException(name, $"Undefined variable '{name.Lexeme}'.");
             }
-
-            if (_enclosing != null) return _enclosing.Get(name);
-
-            throw new LoxRunTimeException(name, $"Undefined variable '{name.Lexeme}'.");
         }
     }
 }

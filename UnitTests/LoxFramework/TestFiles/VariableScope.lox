@@ -1,11 +1,11 @@
 ﻿{
   var a = "first";
-  print a; // "first".
+  print(a); // "first".
 }
 
 {
   var a = "second";
-  print a; // "second".
+  print(a); // "second".
 }
 
 {
@@ -13,10 +13,10 @@
 
     {
         var b = 2;
-        print a + b;
+        print(a + b);
 
         a = 2;
-        print a + b;
+        print(a + b);
     }
 }
 
@@ -30,16 +30,16 @@ var c = "global c";
 
   {
     var a = "inner a";
-    print a;
-    print b;
-    print c;
+    print(a);
+    print(b);
+    print(c);
   }
 
-  print a;
-  print b;
-  print c;
+  print(a);
+  print(b);
+  print(c);
 }
 
-print a;
-print b;
-print c;
+print(a);
+print(b);
+print(c);

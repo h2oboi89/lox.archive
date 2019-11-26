@@ -145,10 +145,6 @@
         /// </summary>
         OR,
         /// <summary>
-        /// print token
-        /// </summary>
-        PRINT,
-        /// <summary>
         /// return token
         /// </summary>
         RETURN,

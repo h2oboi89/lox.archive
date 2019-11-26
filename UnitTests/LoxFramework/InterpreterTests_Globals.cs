@@ -9,7 +9,7 @@ namespace UnitTests.LoxFramework
         [Test]
         public void GlobalClock()
         {
-            Interpreter.Run("print clock();");
+            Interpreter.Run("print(clock());");
 
             Assert.That(Errors, Is.Empty);
 
@@ -21,7 +21,7 @@ namespace UnitTests.LoxFramework
         public void GlobalReset()
         {
             Interpreter.Run("var a = 1;");
-            Interpreter.Run("print a;");
+            Interpreter.Run("print(a);");
 
             Assert.That(Results.Count, Is.EqualTo(1));
             Assert.That(Results[0], Is.EqualTo("1"));
@@ -29,7 +29,7 @@ namespace UnitTests.LoxFramework
             Assert.That(Errors, Is.Empty);
 
             Interpreter.Run("reset();");
-            Interpreter.Run("print a;");
+            Interpreter.Run("print(a);");
 
             Assert.That(Results.Count, Is.EqualTo(1));
 

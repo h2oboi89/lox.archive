@@ -24,7 +24,7 @@ namespace UnitTests.LoxFramework
 
             TestException("return a", "Expect ';' after a return value.");
 
-            TestException("{ print 1;", "Expect '}' after block.");
+            TestException("{ print(1);", "Expect '}' after block.");
 
             TestException("true();", "Can only call functions and classes.");
         }
@@ -41,8 +41,7 @@ namespace UnitTests.LoxFramework
                 "[line 5] Error at ')': Expect expression.",
                 "[line 7] Error at 'false': Expect '(' after 'if'.",
                 "[line 9] Error at 'true': Expect '(' after 'while'.",
-                "[line 11] Error at 'var': Expect expression.",
-                "[line 15] Error at 'print': Expect expression.",
+                "[line 11] Error at ')': Expect ';' after variable declaration.",
                 "[line 19] Error at 'class': Expect variable name."
             };
 
@@ -50,7 +49,12 @@ namespace UnitTests.LoxFramework
 
             Assert.That(Results, Is.Empty);
 
-            Assert.That(Errors.Count, Is.EqualTo(8));
+            Assert.That(Errors.Count, Is.EqualTo(expected.Length));
+
+            foreach (var e in expected.Enumerate())
+            {
+                Assert.That(Errors[e.Index], Is.EqualTo(e.Value));
+            }
         }
     }
 }

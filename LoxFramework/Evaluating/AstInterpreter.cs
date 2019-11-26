@@ -14,7 +14,7 @@ namespace LoxFramework.Evaluating
             Reset();
         }
 
-        private Token GlobalFunctionName(string name)
+        private static Token GlobalFunctionName(string name)
         {
             return new Token(TokenType.FUN, name, null, -1);
         }
@@ -24,6 +24,7 @@ namespace LoxFramework.Evaluating
             environment = new Environment();
 
             environment.Define(GlobalFunctionName("clock"), new Globals.Clock());
+            environment.Define(GlobalFunctionName("print"), new Globals.Print());
             environment.Define(GlobalFunctionName("reset"), new Globals.Reset());
         }
 
@@ -67,6 +68,20 @@ namespace LoxFramework.Evaluating
         }
 
         public event EventHandler<InterpreterEventArgs> Out;
+
+        private static string Stringify(object obj)
+        {
+            if (obj == null) return "nil";
+
+            if (obj is bool bObj) return bObj ? "true" : "false";
+
+            return obj.ToString();
+        }
+
+        internal void RaiseOut(object obj, bool optional = false)
+        {
+            Out?.Invoke(this, new InterpreterEventArgs(Stringify(obj), optional));
+        }
 
         #region Expressions
         private object Evaluate(Expression expression)
@@ -237,7 +252,7 @@ namespace LoxFramework.Evaluating
 
         public object VisitVariableExpression(VariableExpression expression)
         {
-            return environment.Get(expression.Name);
+            return environment[expression.Name];
         }
 
         public object VisitAssignmentExpression(AssignmentExpression expression)
@@ -251,18 +266,6 @@ namespace LoxFramework.Evaluating
         #endregion
 
         #region Statements
-        private static string Stringify(object obj)
-        {
-            if (obj == null) return "nil";
-
-            if (obj is bool bObj)
-            {
-                return bObj ? "true" : "false";
-            }
-
-            return obj.ToString();
-        }
-
         public object VisitBlockStatement(BlockStatement statement)
         {
             ExecuteBlock(statement.Statements, new Environment(environment));
@@ -284,7 +287,7 @@ namespace LoxFramework.Evaluating
         {
             var value = Evaluate(statement.Expression);
 
-            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value), true));
+            RaiseOut(value, true);
 
             return null;
         }
@@ -329,15 +332,6 @@ namespace LoxFramework.Evaluating
                     Evaluate(statement.Increment);
                 }
             }
-
-            return null;
-        }
-
-        public object VisitPrintStatement(PrintStatement statement)
-        {
-            var value = Evaluate(statement.Expression);
-
-            Out?.Invoke(this, new InterpreterEventArgs(Stringify(value)));
 
             return null;
         }
