@@ -8,6 +8,8 @@ namespace LoxFramework.Parsing
 {
     class Parser
     {
+        private const byte MAX_ARGUMENT_COUNT = byte.MaxValue;
+
         private readonly List<Token> tokens;
         private int current = 0;
         private bool inLoop = false;
@@ -129,6 +131,7 @@ namespace LoxFramework.Parsing
         {
             try
             {
+                if (Match(TokenType.FUN)) return FunctionDeclaration("function");
                 if (Match(TokenType.VAR)) return VariableDeclaration();
 
                 return Statement();
@@ -138,6 +141,36 @@ namespace LoxFramework.Parsing
                 Synchronize();
                 return null;
             }
+        }
+
+        private Statement FunctionDeclaration(string kind)
+        {
+            var name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
+
+            Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
+
+            var parameters = new List<Token>();
+
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                do
+                {
+                    if (parameters.Count >= MAX_ARGUMENT_COUNT)
+                    {
+                        Error(Peek(), $"Cannot have more than {MAX_ARGUMENT_COUNT} parameters.");
+                    }
+
+                    parameters.Add(Consume(TokenType.IDENTIFIER, "Expect parameter name."));
+                } while (Match(TokenType.COMMA));
+            }
+
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+
+            Consume(TokenType.LEFT_BRACE, $"Expect '{{' before {kind} body.");
+
+            var body = Block();
+
+            return new FunctionStatement(name, parameters, body);
         }
 
         private Statement VariableDeclaration()
@@ -163,6 +196,7 @@ namespace LoxFramework.Parsing
             if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
+            if (Match(TokenType.RETURN)) return ReturnStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
             if (Match(TokenType.LEFT_BRACE)) return new BlockStatement(Block());
 
@@ -182,7 +216,7 @@ namespace LoxFramework.Parsing
         {
             if (!inLoop) throw Error(Previous(), "No enclosing loop out of which to continue.");
 
-            Consume(TokenType.SEMICOLON, "Expect ';' after 'break'.");
+            Consume(TokenType.SEMICOLON, "Expect ';' after 'continue'.");
 
             return new ContinueStatement();
         }
@@ -254,6 +288,20 @@ namespace LoxFramework.Parsing
             return new PrintStatement(value);
         }
 
+        private Statement ReturnStatement()
+        {
+            var keyword = Previous();
+            Expression value = null;
+
+            if (!Check(TokenType.SEMICOLON))
+            {
+                value = Expression();
+            }
+            Consume(TokenType.SEMICOLON, "Expect ';' after a return value.");
+
+            return new ReturnStatement(keyword, value);
+        }
+
         private Statement WhileStatement()
         {
             Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
@@ -301,10 +349,9 @@ namespace LoxFramework.Parsing
                 var equals = Previous();
                 var value = Assignment();
 
-                if (expression.GetType() == typeof(VariableExpression))
+                if (expression is VariableExpression variableExpression)
                 {
-                    var name = ((VariableExpression)expression).Name;
-                    return new AssignmentExpression(name, value);
+                    return new AssignmentExpression(variableExpression.Name, value);
                 }
 
                 Error(equals, "Invalid assignment target.");
@@ -406,7 +453,47 @@ namespace LoxFramework.Parsing
                 return new UnaryExpression(op, right);
             }
 
-            return Primary();
+            return Call();
+        }
+
+        private Expression Call()
+        {
+            var expression = Primary();
+
+            while (true)
+            {
+                if (Match(TokenType.LEFT_PAREN))
+                {
+                    expression = FinishCall(expression);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return expression;
+        }
+
+        private Expression FinishCall(Expression callee)
+        {
+            var arguments = new List<Expression>();
+
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                do
+                {
+                    if (arguments.Count >= MAX_ARGUMENT_COUNT)
+                    {
+                        Error(Peek(), $"Cannot have more than {MAX_ARGUMENT_COUNT} arguments.");
+                    }
+                    arguments.Add(Expression());
+                } while (Match(TokenType.COMMA));
+            }
+
+            var paren = Consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.");
+
+            return new CallExpression(callee, paren, arguments);
         }
 
         private Expression Primary()

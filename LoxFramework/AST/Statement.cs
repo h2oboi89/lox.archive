@@ -11,9 +11,11 @@ namespace LoxFramework.AST
         T VisitBreakStatement(BreakStatement statement);
         T VisitContinueStatement(ContinueStatement statement);
         T VisitExpressionStatement(ExpressionStatement statement);
+        T VisitFunctionStatement(FunctionStatement statement);
         T VisitIfStatement(IfStatement statement);
         T VisitLoopStatement(LoopStatement statement);
         T VisitPrintStatement(PrintStatement statement);
+        T VisitReturnStatement(ReturnStatement statement);
         T VisitVariableStatement(VariableStatement statement);
     }
 
@@ -72,6 +74,25 @@ namespace LoxFramework.AST
         }
     }
 
+    class FunctionStatement : Statement
+    {
+        public readonly Token Name;
+        public readonly IEnumerable<Token> Parameters;
+        public readonly IEnumerable<Statement> Body;
+
+        public FunctionStatement(Token name, IEnumerable<Token> parameters, IEnumerable<Statement> body)
+        {
+            Name = name;
+            Parameters = parameters;
+            Body = body;
+        }
+
+        public override T Accept<T>(IStatementVisitor<T> visitor)
+        {
+            return visitor.VisitFunctionStatement(this);
+        }
+    }
+
     class IfStatement : Statement
     {
         public readonly Expression Condition;
@@ -124,6 +145,23 @@ namespace LoxFramework.AST
         public override T Accept<T>(IStatementVisitor<T> visitor)
         {
             return visitor.VisitPrintStatement(this);
+        }
+    }
+
+    class ReturnStatement : Statement
+    {
+        public readonly Token Keyword;
+        public readonly Expression Value;
+
+        public ReturnStatement(Token keyword, Expression value)
+        {
+            Keyword = keyword;
+            Value = value;
+        }
+
+        public override T Accept<T>(IStatementVisitor<T> visitor)
+        {
+            return visitor.VisitReturnStatement(this);
         }
     }
 

@@ -9,6 +9,7 @@ namespace LoxFramework.AST
     {
         T VisitAssignmentExpression(AssignmentExpression expression);
         T VisitBinaryExpression(BinaryExpression expression);
+        T VisitCallExpression(CallExpression expression);
         T VisitGroupingExpression(GroupingExpression expression);
         T VisitLiteralExpression(LiteralExpression expression);
         T VisitLogicalExpression(LogicalExpression expression);
@@ -54,6 +55,25 @@ namespace LoxFramework.AST
         public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.VisitBinaryExpression(this);
+        }
+    }
+
+    class CallExpression : Expression
+    {
+        public readonly Expression Callee;
+        public readonly Token Paren;
+        public readonly IEnumerable<Expression> Arguments;
+
+        public CallExpression(Expression callee, Token paren, IEnumerable<Expression> arguments)
+        {
+            Callee = callee;
+            Paren = paren;
+            Arguments = arguments;
+        }
+
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
+        {
+            return visitor.VisitCallExpression(this);
         }
     }
 

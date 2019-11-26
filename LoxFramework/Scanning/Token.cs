@@ -36,14 +36,5 @@
             Literal = literal;
             Line = line;
         }
-
-        /// <summary>
-        /// Returns a string that represents the current Token.
-        /// </summary>
-        /// <returns>A string that represents the current Token.</returns>
-        public override string ToString()
-        {
-            return $"{Type} {Lexeme} {Literal}";
-        }
     }
 }

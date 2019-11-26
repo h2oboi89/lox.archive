@@ -1,9 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using LoxFramework.Scanning;
+using System.Collections.Generic;
 
-namespace LoxFramework.Scanning
+namespace LoxFramework
 {
     static class Extensions
     {
+        internal struct EnumeratedInstance<T>
+        {
+            public int Index;
+            public T Value;
+        }
+
+        /// <summary>
+        ///     Enumerates over IEnumerable
+        /// </summary>
+        /// <typeparam name="T">IEnumerable type.</typeparam>
+        /// <param name="collection">Collection to enumerate over</param>
+        /// <returns>Collection of structs with Index and Value of current item during iteration.</returns>
+        internal static IEnumerable<EnumeratedInstance<T>> Enumerate<T>(this IEnumerable<T> collection)
+        {
+            var i = 0;
+            foreach (var item in collection)
+            {
+                yield return new EnumeratedInstance<T> { Index = i++, Value = item };
+            }
+        }
+
         /// <summary>
         ///     Wrapper for dictionary key access.
         ///     Returns null instead of throwing exception.

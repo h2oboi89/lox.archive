@@ -5,8 +5,15 @@
 |-----------------------|-----------------------------------------------------------|
 | program				| declaration\* EOF											|
 |						|															|
-| declaration			| variableDeclaration										|
+| declaration			| functionDeclaration										|
+|						| variableDeclaration										|
 |						| statement													|
+|						|															|
+| functionDeclaration	| "fun" function											|
+|						|															|
+| function				| IDENTIFIER "(" parameters? ")" block						|
+|						|															|
+| parameters			| IDENTIFIER ( "," IDENTIFIER )*							|
 |						|															|
 | variableDeclaration	| "var" IDENTIFIER ( "=" expression )? ";"					|
 |						|															|
@@ -14,9 +21,12 @@
 |						| forStatement												|
 |						| ifStatement												|
 |						| printStatement											|
+|						| returnStatement											|
 |						| whileStatement											|
 |						| breakStatement											|
 |						| block														|
+|						|															|
+| returnStatement		| "return" expression? ";"									|
 |						|															|
 | expressionStatement	| expression ";"											|
 |						|															|
@@ -35,7 +45,7 @@
 | expression			| assignment												|
 |						|															|
 | assignment			| IDENTIFIER "=" assignment									|
-|						| logc_or													|
+|						| logic_or													|
 |						|															|
 | logic_or				| logic_and ( "or" logic_and )*								|
 |						|															|
@@ -49,8 +59,11 @@
 |						|															|
 | multiplication		| unary ( ( "/" \| "\*" ) unary )*							|
 |						|															|
-| unary					| ( "!" \| "-" ) unary										|
-|						| primary													|
+| unary					| ( "!" \| "-" ) unary \| call								|
+|						|															|
+| call					| primary ( "(" arguments? ")" )*							|
+|						|															|
+| arguments				| expression ( "," expression )*							|
 |						|															|
 | primary				| "true" \| "false" \| "nil"								|
 |						| NUMBER \| STRING											|

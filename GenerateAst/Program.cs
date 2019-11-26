@@ -33,6 +33,7 @@ namespace GenerateAst
             {
                 "Assignment : Token name, Expression value",
                 "Binary     : Expression left, Token operator, Expression right",
+                "Call       : Expression callee, Token paren, IEnumerable<Expression> arguments",
                 "Grouping   : Expression expression",
                 "Literal    : object value",
                 "Logical    : Expression left, Token operator, Expression right",
@@ -46,9 +47,11 @@ namespace GenerateAst
                 "Break      : ",
                 "Continue   : ",
                 "Expression : Expression expression",
+                "Function   : Token name, IEnumerable<Token> parameters, IEnumerable<Statement> body" ,
                 "If         : Expression condition, Statement thenBranch, Statement elseBranch",
                 "Loop       : Statement initializer, Expression condition, Expression increment, Statement body",
                 "Print      : Expression expression",
+                "Return     : Token keyword, Expression value",
                 "Variable   : Token name, Expression initializer"
             });
         }
