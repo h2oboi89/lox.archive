@@ -301,7 +301,7 @@ namespace LoxFramework.Evaluating
 
         public object VisitFunctionStatement(FunctionStatement statement)
         {
-            var function = new LoxFunction(statement);
+            var function = new LoxFunction(statement, environment);
 
             environment.Define(statement.Name, function);
 

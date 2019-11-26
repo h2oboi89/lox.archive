@@ -92,6 +92,9 @@
     <None Include="LoxFramework\TestFiles\HelloWorld.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="LoxFramework\TestFiles\MakeCounter.lox">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="LoxFramework\TestFiles\VariableScope.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

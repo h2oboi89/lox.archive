@@ -47,5 +47,11 @@ namespace UnitTests.LoxFramework
         {
             TestFile("CountFunction.lox", new string[] { "1", "2" });
         }
+
+        [Test]
+        public void MakeCounterFunction()
+        {
+            TestFile("MakeCounter.lox", new string[] { "1", "2" });
+        }
     }
 }

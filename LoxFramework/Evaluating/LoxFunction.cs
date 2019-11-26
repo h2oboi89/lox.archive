@@ -7,10 +7,12 @@ namespace LoxFramework.Evaluating
     class LoxFunction : LoxCallable
     {
         private readonly FunctionStatement declaration;
+        private readonly Environment closure;
 
-        public LoxFunction(FunctionStatement declaration)
+        public LoxFunction(FunctionStatement declaration, Environment closure)
         {
             this.declaration = declaration;
+            this.closure = closure;
         }
 
         public override int Arity()
@@ -20,7 +22,7 @@ namespace LoxFramework.Evaluating
 
         public override object Call(AstInterpreter interpreter, IEnumerable<object> arguments)
         {
-            var environment = new Environment(interpreter.Globals);
+            var environment = new Environment(closure);
 
             foreach (var parameter in declaration.Parameters.Enumerate())
             {
