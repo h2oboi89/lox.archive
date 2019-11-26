@@ -53,13 +53,13 @@ namespace LoxFramework.Evaluating
             statement?.Accept(this);
         }
 
-        internal void ExecuteBlock(IEnumerable<Statement> statements, Environment environment)
+        internal void ExecuteBlock(IEnumerable<Statement> statements, Environment blockEnvironment)
         {
-            var enclosingEnvironment = this.environment;
+            var enclosingEnvironment = environment;
 
             try
             {
-                this.environment = environment;
+                environment = blockEnvironment;
 
                 foreach (var statement in statements)
                 {
@@ -68,7 +68,7 @@ namespace LoxFramework.Evaluating
             }
             finally
             {
-                this.environment = enclosingEnvironment;
+                environment = enclosingEnvironment;
             }
         }
 
