@@ -41,5 +41,11 @@ namespace UnitTests.LoxFramework
 
             TestFile("FibonacciFunction.lox", expected);
         }
+
+        [Test]
+        public void CountFunction()
+        {
+            TestFile("CountFunction.lox", new string[] { "1", "2" });
+        }
     }
 }
