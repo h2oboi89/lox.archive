@@ -1,5 +1,4 @@
 ﻿using LoxFramework.AST;
-using LoxFramework.Evaluating.Globals;
 using LoxFramework.Scanning;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,6 @@ namespace LoxFramework.Evaluating
     class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {
         private readonly bool interactive;
-        public Environment Globals { get; private set; }
         private Environment environment;
 
         public AstInterpreter(bool interactive)
@@ -25,16 +23,14 @@ namespace LoxFramework.Evaluating
 
         private void SetupGlobals(bool interactive)
         {
-            Globals = new Environment(interactive: interactive);
+            environment = new Environment(interactive: interactive);
 
-            Globals.Define(GlobalName("clock"), new Clock());
+            environment.Define(GlobalName("clock"), new Globals.Clock());
         }
 
         public void Reset(bool interactive)
         {
             SetupGlobals(interactive);
-
-            environment = Globals;
         }
 
         public void Interpret(IEnumerable<Statement> statements)
