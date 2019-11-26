@@ -16,7 +16,7 @@ namespace LoxFramework.Evaluating
             Reset(interactive);
         }
 
-        private Token GlobalName(string name)
+        private Token GlobalFunctionName(string name)
         {
             return new Token(TokenType.FUN, name, null, -1);
         }
@@ -25,7 +25,7 @@ namespace LoxFramework.Evaluating
         {
             environment = new Environment(interactive: interactive);
 
-            environment.Define(GlobalName("clock"), new Globals.Clock());
+            environment.Define(GlobalFunctionName("clock"), new Globals.Clock());
         }
 
         public void Reset(bool interactive)
