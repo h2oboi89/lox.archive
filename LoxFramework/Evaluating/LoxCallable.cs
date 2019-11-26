@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LoxFramework.Evaluating
 {
@@ -13,6 +14,9 @@ namespace LoxFramework.Evaluating
     {
         public virtual int Arity() { return 0; }
 
-        public abstract object Call(AstInterpreter interpreter, IEnumerable<object> arguments);
+        public virtual object Call(AstInterpreter interpreter, IEnumerable<object> arguments)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -7,6 +7,14 @@ namespace UnitTests.LoxFramework
     public partial class InterpreterTests
     {
         [Test]
+        public void GlobalToString()
+        {
+            TestStatement("print(clock);", "<function native>");
+            TestStatement("print(reset);", "<function native>");
+            TestStatement("print(print);", "<function native>");
+        }
+
+        [Test]
         public void GlobalClock()
         {
             Interpreter.Run("print(clock());");
@@ -35,6 +43,13 @@ namespace UnitTests.LoxFramework
 
             Assert.That(Errors.Count, Is.EqualTo(1));
             Assert.That(Errors[0], Does.EndWith("Undefined variable 'a'."));
+        }
+
+        [Test]
+        public void GlobalPrint()
+        {
+            TestStatement("print(1);", "1");
+            TestStatement("print(1 + 2);", "3");
         }
     }
 }

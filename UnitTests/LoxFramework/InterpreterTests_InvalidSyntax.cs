@@ -27,6 +27,8 @@ namespace UnitTests.LoxFramework
             TestException("{ print(1);", "Expect '}' after block.");
 
             TestException("true();", "Can only call functions and classes.");
+
+            TestException("/", "Expect expression.");
         }
 
         [Test]
