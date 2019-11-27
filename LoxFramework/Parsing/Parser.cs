@@ -513,6 +513,11 @@ namespace LoxFramework.Parsing
                 return new LiteralExpression(Previous().Literal);
             }
 
+            if (Match(TokenType.THIS))
+            {
+                return new ThisExpression(Previous());
+            }
+
             if (Match(TokenType.IDENTIFIER))
             {
                 return new VariableExpression(Previous());

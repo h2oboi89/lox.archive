@@ -15,31 +15,37 @@ namespace LoxFramework.StaticAnalysis
         {
             private readonly Dictionary<string, bool> values = new Dictionary<string, bool>();
 
-            public bool Declare(Token name)
+            public bool Declare(string name)
             {
-                if (values.ContainsKey(name.Lexeme))
+                if (values.ContainsKey(name))
                 {
                     return false;
                 }
 
-                values.Add(name.Lexeme, false);
+                values.Add(name, false);
 
                 return true;
             }
 
-            public void Define(Token name)
+            public void Define(string name)
             {
-                values[name.Lexeme] = true;
+                values[name] = true;
             }
 
-            public bool IsDeclared(Token name)
+            public void Initialize(string name)
             {
-                return values.ContainsKey(name.Lexeme);
+                Declare(name);
+                Define(name);
             }
 
-            public bool IsDefined(Token name)
+            public bool IsDeclared(string name)
             {
-                return IsDeclared(name) && values[name.Lexeme] == true;
+                return values.ContainsKey(name);
+            }
+
+            public bool IsDefined(string name)
+            {
+                return IsDeclared(name) && values[name] == true;
             }
         }
 
@@ -130,6 +136,23 @@ namespace LoxFramework.StaticAnalysis
         }
 
         /// <summary>
+        /// Enters a new class scope.
+        /// </summary>
+        public void EnterClass()
+        {
+            Enter();
+            scopes.Last.Value.Initialize("this");
+        }
+
+        /// <summary>
+        /// Exits the current class scope and returns to previous scope level
+        /// </summary>
+        public void ExitClass()
+        {
+            Exit();
+        }
+
+        /// <summary>
         /// Attempts to declare a value in the current scope
         /// </summary>
         /// <param name="name">Value to declare</param>
@@ -137,7 +160,7 @@ namespace LoxFramework.StaticAnalysis
         {
             if (IsEmpty) return;
 
-            if (!scopes.Last.Value.Declare(name))
+            if (!scopes.Last.Value.Declare(name.Lexeme))
             {
                 Interpreter.ScopeError(name, "Variable with this name already declared in this scope.");
             }
@@ -151,7 +174,17 @@ namespace LoxFramework.StaticAnalysis
         {
             if (IsEmpty) return;
 
-            scopes.Last.Value.Define(name);
+            scopes.Last.Value.Define(name.Lexeme);
+        }
+
+        /// <summary>
+        /// Combines <see cref="Declare(Token)"/> and <see cref="Define(Token)"/> into a single operation.
+        /// </summary>
+        /// <param name="name">Value to declare and define</param>
+        public void Initialize(Token name)
+        {
+            Declare(name);
+            Define(name);
         }
 
         /// <summary>
@@ -161,7 +194,7 @@ namespace LoxFramework.StaticAnalysis
         /// <returns>True if declared in current scope; otherwise false.</returns>
         public bool IsDeclared(Token name)
         {
-            return IsEmpty || scopes.Last.Value.IsDeclared(name);
+            return IsEmpty || scopes.Last.Value.IsDeclared(name.Lexeme);
         }
 
         /// <summary>
@@ -171,7 +204,7 @@ namespace LoxFramework.StaticAnalysis
         /// <returns>True if declared and defined; otherwise false.</returns>
         public bool IsDefined(Token name)
         {
-            return IsEmpty || scopes.Last.Value.IsDefined(name);
+            return IsEmpty || scopes.Last.Value.IsDefined(name.Lexeme);
         }
 
         /// <summary>
@@ -186,7 +219,7 @@ namespace LoxFramework.StaticAnalysis
 
             while (scope != null)
             {
-                if (scope.Value.IsDeclared(name))
+                if (scope.Value.IsDeclared(name.Lexeme))
                 {
                     interpreter.Resolve(expression, distance);
                     break;

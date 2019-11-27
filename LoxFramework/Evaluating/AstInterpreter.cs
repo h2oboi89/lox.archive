@@ -18,7 +18,7 @@ namespace LoxFramework.Evaluating
 
         private static Token GlobalFunctionName(string name)
         {
-            return new Token(TokenType.FUN, name, null, -1);
+            return new Token(TokenType.FUN, name);
         }
 
         public void Reset()
@@ -283,6 +283,11 @@ namespace LoxFramework.Evaluating
             {
                 throw new LoxRunTimeException(expression.Name, "Only instances have fields.");
             }
+        }
+
+        public object VisitThisExpression(ThisExpression expression)
+        {
+            return LookUpVariable(expression.Keyword, expression);
         }
 
         public object VisitUnaryExpression(UnaryExpression expression)

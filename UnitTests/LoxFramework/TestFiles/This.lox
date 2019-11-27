@@ -1,0 +1,20 @@
+﻿class Test {
+  callback() {
+    fun localFunction() {
+      print(this);
+    }
+
+    return localFunction;
+  }
+
+  method() {
+    print(this);
+  }
+}
+
+var test = Test();
+
+test.method();
+
+var callback = test.callback();
+callback();

@@ -5,6 +5,7 @@
     /// </summary>
     public class Token
     {
+        private const int DEFAULT_LINE = -1;
         /// <summary>
         /// The grammatical type of the scanned lexeme.
         /// </summary>
@@ -29,7 +30,7 @@
         /// <param name="lexeme">The section of source that this token represents.</param>
         /// <param name="literal">Literal value of this token.</param>
         /// <param name="line">Line number of the source this token was scanned from.</param>
-        public Token(TokenType type, string lexeme, object literal, int line)
+        public Token(TokenType type, string lexeme, object literal = null, int line = DEFAULT_LINE)
         {
             Type = type;
             Lexeme = lexeme;

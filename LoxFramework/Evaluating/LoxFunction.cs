@@ -1,4 +1,5 @@
 ﻿using LoxFramework.AST;
+using LoxFramework.Scanning;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,7 @@ namespace LoxFramework.Evaluating
 {
     class LoxFunction : LoxCallable
     {
+        private readonly Token thisToken = new Token(TokenType.THIS, "this");
         private readonly FunctionStatement declaration;
         private readonly Environment closure;
 
@@ -13,6 +15,13 @@ namespace LoxFramework.Evaluating
         {
             this.declaration = declaration;
             this.closure = closure;
+        }
+
+        public LoxFunction Bind(LoxInstance loxInstance)
+        {
+            var environment = new Environment(closure);
+            environment.Define(thisToken, loxInstance);
+            return new LoxFunction(declaration, environment);
         }
 
         public override int Arity()

@@ -24,7 +24,7 @@ namespace LoxFramework.Evaluating
                 }
 
                 var method = loxClass[name.Lexeme];
-                if (method != null) return method;
+                if (method != null) return method.Bind(this);
 
 
                 throw new LoxRunTimeException(name, $"Undefined property '{name.Lexeme}'.");

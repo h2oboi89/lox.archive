@@ -44,8 +44,7 @@ namespace LoxFramework.StaticAnalysis
             scope.EnterFunction(type);
             foreach (var param in function.Parameters)
             {
-                scope.Declare(param);
-                scope.Define(param);
+                scope.Initialize(param);
             }
             Resolve(function.Body);
             scope.ExitFunction();
@@ -64,21 +63,21 @@ namespace LoxFramework.StaticAnalysis
 
         public object VisitClassStatement(ClassStatement statement)
         {
-            scope.Declare(statement.Name);
-            scope.Define(statement.Name);
+            scope.Initialize(statement.Name);
 
+            scope.EnterClass();
             foreach (var method in statement.Methods)
             {
                 ResolveFunction(method, Scope.FunctionType.Method);
             }
+            scope.ExitClass();
 
             return null;
         }
 
         public object VisitFunctionStatement(FunctionStatement statement)
         {
-            scope.Declare(statement.Name);
-            scope.Define(statement.Name);
+            scope.Initialize(statement.Name);
 
             ResolveFunction(statement, Scope.FunctionType.Function);
 
@@ -231,6 +230,13 @@ namespace LoxFramework.StaticAnalysis
         {
             Resolve(expression.Value);
             Resolve(expression.Obj);
+
+            return null;
+        }
+
+        public object VisitThisExpression(ThisExpression expression)
+        {
+            scope.ResolveValue(expression, expression.Keyword);
 
             return null;
         }

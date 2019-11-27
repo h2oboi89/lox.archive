@@ -39,6 +39,7 @@ namespace GenerateAst
                 "Literal    : object value",
                 "Logical    : Expression left, Token op, Expression right",
                 "Set        : Expression obj, Token name, Expression value",
+                "This       : Token keyword",
                 "Unary      : Token op, Expression right",
                 "Variable   : Token name"
             });
