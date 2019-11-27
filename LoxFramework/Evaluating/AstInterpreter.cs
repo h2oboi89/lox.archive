@@ -8,6 +8,8 @@ namespace LoxFramework.Evaluating
     class AstInterpreter : IExpressionVisitor<object>, IStatementVisitor<object>
     {
         private Environment environment;
+        private Environment globals;
+        private Dictionary<Expression, int> locals;
 
         public AstInterpreter()
         {
@@ -21,11 +23,14 @@ namespace LoxFramework.Evaluating
 
         public void Reset()
         {
-            environment = new Environment();
+            globals = new Environment();
+            environment = globals;
 
-            environment.Define(GlobalFunctionName("clock"), new Globals.Clock());
-            environment.Define(GlobalFunctionName("print"), new Globals.Print());
-            environment.Define(GlobalFunctionName("reset"), new Globals.Reset());
+            locals = new Dictionary<Expression, int>();
+
+            globals.Define(GlobalFunctionName("clock"), new Globals.Clock());
+            globals.Define(GlobalFunctionName("print"), new Globals.Print());
+            globals.Define(GlobalFunctionName("reset"), new Globals.Reset());
         }
 
         public void Interpret(IEnumerable<Statement> statements)
@@ -46,6 +51,11 @@ namespace LoxFramework.Evaluating
         private void Execute(Statement statement)
         {
             statement?.Accept(this);
+        }
+
+        internal void Resolve(Expression expression, int depth)
+        {
+            locals.Add(expression, depth);
         }
 
         internal void ExecuteBlock(IEnumerable<Statement> statements, Environment blockEnvironment)
@@ -131,6 +141,18 @@ namespace LoxFramework.Evaluating
             if (left is double && right is double) return;
 
             throw new LoxRunTimeException(op, "Operands must be numbers.");
+        }
+
+        private object LookUpVariable(Token name, Expression expression)
+        {
+            if (!locals.ContainsKey(expression))
+            {
+                return globals.Get(name);
+            }
+
+            var distance = locals[expression];
+
+            return environment.Get(name, distance);
         }
 
         public object VisitBinaryExpression(BinaryExpression expression)
@@ -252,14 +274,23 @@ namespace LoxFramework.Evaluating
 
         public object VisitVariableExpression(VariableExpression expression)
         {
-            return environment[expression.Name];
+            return LookUpVariable(expression.Name, expression);
         }
 
         public object VisitAssignmentExpression(AssignmentExpression expression)
         {
             var value = Evaluate(expression.Value);
 
-            environment.Assign(expression.Name, value);
+            if (!locals.ContainsKey(expression))
+            {
+                globals.Assign(expression.Name, value);
+            }
+            else
+            {
+                var distance = locals[expression];
+
+                environment.Assign(expression.Name, value, distance);
+            }
 
             return value;
         }

@@ -44,8 +44,8 @@ namespace GenerateAst
             GenerateType("Statement", outputDirectory, new string[]
             {
                 "Block      : IEnumerable<Statement> statements",
-                "Break      : ",
-                "Continue   : ",
+                "Break      : Token keyword",
+                "Continue   : Token keyword",
                 "Expression : Expression expression",
                 "Function   : Token name, IEnumerable<Token> parameters, IEnumerable<Statement> body" ,
                 "If         : Expression condition, Statement thenBranch, Statement elseBranch",
@@ -131,35 +131,24 @@ namespace GenerateAst
 
             var fieldParts = fields.SplitTrim(',');
 
-            if (fields.Length > 0)
+            // fields
+            foreach (var field in fieldParts)
             {
-                // fields
-                foreach (var field in fieldParts)
-                {
-                    var (type, name, _) = field.Split(' ');
-                    output.Enqueue($"public readonly {type} {name.ToUppercaseFirst()};");
-                }
-
-                output.Enqueue();
+                var (type, name, _) = field.Split(' ');
+                output.Enqueue($"public readonly {type} {name.ToUppercaseFirst()};");
             }
+
+            output.Enqueue();
 
             // constructor
-            var constructor = $"public {className}({KeywordFilter.Filter(fields)})";
-            if (fields.Length > 0)
+            output.Enqueue($"public {className}({KeywordFilter.Filter(fields)})");
+            output.Enqueue("{");
+            foreach (var field in fieldParts)
             {
-                output.Enqueue(constructor);
-                output.Enqueue("{");
-                foreach (var field in fieldParts)
-                {
-                    var (_, name, _) = field.Split(' ');
-                    output.Enqueue($"{name.ToUppercaseFirst()} = {KeywordFilter.Filter(name)};");
-                }
-                output.Enqueue("}");
+                var (_, name, _) = field.Split(' ');
+                output.Enqueue($"{name.ToUppercaseFirst()} = {KeywordFilter.Filter(name)};");
             }
-            else
-            {
-                output.Enqueue(constructor + " { }");
-            }
+            output.Enqueue("}");
 
             output.Enqueue();
 

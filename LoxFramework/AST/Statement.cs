@@ -40,7 +40,12 @@ namespace LoxFramework.AST
 
     class BreakStatement : Statement
     {
-        public BreakStatement() { }
+        public readonly Token Keyword;
+
+        public BreakStatement(Token keyword)
+        {
+            Keyword = keyword;
+        }
 
         public override T Accept<T>(IStatementVisitor<T> visitor)
         {
@@ -50,7 +55,12 @@ namespace LoxFramework.AST
 
     class ContinueStatement : Statement
     {
-        public ContinueStatement() { }
+        public readonly Token Keyword;
+
+        public ContinueStatement(Token keyword)
+        {
+            Keyword = keyword;
+        }
 
         public override T Accept<T>(IStatementVisitor<T> visitor)
         {
