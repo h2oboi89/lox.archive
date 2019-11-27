@@ -162,6 +162,13 @@ namespace LoxFramework.StaticAnalysis
             return null;
         }
 
+        public object VisitGetExpression(GetExpression expression)
+        {
+            Resolve(expression.Obj);
+
+            return null;
+        }
+
         public object VisitGroupingExpression(GroupingExpression expression)
         {
             Resolve(expression.Expression);
@@ -211,6 +218,14 @@ namespace LoxFramework.StaticAnalysis
             }
 
             Resolve(statement.Value);
+
+            return null;
+        }
+
+        public object VisitSetExpression(SetExpression expression)
+        {
+            Resolve(expression.Value);
+            Resolve(expression.Obj);
 
             return null;
         }

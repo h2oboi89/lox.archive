@@ -32,12 +32,14 @@ namespace GenerateAst
             GenerateType("Expression", outputDirectory, new string[]
             {
                 "Assignment : Token name, Expression value",
-                "Binary     : Expression left, Token operator, Expression right",
+                "Binary     : Expression left, Token op, Expression right",
                 "Call       : Expression callee, Token paren, IEnumerable<Expression> arguments",
+                "Get        : Expression obj, Token name",
                 "Grouping   : Expression expression",
                 "Literal    : object value",
-                "Logical    : Expression left, Token operator, Expression right",
-                "Unary      : Token operator, Expression right",
+                "Logical    : Expression left, Token op, Expression right",
+                "Set        : Expression obj, Token name, Expression value",
+                "Unary      : Token op, Expression right",
                 "Variable   : Token name"
             });
 
@@ -142,12 +144,12 @@ namespace GenerateAst
             output.Enqueue();
 
             // constructor
-            output.Enqueue($"public {className}({KeywordFilter.Filter(fields)})");
+            output.Enqueue($"public {className}({fields})");
             output.Enqueue("{");
             foreach (var field in fieldParts)
             {
                 var (_, name, _) = field.Split(' ');
-                output.Enqueue($"{name.ToUppercaseFirst()} = {KeywordFilter.Filter(name)};");
+                output.Enqueue($"{name.ToUppercaseFirst()} = {name};");
             }
             output.Enqueue("}");
 

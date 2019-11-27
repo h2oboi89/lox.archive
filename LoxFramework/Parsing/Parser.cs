@@ -349,6 +349,10 @@ namespace LoxFramework.Parsing
                 {
                     return new AssignmentExpression(variableExpression.Name, value);
                 }
+                else if (expression is GetExpression getExpression)
+                {
+                    return new SetExpression(getExpression.Obj, getExpression.Name, value);
+                }
 
                 Error(equals, "Invalid assignment target.");
             }
@@ -461,6 +465,12 @@ namespace LoxFramework.Parsing
                 if (Match(TokenType.LEFT_PAREN))
                 {
                     expression = FinishCall(expression);
+                }
+                else if (Match(TokenType.DOT))
+                {
+                    var name = Consume(TokenType.IDENTIFIER, "Expect property name afer '.'.");
+
+                    expression = new GetExpression(expression, name);
                 }
                 else
                 {

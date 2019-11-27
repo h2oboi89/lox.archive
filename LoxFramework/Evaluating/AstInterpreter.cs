@@ -160,26 +160,26 @@ namespace LoxFramework.Evaluating
             var left = Evaluate(expression.Left);
             var right = Evaluate(expression.Right);
 
-            switch (expression.Operator.Type)
+            switch (expression.Op.Type)
             {
                 // Comparisons
                 case TokenType.GREATER:
-                    CheckNumberOperands(expression.Operator, left, right);
+                    CheckNumberOperands(expression.Op, left, right);
                     return (double)left > (double)right;
                 case TokenType.GREATER_EQUAL:
-                    CheckNumberOperands(expression.Operator, left, right);
+                    CheckNumberOperands(expression.Op, left, right);
                     return (double)left >= (double)right;
                 case TokenType.LESS:
-                    CheckNumberOperands(expression.Operator, left, right);
+                    CheckNumberOperands(expression.Op, left, right);
                     return (double)left < (double)right;
                 case TokenType.LESS_EQUAL:
-                    CheckNumberOperands(expression.Operator, left, right);
+                    CheckNumberOperands(expression.Op, left, right);
                     return (double)left <= (double)right;
                 case TokenType.BANG_EQUAL: return !IsEqual(left, right);
                 case TokenType.EQUAL_EQUAL: return IsEqual(left, right);
                 // Arithmetic
                 case TokenType.MINUS:
-                    CheckNumberOperands(expression.Operator, left, right);
+                    CheckNumberOperands(expression.Op, left, right);
                     return (double)left - (double)right;
                 case TokenType.PLUS:
                     if (left is double dLeft && right is double dRight)
@@ -192,12 +192,12 @@ namespace LoxFramework.Evaluating
                         return sLeft + sRight;
                     }
 
-                    throw new LoxRunTimeException(expression.Operator, "Operands must be two numbers or two strings.");
+                    throw new LoxRunTimeException(expression.Op, "Operands must be two numbers or two strings.");
                 case TokenType.SLASH:
-                    CheckNumberOperands(expression.Operator, left, right);
+                    CheckNumberOperands(expression.Op, left, right);
                     return (double)left / (double)right;
                 case TokenType.STAR:
-                    CheckNumberOperands(expression.Operator, left, right);
+                    CheckNumberOperands(expression.Op, left, right);
                     return (double)left * (double)right;
             }
 
@@ -229,6 +229,18 @@ namespace LoxFramework.Evaluating
             return function.Call(this, arguments);
         }
 
+        public object VisitGetExpression(GetExpression expression)
+        {
+            var obj = Evaluate(expression.Obj);
+
+            if (obj is LoxInstance loxInstance)
+            {
+                return loxInstance[expression.Name];
+            }
+
+            throw new LoxRunTimeException(expression.Name, "Only instances have properties.");
+        }
+
         public object VisitGroupingExpression(GroupingExpression expression)
         {
             return Evaluate(expression.Expression);
@@ -243,7 +255,7 @@ namespace LoxFramework.Evaluating
         {
             var left = Evaluate(expression.Left);
 
-            if (expression.Operator.Type == TokenType.OR)
+            if (expression.Op.Type == TokenType.OR)
             {
                 if (IsTruthy(left)) return left;
             }
@@ -255,14 +267,32 @@ namespace LoxFramework.Evaluating
             return Evaluate(expression.Right);
         }
 
+        public object VisitSetExpression(SetExpression expression)
+        {
+            var obj = Evaluate(expression.Obj);
+
+            if (obj is LoxInstance loxInstance)
+            {
+                var value = Evaluate(expression.Value);
+
+                loxInstance[expression.Name] = value;
+
+                return value;
+            }
+            else
+            {
+                throw new LoxRunTimeException(expression.Name, "Only instances have fields.");
+            }
+        }
+
         public object VisitUnaryExpression(UnaryExpression expression)
         {
             var right = Evaluate(expression.Right);
 
-            switch (expression.Operator.Type)
+            switch (expression.Op.Type)
             {
                 case TokenType.MINUS:
-                    CheckNumberOperand(expression.Operator, right);
+                    CheckNumberOperand(expression.Op, right);
                     return -(double)right;
                 case TokenType.BANG:
                     return !IsTruthy(right);
