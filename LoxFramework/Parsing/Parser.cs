@@ -27,7 +27,7 @@ namespace LoxFramework.Parsing
         {
             var statements = new List<Statement>();
 
-            while (!IsAtEnd())
+            while (!IsAtEnd)
             {
                 statements.Add(Declaration());
             }
@@ -52,19 +52,19 @@ namespace LoxFramework.Parsing
 
         private bool Check(TokenType tokenType)
         {
-            if (IsAtEnd()) return false;
+            if (IsAtEnd) return false;
             return Peek().Type == tokenType;
         }
 
         private Token Advance()
         {
-            if (!IsAtEnd()) current++;
+            if (!IsAtEnd) current++;
             return Previous();
         }
 
-        private bool IsAtEnd()
+        private bool IsAtEnd
         {
-            return Peek().Type == TokenType.EOF;
+            get { return Peek().Type == TokenType.EOF; }
         }
 
         private Token Peek()
@@ -94,7 +94,7 @@ namespace LoxFramework.Parsing
         {
             Advance();
 
-            while (!IsAtEnd())
+            while (!IsAtEnd)
             {
                 if (Previous().Type == TokenType.SEMICOLON) return;
 
@@ -120,6 +120,7 @@ namespace LoxFramework.Parsing
         {
             try
             {
+                if (Match(TokenType.CLASS)) return ClassDeclaration();
                 if (Match(TokenType.FUN)) return FunctionDeclaration("function");
                 if (Match(TokenType.VAR)) return VariableDeclaration();
 
@@ -132,7 +133,23 @@ namespace LoxFramework.Parsing
             }
         }
 
-        private Statement FunctionDeclaration(string kind)
+        private Statement ClassDeclaration()
+        {
+            var name = Consume(TokenType.IDENTIFIER, "Expect class name.");
+            Consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
+
+            var methods = new List<FunctionStatement>();
+            while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd)
+            {
+                methods.Add(FunctionDeclaration("method"));
+            }
+
+            Consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
+
+            return new ClassStatement(name, methods);
+        }
+
+        private FunctionStatement FunctionDeclaration(string kind)
         {
             var name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
 
@@ -296,7 +313,7 @@ namespace LoxFramework.Parsing
         {
             var statements = new List<Statement>();
 
-            while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
+            while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd)
             {
                 statements.Add(Declaration());
             }

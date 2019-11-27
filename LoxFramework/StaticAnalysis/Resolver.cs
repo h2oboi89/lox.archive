@@ -62,6 +62,14 @@ namespace LoxFramework.StaticAnalysis
             return null;
         }
 
+        public object VisitClassStatement(ClassStatement statement)
+        {
+            scope.Declare(statement.Name);
+            scope.Define(statement.Name);
+
+            return null;
+        }
+
         public object VisitFunctionStatement(FunctionStatement statement)
         {
             scope.Declare(statement.Name);

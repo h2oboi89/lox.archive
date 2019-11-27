@@ -309,6 +309,17 @@ namespace LoxFramework.Evaluating
             throw new LoxBreakException();
         }
 
+        public object VisitClassStatement(ClassStatement statement)
+        {
+            environment.Define(statement.Name, null);
+
+            var loxClass = new LoxClass(statement.Name.Lexeme);
+
+            environment.Assign(statement.Name, loxClass);
+
+            return null;
+        }
+
         public object VisitContinueStatement(ContinueStatement statement)
         {
             throw new LoxContinueException();

@@ -45,7 +45,7 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
-        public void Variables_Scope()
+        public void VariableScope()
         {
             var expected = new string[]
             {
