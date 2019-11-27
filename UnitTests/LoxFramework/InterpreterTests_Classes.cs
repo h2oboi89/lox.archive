@@ -49,5 +49,17 @@ namespace UnitTests.LoxFramework
         {
             TestException("class Test{} var test = Test(); test.foo;", "Undefined property 'foo'.");
         }
+
+        [Test]
+        public void Class_Method_Executes()
+        {
+            TestStatement("class Test{ foo() { print(1); } } Test().foo();", "1");
+        }
+
+        [Test]
+        public void Class_UndefinedMethod_ThrowsException()
+        {
+            TestException("class Test{ foo() { print(1); } } Test().bar();", "Undefined property 'bar'.");
+        }
     }
 }

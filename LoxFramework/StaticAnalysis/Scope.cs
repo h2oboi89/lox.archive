@@ -51,7 +51,11 @@ namespace LoxFramework.StaticAnalysis
             /// <summary>
             /// Lox function
             /// </summary>
-            Function
+            Function,
+            /// <summary>
+            /// Lox class method
+            /// </summary>
+            Method
         }
 
         private readonly Stack<FunctionType> currentFunction = new Stack<FunctionType>();

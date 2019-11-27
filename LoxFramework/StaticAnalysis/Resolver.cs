@@ -67,6 +67,11 @@ namespace LoxFramework.StaticAnalysis
             scope.Declare(statement.Name);
             scope.Define(statement.Name);
 
+            foreach (var method in statement.Methods)
+            {
+                ResolveFunction(method, Scope.FunctionType.Method);
+            }
+
             return null;
         }
 

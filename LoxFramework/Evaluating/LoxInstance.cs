@@ -23,6 +23,10 @@ namespace LoxFramework.Evaluating
                     return fields[name.Lexeme];
                 }
 
+                var method = loxClass[name.Lexeme];
+                if (method != null) return method;
+
+
                 throw new LoxRunTimeException(name, $"Undefined property '{name.Lexeme}'.");
             }
             set

@@ -343,7 +343,14 @@ namespace LoxFramework.Evaluating
         {
             environment.Define(statement.Name, null);
 
-            var loxClass = new LoxClass(statement.Name.Lexeme);
+            var methods = new Dictionary<string, LoxFunction>();
+            foreach (var method in statement.Methods)
+            {
+                var function = new LoxFunction(method, environment);
+                methods.Add(method.Name.Lexeme, function);
+            }
+
+            var loxClass = new LoxClass(statement.Name.Lexeme, methods);
 
             environment.Assign(statement.Name, loxClass);
 

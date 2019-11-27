@@ -125,9 +125,14 @@ namespace LoxFramework.Scanning
 
             var text = _source.Extract(_start, _current);
 
-            var type = _keywords.Get(text);
-
-            AddToken(type ?? TokenType.IDENTIFIER);
+            if (_keywords.ContainsKey(text))
+            {
+                AddToken(_keywords[text]);
+            }
+            else
+            {
+                AddToken(TokenType.IDENTIFIER);
+            }
         }
 
         private static bool IsAlphaNumeric(char c)
