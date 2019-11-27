@@ -12,7 +12,6 @@ namespace UnitTests.LoxFramework
             TestException("a;", "Undefined variable 'a'.");
             TestException("a = 1;", "Undefined variable 'a'.");
             TestException("var a = 1; var a = 2;", "Variable 'a' already declared in this scope.");
-            TestException("{ var a = a; }", "Cannot read local variable in its own initializer.");
 
             TestStatement("var a; print(a);", "nil");
             TestStatement("var a; a = 2; print(a);", "2");
@@ -20,7 +19,16 @@ namespace UnitTests.LoxFramework
             TestStatement("var a = 1; a = 2; print(a);", "2");
 
             TestStatement("var abc_ABC_123 = 3; print(abc_ABC_123);", "3");
+        }
 
+        [Test]
+        public void ScopingVariables()
+        {
+            TestException("{ var a = a; }", "Cannot read local variable in its own initializer.");
+            TestException("{ var a; var a; }", "Variable with this name already declared in this scope.");
+            TestException("{ var a = 1; var a = 2; }", "Variable with this name already declared in this scope.");
+
+            TestStatement("{ var a; print(a); a = 1; print(a); }", "nil", "1");
         }
 
         [Test]
