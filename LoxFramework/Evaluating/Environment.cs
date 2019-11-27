@@ -7,7 +7,7 @@ namespace LoxFramework.Evaluating
     {
         private readonly Environment enclosing;
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
-        private const int IGNORE = -1;
+        private const int IGNORE = int.MinValue;
 
         public static bool PromptMode = false;
 
