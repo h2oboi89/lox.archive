@@ -8,6 +8,12 @@ namespace UnitTests.LoxFramework
     public partial class InterpreterTests
     {
         [Test]
+        public void TopLevelReturn_ThrowsException()
+        {
+            TestException("return;", "Cannot return from top-level code.");
+        }
+
+        [Test]
         public void FunctionToString()
         {
             TestStatement("fun a() { return; } print(a);", "<function a>");

@@ -22,6 +22,16 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
+        public void ScopingVariables()
+        {
+            TestException("{ var a = a; }", "Cannot read local variable in its own initializer.");
+            TestException("{ var a; var a; }", "Variable with this name already declared in this scope.");
+            TestException("{ var a = 1; var a = 2; }", "Variable with this name already declared in this scope.");
+
+            TestStatement("{ var a; print(a); a = 1; print(a); }", "nil", "1");
+        }
+
+        [Test]
         public void VariablesInInteractiveCanBeRedeclared()
         {
             Interpreter.Reset(true);

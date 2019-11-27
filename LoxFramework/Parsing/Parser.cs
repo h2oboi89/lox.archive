@@ -12,7 +12,6 @@ namespace LoxFramework.Parsing
 
         private readonly List<Token> tokens;
         private int current = 0;
-        private bool inLoop = false;
 
         private Parser(IEnumerable<Token> tokens)
         {
@@ -89,15 +88,6 @@ namespace LoxFramework.Parsing
         {
             Interpreter.ParseError(token, message);
             return new ParseException();
-        }
-
-        private Statement LoopBody()
-        {
-            inLoop = true;
-            var body = Statement();
-            inLoop = false;
-
-            return body;
         }
 
         private void Synchronize()
@@ -203,20 +193,20 @@ namespace LoxFramework.Parsing
 
         private Statement BreakStatement()
         {
-            if (!inLoop) throw Error(Previous(), "No enclosing loop out of which to break.");
+            var keyword = Previous();
 
             Consume(TokenType.SEMICOLON, "Expect ';' after 'break'.");
 
-            return new BreakStatement();
+            return new BreakStatement(keyword);
         }
 
         private Statement ContinueStatement()
         {
-            if (!inLoop) throw Error(Previous(), "No enclosing loop out of which to continue.");
+            var keyword = Previous();
 
             Consume(TokenType.SEMICOLON, "Expect ';' after 'continue'.");
 
-            return new ContinueStatement();
+            return new ContinueStatement(keyword);
         }
 
         private Statement ForStatement()
@@ -255,7 +245,7 @@ namespace LoxFramework.Parsing
             }
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
 
-            var body = LoopBody();
+            var body = Statement();
 
             return new LoopStatement(initializer, condition, increment, body);
         }
@@ -297,7 +287,7 @@ namespace LoxFramework.Parsing
             var condition = Expression();
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
 
-            var body = LoopBody();
+            var body = Statement();
 
             return new LoopStatement(null, condition, null, body);
         }

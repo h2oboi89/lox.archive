@@ -1,6 +1,7 @@
 ﻿using LoxFramework.Evaluating;
 using LoxFramework.Parsing;
 using LoxFramework.Scanning;
+using LoxFramework.StaticAnalysis;
 using System;
 using System.Linq;
 using Environment = LoxFramework.Evaluating.Environment;
@@ -57,6 +58,11 @@ namespace LoxFramework
             // check for parse error
             if (hadError) return;
 
+            Resolver.Resolve(astInterpreter, statements);
+
+            // check for resolve error
+            if (hadError) return;
+
             astInterpreter.Interpret(statements);
         }
 
@@ -71,7 +77,7 @@ namespace LoxFramework
             Report(line, "", message);
         }
 
-        internal static void ParseError(Token token, string message)
+        private static void AstError(Token token, string message)
         {
             if (token.Type == TokenType.EOF)
             {
@@ -83,7 +89,17 @@ namespace LoxFramework
             }
         }
 
-        internal static void InterpretError(LoxRunTimeException e)
+        internal static void ParseError(Token token, string message)
+        {
+            AstError(token, message);
+        }
+
+        internal static void ScopeError(Token token, string message)
+        {
+            AstError(token, message);
+        }
+
+        internal static void RunTimeError(LoxRunTimeException e)
         {
             Report(e.Token.Line, $" at '{e.Token.Lexeme}'", e.Message);
         }

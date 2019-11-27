@@ -5,14 +5,15 @@ namespace LoxFramework.Evaluating
 {
     class Environment
     {
-        private readonly Environment _enclosing;
+        private readonly Environment enclosing;
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
+        private const int IGNORE = int.MinValue;
 
         public static bool PromptMode = false;
 
-        public Environment(Environment enclosing = null)
+        public Environment(Environment enclosingEnvironment = null)
         {
-            _enclosing = enclosing;
+            enclosing = enclosingEnvironment;
         }
 
         public void Define(Token name, object value)
@@ -34,35 +35,58 @@ namespace LoxFramework.Evaluating
             }
         }
 
-        public void Assign(Token name, object value)
+        public void Assign(Token name, object value, int distance = IGNORE)
         {
-            if (values.ContainsKey(name.Lexeme))
+            if (distance == IGNORE)
             {
-                values[name.Lexeme] = value;
-                return;
-            }
+                if (values.ContainsKey(name.Lexeme))
+                {
+                    values[name.Lexeme] = value;
+                    return;
+                }
 
-            if (_enclosing != null)
+                if (enclosing != null)
+                {
+                    enclosing.Assign(name, value);
+                    return;
+                }
+
+                throw new LoxRunTimeException(name, $"Undefined variable '{name.Lexeme}'.");
+            }
+            else
             {
-                _enclosing.Assign(name, value);
-                return;
+                Ancestor(distance).values[name.Lexeme] = value;
             }
-
-            throw new LoxRunTimeException(name, $"Undefined variable '{name.Lexeme}'.");
         }
 
-        public object this[Token name]
+        private Environment Ancestor(int distance)
         {
-            get
+            var environment = this;
+
+            for (var i = 0; i < distance; i++)
+            {
+                environment = environment.enclosing;
+            }
+
+            return environment;
+        }
+
+        public object Get(Token name, int distance = IGNORE)
+        {
+            if (distance == IGNORE)
             {
                 if (values.ContainsKey(name.Lexeme))
                 {
                     return values[name.Lexeme];
                 }
 
-                if (_enclosing != null) return _enclosing[name];
+                if (enclosing != null) return enclosing.Get(name);
 
                 throw new LoxRunTimeException(name, $"Undefined variable '{name.Lexeme}'.");
+            }
+            else
+            {
+                return Ancestor(distance).values[name.Lexeme];
             }
         }
     }
