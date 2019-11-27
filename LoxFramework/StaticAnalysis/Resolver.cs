@@ -1,27 +1,16 @@
 ﻿using LoxFramework.AST;
 using LoxFramework.Evaluating;
-using LoxFramework.Scanning;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace LoxFramework.StaticAnalysis
 {
     class Resolver : IExpressionVisitor<object>, IStatementVisitor<object>
     {
-        private readonly AstInterpreter interpreter;
-        private readonly Stack<Dictionary<string, bool>> scopes = new Stack<Dictionary<string, bool>>();
-        private FunctionType currentFunction = FunctionType.None;
-        private int inLoop = 0;
-
-        private enum FunctionType
-        {
-            None,
-            Function
-        }
+        private readonly Scope scope;
 
         private Resolver(AstInterpreter interpreter)
         {
-            this.interpreter = interpreter;
+            scope = new Scope(interpreter);
         }
 
         public static void Resolve(AstInterpreter interpreter, IEnumerable<Statement> statements)
@@ -32,7 +21,7 @@ namespace LoxFramework.StaticAnalysis
         }
 
         #region Utility Methods
-        private void Resolve(IEnumerable<Statement> statements)
+        internal void Resolve(IEnumerable<Statement> statements)
         {
             foreach (var statement in statements)
             {
@@ -50,95 +39,44 @@ namespace LoxFramework.StaticAnalysis
             expression?.Accept(this);
         }
 
-        private void ResolveLocal(Expression expression, Token name)
+        private void ResolveFunction(FunctionStatement function, Scope.FunctionType type)
         {
-            for (var i = scopes.Count - 1; i >= 0; i--)
-            {
-                if (scopes.ElementAt(i).ContainsKey(name.Lexeme))
-                {
-                    interpreter.Resolve(expression, scopes.Count() - 1 - i);
-                    return;
-                }
-            }
-
-            // Not found. Assume it is global.
-        }
-
-        private void ResolveFunction(FunctionStatement function, FunctionType type)
-        {
-            var enclosingFunction = currentFunction;
-            currentFunction = type;
-
-            BeginScope();
+            scope.EnterFunction(type);
             foreach (var param in function.Parameters)
             {
-                Declare(param);
-                Define(param);
+                scope.Declare(param);
+                scope.Define(param);
             }
             Resolve(function.Body);
-            EndScope();
-
-            currentFunction = enclosingFunction;
-        }
-
-        private void BeginScope()
-        {
-            scopes.Push(new Dictionary<string, bool>());
-        }
-
-        private void EndScope()
-        {
-            scopes.Pop();
-        }
-
-        private void Declare(Token name)
-        {
-            if (scopes.IsEmpty()) return;
-
-            var scope = scopes.Peek();
-
-            if (scope.ContainsKey(name.Lexeme))
-            {
-                Interpreter.ResolutionError(name, "Variable with this name already declared in this scope.");
-            }
-
-            scope.Add(name.Lexeme, false);
-        }
-
-        private void Define(Token name)
-        {
-            if (scopes.IsEmpty()) return;
-
-            // TODO: check if token exists?
-            scopes.Peek()[name.Lexeme] = true;
+            scope.ExitFunction();
         }
         #endregion
 
         #region Statements
         public object VisitBlockStatement(BlockStatement statement)
         {
-            BeginScope();
+            scope.Enter();
             Resolve(statement.Statements);
-            EndScope();
+            scope.Exit();
 
             return null;
         }
 
         public object VisitFunctionStatement(FunctionStatement statement)
         {
-            Declare(statement.Name);
-            Define(statement.Name);
+            scope.Declare(statement.Name);
+            scope.Define(statement.Name);
 
-            ResolveFunction(statement, FunctionType.Function);
+            ResolveFunction(statement, Scope.FunctionType.Function);
 
             return null;
         }
 
         public object VisitVariableStatement(VariableStatement statement)
         {
-            Declare(statement.Name);
+            scope.Declare(statement.Name);
             Resolve(statement.Initializer);
-            Define(statement.Name);
+            scope.Define(statement.Name);
 
             return null;
         }
@@ -149,19 +87,19 @@ namespace LoxFramework.StaticAnalysis
         public object VisitAssignmentExpression(AssignmentExpression expression)
         {
             Resolve(expression.Value);
-            ResolveLocal(expression, expression.Name);
+            scope.ResolveValue(expression, expression.Name);
 
             return null;
         }
 
         public object VisitVariableExpression(VariableExpression expression)
         {
-            if (!scopes.IsEmpty() && scopes.Peek()[expression.Name.Lexeme] == false)
+            if (scope.IsDeclared(expression.Name) && !scope.IsDefined(expression.Name))
             {
-                Interpreter.ResolutionError(expression.Name, "Cannot read local variable in its own initializer.");
+                Interpreter.ScopeError(expression.Name, "Cannot read local variable in its own initializer.");
             }
 
-            ResolveLocal(expression, expression.Name);
+            scope.ResolveValue(expression, expression.Name);
 
             return null;
         }
@@ -179,9 +117,9 @@ namespace LoxFramework.StaticAnalysis
 
         public object VisitBreakStatement(BreakStatement statement)
         {
-            if (inLoop == 0)
+            if (!scope.InLoop)
             {
-                Interpreter.ResolutionError(statement.Keyword, "No enclosing loop out of which to continue.");
+                Interpreter.ScopeError(statement.Keyword, "No enclosing loop out of which to break.");
             }
 
             return null;
@@ -201,9 +139,9 @@ namespace LoxFramework.StaticAnalysis
 
         public object VisitContinueStatement(ContinueStatement statement)
         {
-            if (inLoop == 0)
+            if (!scope.InLoop)
             {
-                Interpreter.ResolutionError(statement.Keyword, "No enclosing loop out of which to continue.");
+                Interpreter.ScopeError(statement.Keyword, "No enclosing loop out of which to continue.");
             }
 
             return null;
@@ -247,20 +185,21 @@ namespace LoxFramework.StaticAnalysis
 
         public object VisitLoopStatement(LoopStatement statement)
         {
-            inLoop++;
+            scope.EnterLoop();
             Resolve(statement.Initializer);
             Resolve(statement.Condition);
             Resolve(statement.Increment);
             Resolve(statement.Body);
-            inLoop--;
+            scope.ExitLoop();
+
             return null;
         }
 
         public object VisitReturnStatement(ReturnStatement statement)
         {
-            if (currentFunction == FunctionType.None)
+            if (!scope.InFunction)
             {
-                Interpreter.ResolutionError(statement.Keyword, "Cannot return from top-level code.");
+                Interpreter.ScopeError(statement.Keyword, "Cannot return from top-level code.");
             }
 
             Resolve(statement.Value);

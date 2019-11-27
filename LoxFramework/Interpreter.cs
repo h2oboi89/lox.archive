@@ -77,7 +77,7 @@ namespace LoxFramework
             Report(line, "", message);
         }
 
-        internal static void ParseError(Token token, string message)
+        private static void AstError(Token token, string message)
         {
             if (token.Type == TokenType.EOF)
             {
@@ -89,12 +89,17 @@ namespace LoxFramework
             }
         }
 
-        internal static void ResolutionError(Token token, string message)
+        internal static void ParseError(Token token, string message)
         {
-            ParseError(token, message);
+            AstError(token, message);
         }
 
-        internal static void InterpretError(LoxRunTimeException e)
+        internal static void ScopeError(Token token, string message)
+        {
+            AstError(token, message);
+        }
+
+        internal static void RunTimeError(LoxRunTimeException e)
         {
             Report(e.Token.Line, $" at '{e.Token.Lexeme}'", e.Message);
         }

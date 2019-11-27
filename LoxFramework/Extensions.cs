@@ -61,10 +61,5 @@ namespace LoxFramework
         {
             return str.Substring(startIndex, endIndex - startIndex);
         }
-
-        internal static bool IsEmpty(this Stack<Dictionary<string, bool>> stack)
-        {
-            return stack.Count == 0;
-        }
     }
 }

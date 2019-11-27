@@ -72,6 +72,7 @@
     <Compile Include="Scanning\Scanner.cs" />
     <Compile Include="Scanning\Token.cs" />
     <Compile Include="Scanning\TokenType.cs" />
+    <Compile Include="StaticAnalysis\Scope.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parsing\Grammer.md" />

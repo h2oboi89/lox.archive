@@ -44,7 +44,7 @@ namespace LoxFramework.Evaluating
             }
             catch (LoxRunTimeException e)
             {
-                Interpreter.InterpretError(e);
+                Interpreter.RunTimeError(e);
             }
         }
 
