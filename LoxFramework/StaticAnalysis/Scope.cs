@@ -64,7 +64,19 @@ namespace LoxFramework.StaticAnalysis
             Method
         }
 
+        /// <summary>
+        /// Class scope types.
+        /// </summary>
+        public enum ClassType
+        {
+            /// <summary>
+            /// Lox class
+            /// </summary>
+            Class
+        }
+
         private readonly Stack<FunctionType> currentFunction = new Stack<FunctionType>();
+        private readonly Stack<ClassType> currentClass = new Stack<ClassType>();
         private readonly LinkedList<ScopeLevel> scopes = new LinkedList<ScopeLevel>();
         private readonly AstInterpreter interpreter;
 
@@ -130,17 +142,15 @@ namespace LoxFramework.StaticAnalysis
         /// <summary>
         /// True if in function scope; otherwise false.
         /// </summary>
-        public bool InFunction
-        {
-            get { return currentFunction.Count > 0; }
-        }
+        public bool InFunction { get { return currentFunction.Count > 0; } }
 
         /// <summary>
         /// Enters a new class scope.
         /// </summary>
-        public void EnterClass()
+        public void EnterClass(ClassType type)
         {
             Enter();
+            currentClass.Push(type);
             scopes.Last.Value.Initialize("this");
         }
 
@@ -150,7 +160,13 @@ namespace LoxFramework.StaticAnalysis
         public void ExitClass()
         {
             Exit();
+            currentClass.Pop();
         }
+
+        /// <summary>
+        /// True if in class scope; otherwise false.
+        /// </summary>
+        public bool InClass { get { return currentClass.Count > 0; } }
 
         /// <summary>
         /// Attempts to declare a value in the current scope

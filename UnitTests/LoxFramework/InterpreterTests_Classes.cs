@@ -68,5 +68,11 @@ namespace UnitTests.LoxFramework
             TestFile("This.lox", new string[] { "Test instance", "Test instance" });
         }
 
+        [Test]
+        public void Class_InvalidThis_ThrowsException()
+        {
+            TestException("print(this);", "Cannot use 'this' outside of a class.");
+            TestException("fun notAMethod() { print(this); }", "Cannot use 'this' outside of a class.");
+        }
     }
 }

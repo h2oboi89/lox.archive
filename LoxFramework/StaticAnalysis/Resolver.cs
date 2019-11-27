@@ -65,7 +65,7 @@ namespace LoxFramework.StaticAnalysis
         {
             scope.Initialize(statement.Name);
 
-            scope.EnterClass();
+            scope.EnterClass(Scope.ClassType.Class);
             foreach (var method in statement.Methods)
             {
                 ResolveFunction(method, Scope.FunctionType.Method);
@@ -236,7 +236,14 @@ namespace LoxFramework.StaticAnalysis
 
         public object VisitThisExpression(ThisExpression expression)
         {
-            scope.ResolveValue(expression, expression.Keyword);
+            if (scope.InClass)
+            {
+                scope.ResolveValue(expression, expression.Keyword);
+            }
+            else
+            {
+                Interpreter.ScopeError(expression.Keyword, "Cannot use 'this' outside of a class.");
+            }
 
             return null;
         }
