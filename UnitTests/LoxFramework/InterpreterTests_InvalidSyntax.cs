@@ -10,7 +10,7 @@ namespace UnitTests.LoxFramework
         [Test]
         public void InvalidSyntax_ThrowsException()
         {
-            TestException("@", "Unexpected character.");
+            TestException("@", "Unexpected character '@'.");
 
             TestException(@"""abc", "Unterminated string.");
 
@@ -38,7 +38,7 @@ namespace UnitTests.LoxFramework
             var source = File.ReadAllText(file);
             var expected = new string[]
             {
-                "[line 5] Error: Unexpected character.",
+                "[line 5] Error: Unexpected character '#'.",
                 "[line 3] Error at 'fun': Expect ';' after variable declaration.",
                 "[line 5] Error at ')': Expect expression.",
                 "[line 7] Error at 'false': Expect '(' after 'if'.",

@@ -94,7 +94,7 @@ namespace LoxFramework.Scanning
                     }
                     else
                     {
-                        Interpreter.ScanError(_line, "Unexpected character.");
+                        Interpreter.ScanError(_line, $"Unexpected character '{c}'.");
                     }
                     break;
             }
