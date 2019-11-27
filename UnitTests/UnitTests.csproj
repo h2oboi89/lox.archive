@@ -81,9 +81,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LoxFramework\TestFiles\ClassPrint.lox">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="LoxFramework\TestFiles\CountFunction.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

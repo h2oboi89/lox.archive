@@ -6,9 +6,15 @@ namespace UnitTests.LoxFramework
     public partial class InterpreterTests
     {
         [Test]
-        public void ClassPrint()
+        public void Class_Print_ReturnsName()
         {
-            TestFile("ClassPrint.lox", new string[] { "DevonshireCream" });
+            TestStatement("class Test{} print(Test);", "Test");
+        }
+
+        [Test]
+        public void Class_InstantiatedPrint_ReturnsName()
+        {
+            TestStatement("class Test {} var test = Test(); print(test);", "Test instance");
         }
     }
 }
