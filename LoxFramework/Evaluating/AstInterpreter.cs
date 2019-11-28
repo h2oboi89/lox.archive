@@ -221,9 +221,9 @@ namespace LoxFramework.Evaluating
                 throw new LoxRunTimeException(expression.Paren, "Can only call functions and classes.");
             }
 
-            if (arguments.Count != function.Arity())
+            if (arguments.Count != function.Arity)
             {
-                throw new LoxRunTimeException(expression.Paren, $"Expected {function.Arity()} arguments but got {arguments.Count}.");
+                throw new LoxRunTimeException(expression.Paren, $"Expected {function.Arity} arguments but got {arguments.Count}.");
             }
 
             return function.Call(this, arguments);
@@ -351,7 +351,7 @@ namespace LoxFramework.Evaluating
             var methods = new Dictionary<string, LoxFunction>();
             foreach (var method in statement.Methods)
             {
-                var function = new LoxFunction(method, environment);
+                var function = new LoxFunction(method, environment, LoxClass.IsInitializer(method));
                 methods.Add(method.Name.Lexeme, function);
             }
 

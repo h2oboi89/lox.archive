@@ -74,5 +74,23 @@ namespace UnitTests.LoxFramework
             TestException("print(this);", "Cannot use 'this' outside of a class.");
             TestException("fun notAMethod() { print(this); }", "Cannot use 'this' outside of a class.");
         }
+
+        [Test]
+        public void Class_InitializerNonNullReturn_ThrowsException()
+        {
+            TestException("class Test { init() { return 0; } }", "Cannot return a value from an initializer.");
+        }
+
+        [Test]
+        public void Class_InitializerNullReturn_IsAllowed()
+        {
+            TestStatement("class Test{ init() { return; } foo() { print(1); } } Test().foo();", "1");
+        }
+
+        [Test]
+        public void Class_Constructor_InitializesClass()
+        {
+            TestFile("ClassConstructor.lox", new string[] { "50.265482448" });
+        }
     }
 }

@@ -68,7 +68,8 @@ namespace LoxFramework.StaticAnalysis
             scope.EnterClass(Scope.ClassType.Class);
             foreach (var method in statement.Methods)
             {
-                ResolveFunction(method, Scope.FunctionType.Method);
+                var type = LoxClass.IsInitializer(method) ? Scope.FunctionType.Initializer : Scope.FunctionType.Method;
+                ResolveFunction(method, type);
             }
             scope.ExitClass();
 
@@ -219,6 +220,11 @@ namespace LoxFramework.StaticAnalysis
             if (!scope.InFunction)
             {
                 Interpreter.ScopeError(statement.Keyword, "Cannot return from top-level code.");
+            }
+
+            if (scope.InInitializer && statement.Value != null)
+            {
+                Interpreter.ScopeError(statement.Keyword, "Cannot return a value from an initializer.");
             }
 
             Resolve(statement.Value);

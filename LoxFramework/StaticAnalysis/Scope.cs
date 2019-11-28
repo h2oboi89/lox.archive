@@ -59,6 +59,10 @@ namespace LoxFramework.StaticAnalysis
             /// </summary>
             Function,
             /// <summary>
+            /// Lox class constructor
+            /// </summary>
+            Initializer,
+            /// <summary>
             /// Lox class method
             /// </summary>
             Method
@@ -143,6 +147,8 @@ namespace LoxFramework.StaticAnalysis
         /// True if in function scope; otherwise false.
         /// </summary>
         public bool InFunction { get { return currentFunction.Count > 0; } }
+
+        public bool InInitializer { get { return InFunction && currentFunction.Peek() == FunctionType.Initializer; } }
 
         /// <summary>
         /// Enters a new class scope.
