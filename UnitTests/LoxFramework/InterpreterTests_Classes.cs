@@ -92,5 +92,50 @@ namespace UnitTests.LoxFramework
         {
             TestFile("ClassConstructor.lox", new string[] { "50.265482448" });
         }
+
+        [Test]
+        public void Class_SubclassCallsSuperclassMethod_Executes()
+        {
+            TestStatement("class Foo { foo() { print(1); } } class Bar < Foo { } Bar().foo();", "1");
+        }
+
+        [Test]
+        public void Class_InvalidInhertitanceSyntax_ThrowsException()
+        {
+            TestException("class Foo < {}", "Expect superclass name.");
+        }
+
+        [Test]
+        public void Class_SelfInheritance_ThrowsException()
+        {
+            TestException("class Foo < Foo {}", "A class cannot inherit from itself.");
+        }
+
+        [Test]
+        public void Class_SuperMethod_CanBeCalled()
+        {
+            TestStatement("class Foo { foo() { return 1; } } class Bar < Foo { foo() { return super.foo() + 1; } } print(Bar().foo());", "2");
+        }
+
+        [Test]
+        public void Class_InvalidSuperSyntax_ThrowsException()
+        {
+            TestException("class Foo { foo() {} } class Bar < Foo { foo() { super; } }", "Expect '.' after 'super'.");
+            TestException("class Foo { foo() {} } class Bar < Foo { foo() { super.1(); } }", "Expect superclass method name.");
+        }
+
+        [Test]
+        public void Class_InvalidSuperUse_ThrowsException()
+        {
+            TestException("super.foo();", "Cannot use 'super' outside of a class.");
+            TestException("class Foo { foo() { super.foo(); } } Foo().foo();", "Cannot use 'super' in a class with no superclass.");
+            TestException("var NotAClass = 1; class Foo < NotAClass {}", "Superclass must be a class.");
+        }
+
+        [Test]
+        public void Class_UndefinedSuperMethod_ThrowsException()
+        {
+            TestException("class Foo { foo() {} } class Bar < Foo { bar() { super.bar(); } } Bar().bar();", "Undefined property 'bar'.");
+        }
     }
 }

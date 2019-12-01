@@ -10,7 +10,7 @@
 |						| variableDeclaration										|
 |						| statement													|
 |						|															|
-| classDeclaration		| "class" IDENTIFIER "{" function* "}"						|
+| classDeclaration		| "class" IDENTIFIER  ( "<" IDENTIFIER )? "{" function* "}"	|
 |						|															|
 | functionDeclaration	| "fun" function											|
 |						|															|
@@ -72,6 +72,7 @@
 |						| NUMBER \| STRING											|
 |						| "(" expression ")"										|
 |						| IDENTIFIER												|
+|						| "super" "." IDENTIFIER									|
 
 ## Rules
 | Grammar notation	| Code representation				|

@@ -15,6 +15,7 @@ namespace LoxFramework.AST
         T VisitLiteralExpression(LiteralExpression expression);
         T VisitLogicalExpression(LogicalExpression expression);
         T VisitSetExpression(SetExpression expression);
+        T VisitSuperExpression(SuperExpression expression);
         T VisitThisExpression(ThisExpression expression);
         T VisitUnaryExpression(UnaryExpression expression);
         T VisitVariableExpression(VariableExpression expression);
@@ -162,6 +163,23 @@ namespace LoxFramework.AST
         public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.VisitSetExpression(this);
+        }
+    }
+
+    class SuperExpression : Expression
+    {
+        public readonly Token Keyword;
+        public readonly Token Method;
+
+        public SuperExpression(Token keyword, Token method)
+        {
+            Keyword = keyword;
+            Method = method;
+        }
+
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
+        {
+            return visitor.VisitSuperExpression(this);
         }
     }
 

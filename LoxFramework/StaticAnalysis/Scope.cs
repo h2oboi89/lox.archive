@@ -76,7 +76,11 @@ namespace LoxFramework.StaticAnalysis
             /// <summary>
             /// Lox class
             /// </summary>
-            Class
+            Class,
+            /// <summary>
+            /// Lox subclass
+            /// </summary>
+            Subclass
         }
 
         private readonly Stack<FunctionType> currentFunction = new Stack<FunctionType>();
@@ -174,9 +178,31 @@ namespace LoxFramework.StaticAnalysis
         }
 
         /// <summary>
+        /// Enters a new superclass scope. Wrapper for <see cref="EnterBlock"/> for superclasses.
+        /// </summary>
+        public void EnterSuperclass()
+        {
+            EnterBlock();
+            currentClass.Push(ClassType.Subclass);
+            scopes.Last.Value.Initialize("super");
+        }
+
+        /// <summary>
+        /// Exits the current superclass scope and returns to the previous scope level.
+        /// Wrapper for <see cref="ExitBlock"/> for superclasses.
+        /// </summary>
+        public void ExitSuperclass()
+        {
+            ExitBlock();
+            currentClass.Pop();
+        }
+
+        /// <summary>
         /// True if in class scope; otherwise false.
         /// </summary>
         public bool InClass { get { return currentClass.Count > 0; } }
+
+        public bool InSubclass { get { return currentClass.Peek() == ClassType.Subclass; } }
 
         /// <summary>
         /// Attempts to declare a value in the current scope

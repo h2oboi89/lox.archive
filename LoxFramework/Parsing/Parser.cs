@@ -59,23 +59,17 @@ namespace LoxFramework.Parsing
         private Token Advance()
         {
             if (!IsAtEnd) current++;
-            return Previous();
+            return PreviousToken;
         }
 
-        private bool IsAtEnd
-        {
-            get { return Peek().Type == TokenType.EOF; }
-        }
+        private bool IsAtEnd { get { return Peek().Type == TokenType.EOF; } }
 
         private Token Peek()
         {
             return tokens[current];
         }
 
-        private Token Previous()
-        {
-            return tokens[current - 1];
-        }
+        private Token PreviousToken { get { return tokens[current - 1]; } }
 
         private Token Consume(TokenType tokenType, string message)
         {
@@ -96,7 +90,7 @@ namespace LoxFramework.Parsing
 
             while (!IsAtEnd)
             {
-                if (Previous().Type == TokenType.SEMICOLON) return;
+                if (PreviousToken.Type == TokenType.SEMICOLON) return;
 
                 switch (Peek().Type)
                 {
@@ -136,6 +130,14 @@ namespace LoxFramework.Parsing
         private Statement ClassDeclaration()
         {
             var name = Consume(TokenType.IDENTIFIER, "Expect class name.");
+
+            VariableExpression superclass = null;
+            if (Match(TokenType.LESS))
+            {
+                Consume(TokenType.IDENTIFIER, "Expect superclass name.");
+                superclass = new VariableExpression(PreviousToken);
+            }
+
             Consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
 
             var methods = new List<FunctionStatement>();
@@ -146,7 +148,7 @@ namespace LoxFramework.Parsing
 
             Consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
 
-            return new ClassStatement(name, methods);
+            return new ClassStatement(name, superclass, methods);
         }
 
         private FunctionStatement FunctionDeclaration(string kind)
@@ -210,7 +212,7 @@ namespace LoxFramework.Parsing
 
         private Statement BreakStatement()
         {
-            var keyword = Previous();
+            var keyword = PreviousToken;
 
             Consume(TokenType.SEMICOLON, "Expect ';' after 'break'.");
 
@@ -219,7 +221,7 @@ namespace LoxFramework.Parsing
 
         private Statement ContinueStatement()
         {
-            var keyword = Previous();
+            var keyword = PreviousToken;
 
             Consume(TokenType.SEMICOLON, "Expect ';' after 'continue'.");
 
@@ -286,7 +288,7 @@ namespace LoxFramework.Parsing
 
         private Statement ReturnStatement()
         {
-            var keyword = Previous();
+            var keyword = PreviousToken;
             Expression value = null;
 
             if (!Check(TokenType.SEMICOLON))
@@ -342,7 +344,7 @@ namespace LoxFramework.Parsing
 
             if (Match(TokenType.EQUAL))
             {
-                var equals = Previous();
+                var equals = PreviousToken;
                 var value = Assignment();
 
                 if (expression is VariableExpression variableExpression)
@@ -366,7 +368,7 @@ namespace LoxFramework.Parsing
 
             while (Match(TokenType.OR))
             {
-                var op = Previous();
+                var op = PreviousToken;
                 var right = And();
                 expression = new LogicalExpression(expression, op, right);
             }
@@ -380,7 +382,7 @@ namespace LoxFramework.Parsing
 
             while (Match(TokenType.AND))
             {
-                var op = Previous();
+                var op = PreviousToken;
                 var right = Equality();
                 expression = new LogicalExpression(expression, op, right);
             }
@@ -394,7 +396,7 @@ namespace LoxFramework.Parsing
 
             while (Match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL))
             {
-                var op = Previous();
+                var op = PreviousToken;
                 var right = Comparison();
                 expression = new BinaryExpression(expression, op, right);
             }
@@ -408,7 +410,7 @@ namespace LoxFramework.Parsing
 
             while (Match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL))
             {
-                var op = Previous();
+                var op = PreviousToken;
                 var right = Addition();
                 expression = new BinaryExpression(expression, op, right);
             }
@@ -422,7 +424,7 @@ namespace LoxFramework.Parsing
 
             while (Match(TokenType.MINUS, TokenType.PLUS))
             {
-                var op = Previous();
+                var op = PreviousToken;
                 var right = Multiplication();
                 expression = new BinaryExpression(expression, op, right);
             }
@@ -436,7 +438,7 @@ namespace LoxFramework.Parsing
 
             while (Match(TokenType.SLASH, TokenType.STAR))
             {
-                var op = Previous();
+                var op = PreviousToken;
                 var right = Unary();
                 expression = new BinaryExpression(expression, op, right);
             }
@@ -448,7 +450,7 @@ namespace LoxFramework.Parsing
         {
             if (Match(TokenType.BANG, TokenType.MINUS))
             {
-                var op = Previous();
+                var op = PreviousToken;
                 var right = Unary();
                 return new UnaryExpression(op, right);
             }
@@ -510,17 +512,25 @@ namespace LoxFramework.Parsing
 
             if (Match(TokenType.NUMBER, TokenType.STRING))
             {
-                return new LiteralExpression(Previous().Literal);
+                return new LiteralExpression(PreviousToken.Literal);
+            }
+
+            if (Match(TokenType.SUPER))
+            {
+                var keyword = PreviousToken;
+                Consume(TokenType.DOT, "Expect '.' after 'super'.");
+                var method = Consume(TokenType.IDENTIFIER, "Expect superclass method name.");
+                return new SuperExpression(keyword, method);
             }
 
             if (Match(TokenType.THIS))
             {
-                return new ThisExpression(Previous());
+                return new ThisExpression(PreviousToken);
             }
 
             if (Match(TokenType.IDENTIFIER))
             {
-                return new VariableExpression(Previous());
+                return new VariableExpression(PreviousToken);
             }
 
             if (Match(TokenType.LEFT_PAREN))

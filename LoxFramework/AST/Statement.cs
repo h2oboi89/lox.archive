@@ -57,11 +57,13 @@ namespace LoxFramework.AST
     class ClassStatement : Statement
     {
         public readonly Token Name;
+        public readonly VariableExpression Superclass;
         public readonly IEnumerable<FunctionStatement> Methods;
 
-        public ClassStatement(Token name, IEnumerable<FunctionStatement> methods)
+        public ClassStatement(Token name, VariableExpression superclass, IEnumerable<FunctionStatement> methods)
         {
             Name = name;
+            Superclass = superclass;
             Methods = methods;
         }
 

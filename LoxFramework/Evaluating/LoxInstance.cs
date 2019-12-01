@@ -8,7 +8,6 @@ namespace LoxFramework.Evaluating
         private readonly Dictionary<string, object> fields = new Dictionary<string, object>();
         private readonly LoxClass loxClass;
 
-
         public LoxInstance(LoxClass loxClass)
         {
             this.loxClass = loxClass;

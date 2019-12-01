@@ -5,15 +5,15 @@ namespace LoxFramework.Evaluating
 {
     class Environment
     {
-        private readonly Environment enclosing;
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
         private const int IGNORE = int.MinValue;
-
         public static bool PromptMode = false;
 
-        public Environment(Environment enclosingEnvironment = null)
+        public Environment Enclosing { get; private set; }
+
+        public Environment(Environment enclosing = null)
         {
-            enclosing = enclosingEnvironment;
+            Enclosing = enclosing;
         }
 
         public void Define(Token name, object value)
@@ -39,15 +39,10 @@ namespace LoxFramework.Evaluating
         {
             if (distance == IGNORE)
             {
+                // working in global scope
                 if (values.ContainsKey(name.Lexeme))
                 {
                     values[name.Lexeme] = value;
-                    return;
-                }
-
-                if (enclosing != null)
-                {
-                    enclosing.Assign(name, value);
                     return;
                 }
 
@@ -65,7 +60,7 @@ namespace LoxFramework.Evaluating
 
             for (var i = 0; i < distance; i++)
             {
-                environment = environment.enclosing;
+                environment = environment.Enclosing;
             }
 
             return environment;
@@ -75,12 +70,11 @@ namespace LoxFramework.Evaluating
         {
             if (distance == IGNORE)
             {
+                // working in global scope
                 if (values.ContainsKey(name.Lexeme))
                 {
                     return values[name.Lexeme];
                 }
-
-                if (enclosing != null) return enclosing.Get(name);
 
                 throw new LoxRunTimeException(name, $"Undefined variable '{name.Lexeme}'.");
             }

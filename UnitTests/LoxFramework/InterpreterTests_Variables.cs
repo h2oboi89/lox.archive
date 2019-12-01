@@ -29,6 +29,8 @@ namespace UnitTests.LoxFramework
             TestException("{ var a = 1; var a = 2; }", "Variable with this name already declared in this scope.");
 
             TestStatement("{ var a; print(a); a = 1; print(a); }", "nil", "1");
+
+            TestStatement("var a = 1; { print(a); a = 2; print(a); } print(a);", "1", "2", "2");
         }
 
         [Test]

@@ -39,6 +39,7 @@ namespace GenerateAst
                 "Literal    : object value",
                 "Logical    : Expression left, Token op, Expression right",
                 "Set        : Expression obj, Token name, Expression value",
+                "Super      : Token keyword, Token method",
                 "This       : Token keyword",
                 "Unary      : Token op, Expression right",
                 "Variable   : Token name"
@@ -48,7 +49,7 @@ namespace GenerateAst
             {
                 "Block      : IEnumerable<Statement> statements",
                 "Break      : Token keyword",
-                "Class      : Token name, IEnumerable<FunctionStatement> methods",
+                "Class      : Token name, VariableExpression superclass, IEnumerable<FunctionStatement> methods",
                 "Continue   : Token keyword",
                 "Expression : Expression expression",
                 "Function   : Token name, IEnumerable<Token> parameters, IEnumerable<Statement> body" ,

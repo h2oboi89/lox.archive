@@ -65,13 +65,34 @@ namespace LoxFramework.StaticAnalysis
         {
             scope.Initialize(statement.Name);
 
-            scope.EnterClass(Scope.ClassType.Class);
+            var classType = Scope.ClassType.Class;
+
+            if (statement.Superclass != null)
+            {
+                classType = Scope.ClassType.Subclass;
+
+                if (statement.Name.Lexeme == statement.Superclass.Name.Lexeme)
+                {
+                    Interpreter.ScopeError(statement.Superclass.Name, "A class cannot inherit from itself.");
+                }
+
+                Resolve(statement.Superclass);
+
+                scope.EnterSuperclass();
+            }
+
+            scope.EnterClass(classType);
             foreach (var method in statement.Methods)
             {
                 var type = LoxClass.IsInitializer(method) ? Scope.FunctionType.Initializer : Scope.FunctionType.Method;
                 ResolveFunction(method, type);
             }
             scope.ExitClass();
+
+            if (statement.Superclass != null)
+            {
+                scope.ExitSuperclass();
+            }
 
             return null;
         }
@@ -237,6 +258,21 @@ namespace LoxFramework.StaticAnalysis
             Resolve(expression.Value);
             Resolve(expression.Obj);
 
+            return null;
+        }
+
+        public object VisitSuperExpression(SuperExpression expression)
+        {
+            if (!scope.InClass)
+            {
+                Interpreter.ScopeError(expression.Keyword, "Cannot use 'super' outside of a class.");
+            }
+            else if (!scope.InSubclass)
+            {
+                Interpreter.ScopeError(expression.Keyword, "Cannot use 'super' in a class with no superclass.");
+            }
+
+            scope.ResolveValue(expression, expression.Keyword);
             return null;
         }
 
