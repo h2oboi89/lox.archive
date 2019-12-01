@@ -100,8 +100,8 @@ namespace UnitTests.LoxFramework.InterpreterTests
 
         /// <summary>
         /// Executes all enqueued statements.
-        /// Validates expected output from <see cref="Enqueue(string, string)"/> calls and
-        /// <paramref name="expectedError"/> is not null then an expected error will be checked for.
+        /// Validates expected output from <see cref="Enqueue(string, string)"/> and <see cref="EnqueueFile(string)"/> calls.
+        /// If <paramref name="expectedError"/> is not null then an expected error will be checked for.
         /// There should only be one of these per test.
         /// </summary>
         /// <param name="expectedError">Expected error</param>
