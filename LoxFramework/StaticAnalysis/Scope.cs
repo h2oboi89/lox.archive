@@ -109,37 +109,40 @@ namespace LoxFramework.StaticAnalysis
         private bool IsEmpty { get { return scopes.Count == 0; } }
 
         /// <summary>
-        /// Enters a new scope level
+        /// Enters a new block scope level.
+        /// See <see cref="EnterFunction(FunctionType)"/> and <see cref="EnterClass(ClassType)"/> if block is a function or class.
         /// </summary>
-        public void Enter()
+        public void EnterBlock()
         {
             scopes.AddLast(new ScopeLevel());
         }
 
         /// <summary>
-        /// Exits the current scope level and returns to previous scope level
+        /// Exits the current block scope level and returns to previous scope level.
+        /// See <see cref="ExitFunction()"/> and <see cref="ExitClass()"/> if block is a function or class.
         /// </summary>
-        public void Exit()
+        public void ExitBlock()
         {
             scopes.RemoveLast();
         }
 
         /// <summary>
-        /// Enters a new function scope.
+        /// Enters a new function scope. Wrapper for <see cref="EnterBlock"/> for functions.
         /// </summary>
         /// <param name="type">Function type</param>
         public void EnterFunction(FunctionType type)
         {
             currentFunction.Push(type);
-            Enter();
+            EnterBlock();
         }
 
         /// <summary>
-        /// Exits the current function scope and returns to previous scope level
+        /// Exits the current function scope and returns to previous scope level. 
+        /// Wrapper for <see cref="ExitBlock"/> for functions.
         /// </summary>
         public void ExitFunction()
         {
-            Exit();
+            ExitBlock();
             currentFunction.Pop();
         }
 
@@ -151,21 +154,22 @@ namespace LoxFramework.StaticAnalysis
         public bool InInitializer { get { return InFunction && currentFunction.Peek() == FunctionType.Initializer; } }
 
         /// <summary>
-        /// Enters a new class scope.
+        /// Enters a new class scope. Wrapper for <see cref="EnterBlock"/> for classes.
         /// </summary>
         public void EnterClass(ClassType type)
         {
-            Enter();
+            EnterBlock();
             currentClass.Push(type);
             scopes.Last.Value.Initialize("this");
         }
 
         /// <summary>
-        /// Exits the current class scope and returns to previous scope level
+        /// Exits the current class scope and returns to previous scope level.
+        /// Wrapper for<see cref="ExitBlock"/> for classes.
         /// </summary>
         public void ExitClass()
         {
-            Exit();
+            ExitBlock();
             currentClass.Pop();
         }
 

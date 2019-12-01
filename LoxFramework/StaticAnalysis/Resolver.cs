@@ -54,9 +54,9 @@ namespace LoxFramework.StaticAnalysis
         #region Statements
         public object VisitBlockStatement(BlockStatement statement)
         {
-            scope.Enter();
+            scope.EnterBlock();
             Resolve(statement.Statements);
-            scope.Exit();
+            scope.ExitBlock();
 
             return null;
         }
