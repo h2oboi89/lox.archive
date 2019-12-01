@@ -515,6 +515,14 @@ namespace LoxFramework.Parsing
                 return new LiteralExpression(PreviousToken.Literal);
             }
 
+            if (Match(TokenType.SUPER))
+            {
+                var keyword = PreviousToken;
+                Consume(TokenType.DOT, "Expect '.' after 'super'.");
+                var method = Consume(TokenType.IDENTIFIER, "Expect superclass method name.");
+                return new SuperExpression(keyword, method);
+            }
+
             if (Match(TokenType.THIS))
             {
                 return new ThisExpression(PreviousToken);

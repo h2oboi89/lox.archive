@@ -10,6 +10,8 @@ namespace LoxFramework.Evaluating
         private Environment environment;
         private Environment globals;
         private Dictionary<Expression, int> locals;
+        private readonly Token thisToken = new Token(TokenType.THIS, "this");
+        private readonly Token superToken = new Token(TokenType.SUPER, "super");
 
         public AstInterpreter()
         {
@@ -285,6 +287,25 @@ namespace LoxFramework.Evaluating
             }
         }
 
+        public object VisitSuperExpression(SuperExpression expression)
+        {
+            var distance = locals[expression];
+
+            var superclass = (LoxClass)environment.Get(superToken, distance);
+
+            // "this" is always one level closer than "super"'s environment
+            var instance = (LoxInstance)environment.Get(thisToken, distance - 1);
+
+            var method = superclass[expression.Method.Lexeme];
+
+            if (method == null)
+            {
+                throw new LoxRunTimeException(expression.Method, $"Undefined property '{expression.Method.Lexeme}'.");
+            }
+
+            return method.Bind(instance);
+        }
+
         public object VisitThisExpression(ThisExpression expression)
         {
             return LookUpVariable(expression.Keyword, expression);
@@ -360,6 +381,12 @@ namespace LoxFramework.Evaluating
 
             environment.Define(statement.Name, null);
 
+            if (statement.Superclass != null)
+            {
+                environment = new Environment(environment);
+                environment.Define(superToken, superclass);
+            }
+
             var methods = new Dictionary<string, LoxFunction>();
             foreach (var method in statement.Methods)
             {
@@ -368,6 +395,11 @@ namespace LoxFramework.Evaluating
             }
 
             var loxClass = new LoxClass(statement.Name.Lexeme, (LoxClass)superclass, methods);
+
+            if (superclass != null)
+            {
+                environment = environment.Enclosing;
+            }
 
             environment.Assign(statement.Name, loxClass);
 
