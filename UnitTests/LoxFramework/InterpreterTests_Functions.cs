@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace UnitTests.LoxFramework
 {
     [TestFixture]
-    public partial class InterpreterTests
+    public partial class InterpreterTestClasses
     {
         [Test]
         public void TopLevelReturn_ThrowsException()

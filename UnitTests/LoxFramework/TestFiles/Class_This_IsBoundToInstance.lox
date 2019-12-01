@@ -11,10 +11,3 @@
     print(this);
   }
 }
-
-var test = Test();
-
-test.method();
-
-var callback = test.callback();
-callback();

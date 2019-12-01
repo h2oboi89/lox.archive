@@ -1,0 +1,11 @@
+﻿class Test {
+	init() {
+		this.f = 1;
+		return;
+		this.f = 2;
+	}
+
+	foo() {
+		return this.f;
+	}
+}

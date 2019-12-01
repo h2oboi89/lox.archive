@@ -3,7 +3,7 @@
 namespace UnitTests.LoxFramework
 {
     [TestFixture]
-    public partial class InterpreterTests
+    public partial class InterpreterTestClasses
     {
         [Test]
         public void ExpressionValues_CanBeOptionallyDisplayed()

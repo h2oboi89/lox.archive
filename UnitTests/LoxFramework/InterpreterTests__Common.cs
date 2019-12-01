@@ -8,7 +8,7 @@ using System.Linq;
 namespace UnitTests.LoxFramework
 {
     [TestFixture]
-    public partial class InterpreterTests
+    public partial class InterpreterTestClasses
     {
         private static readonly string TEST_FILE_DIRECTORY = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LoxFramework", "TestFiles");
         private readonly List<string> Results = new List<string>();
@@ -55,7 +55,6 @@ namespace UnitTests.LoxFramework
             showOptional = false;
         }
 
-        #region test helper methods
         private void TestFile(string filename, IEnumerable<string> expected)
         {
             var file = Path.Combine(TEST_FILE_DIRECTORY, filename);
@@ -98,6 +97,5 @@ namespace UnitTests.LoxFramework
             Assert.That(Errors.Count, Is.EqualTo(1));
             Assert.That(Errors[0], Does.EndWith(expected));
         }
-        #endregion
     }
 }

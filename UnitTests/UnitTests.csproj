@@ -47,7 +47,8 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Extensions.cs" />
-    <Compile Include="LoxFramework\InterpreterTests_Classes.cs" />
+    <Compile Include="LoxFramework\InterpreterTests\InterpreterTester.cs" />
+    <Compile Include="LoxFramework\InterpreterTests\InvalidSyntax.cs" />
     <Compile Include="LoxFramework\InterpreterTests_InvalidSyntax.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Basic.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Functions.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="LoxFramework\InterpreterTests_Loops.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Variables.cs" />
     <Compile Include="LoxFramework\InterpreterTests__Common.cs" />
+    <Compile Include="LoxFramework\InterpreterTests\Classes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -81,7 +83,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LoxFramework\TestFiles\ClassConstructor.lox">
+    <None Include="LoxFramework\TestFiles\Class_Constructor_InstantiatesObject.lox">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LoxFramework\TestFiles\Class_Constructor_ReturnNull_IsAllowed.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="LoxFramework\TestFiles\CountFunction.lox">
@@ -102,7 +107,7 @@
     <None Include="LoxFramework\TestFiles\SynchronizeTest.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\This.lox">
+    <None Include="LoxFramework\TestFiles\Class_This_IsBoundToInstance.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="LoxFramework\TestFiles\VariableScope.lox">
