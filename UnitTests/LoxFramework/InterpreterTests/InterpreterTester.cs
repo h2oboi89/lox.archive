@@ -6,6 +6,9 @@ using System.IO;
 
 namespace UnitTests.LoxFramework.InterpreterTests
 {
+    /// <summary>
+    /// Utility methods for testing <see cref="Interpreter"/>.
+    /// </summary>
     class InterpreterTester
     {
         private static readonly string TEST_FILE_DIRECTORY = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LoxFramework", "TestFiles");
@@ -43,7 +46,7 @@ namespace UnitTests.LoxFramework.InterpreterTests
 
         /// <summary>
         /// Resets output and Interpreter.
-        /// Should be called before everytest (in Setup method).
+        /// Should be called before every test (in Setup method).
         /// </summary>
         public void Reset()
         {
