@@ -10,9 +10,12 @@ namespace LoxFramework.AST
         T VisitAssignmentExpression(AssignmentExpression expression);
         T VisitBinaryExpression(BinaryExpression expression);
         T VisitCallExpression(CallExpression expression);
+        T VisitGetExpression(GetExpression expression);
         T VisitGroupingExpression(GroupingExpression expression);
         T VisitLiteralExpression(LiteralExpression expression);
         T VisitLogicalExpression(LogicalExpression expression);
+        T VisitSetExpression(SetExpression expression);
+        T VisitThisExpression(ThisExpression expression);
         T VisitUnaryExpression(UnaryExpression expression);
         T VisitVariableExpression(VariableExpression expression);
     }
@@ -42,13 +45,13 @@ namespace LoxFramework.AST
     class BinaryExpression : Expression
     {
         public readonly Expression Left;
-        public readonly Token Operator;
+        public readonly Token Op;
         public readonly Expression Right;
 
         public BinaryExpression(Expression left, Token op, Expression right)
         {
             Left = left;
-            Operator = op;
+            Op = op;
             Right = right;
         }
 
@@ -74,6 +77,23 @@ namespace LoxFramework.AST
         public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.VisitCallExpression(this);
+        }
+    }
+
+    class GetExpression : Expression
+    {
+        public readonly Expression Obj;
+        public readonly Token Name;
+
+        public GetExpression(Expression obj, Token name)
+        {
+            Obj = obj;
+            Name = name;
+        }
+
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
+        {
+            return visitor.VisitGetExpression(this);
         }
     }
 
@@ -110,13 +130,13 @@ namespace LoxFramework.AST
     class LogicalExpression : Expression
     {
         public readonly Expression Left;
-        public readonly Token Operator;
+        public readonly Token Op;
         public readonly Expression Right;
 
         public LogicalExpression(Expression left, Token op, Expression right)
         {
             Left = left;
-            Operator = op;
+            Op = op;
             Right = right;
         }
 
@@ -126,14 +146,48 @@ namespace LoxFramework.AST
         }
     }
 
+    class SetExpression : Expression
+    {
+        public readonly Expression Obj;
+        public readonly Token Name;
+        public readonly Expression Value;
+
+        public SetExpression(Expression obj, Token name, Expression value)
+        {
+            Obj = obj;
+            Name = name;
+            Value = value;
+        }
+
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
+        {
+            return visitor.VisitSetExpression(this);
+        }
+    }
+
+    class ThisExpression : Expression
+    {
+        public readonly Token Keyword;
+
+        public ThisExpression(Token keyword)
+        {
+            Keyword = keyword;
+        }
+
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
+        {
+            return visitor.VisitThisExpression(this);
+        }
+    }
+
     class UnaryExpression : Expression
     {
-        public readonly Token Operator;
+        public readonly Token Op;
         public readonly Expression Right;
 
         public UnaryExpression(Token op, Expression right)
         {
-            Operator = op;
+            Op = op;
             Right = right;
         }
 

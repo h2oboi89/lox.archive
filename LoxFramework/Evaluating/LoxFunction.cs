@@ -1,4 +1,5 @@
 ﻿using LoxFramework.AST;
+using LoxFramework.Scanning;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,19 +7,28 @@ namespace LoxFramework.Evaluating
 {
     class LoxFunction : LoxCallable
     {
+        private readonly Token thisToken = new Token(TokenType.THIS, "this");
         private readonly FunctionStatement declaration;
         private readonly Environment closure;
+        private readonly bool isInitializer;
 
-        public LoxFunction(FunctionStatement declaration, Environment closure)
+        public LoxFunction(FunctionStatement declaration, Environment closure, bool isInitializer = false)
         {
             this.declaration = declaration;
             this.closure = closure;
+            this.isInitializer = isInitializer;
         }
 
-        public override int Arity()
+        public LoxFunction Bind(LoxInstance loxInstance)
         {
-            return declaration.Parameters.Count();
+            var environment = new Environment(closure);
+            environment.Define(thisToken, loxInstance);
+            return new LoxFunction(declaration, environment, isInitializer);
         }
+
+        public override int Arity { get { return declaration.Parameters.Count(); } }
+
+        private object InstanceReference { get { return closure.Get(thisToken, 0); } }
 
         public override object Call(AstInterpreter interpreter, IEnumerable<object> arguments)
         {
@@ -35,8 +45,11 @@ namespace LoxFramework.Evaluating
             }
             catch (LoxReturn returnValue)
             {
-                return returnValue.Value;
+                return isInitializer ? InstanceReference : returnValue.Value;
             }
+
+            if (isInitializer) return InstanceReference;
+
             return null;
         }
 

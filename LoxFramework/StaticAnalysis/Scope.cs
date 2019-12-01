@@ -15,31 +15,37 @@ namespace LoxFramework.StaticAnalysis
         {
             private readonly Dictionary<string, bool> values = new Dictionary<string, bool>();
 
-            public bool Declare(Token name)
+            public bool Declare(string name)
             {
-                if (values.ContainsKey(name.Lexeme))
+                if (values.ContainsKey(name))
                 {
                     return false;
                 }
 
-                values.Add(name.Lexeme, false);
+                values.Add(name, false);
 
                 return true;
             }
 
-            public void Define(Token name)
+            public void Define(string name)
             {
-                values[name.Lexeme] = true;
+                values[name] = true;
             }
 
-            public bool IsDeclared(Token name)
+            public void Initialize(string name)
             {
-                return values.ContainsKey(name.Lexeme);
+                Declare(name);
+                Define(name);
             }
 
-            public bool IsDefined(Token name)
+            public bool IsDeclared(string name)
             {
-                return IsDeclared(name) && values[name.Lexeme] == true;
+                return values.ContainsKey(name);
+            }
+
+            public bool IsDefined(string name)
+            {
+                return IsDeclared(name) && values[name] == true;
             }
         }
 
@@ -51,10 +57,30 @@ namespace LoxFramework.StaticAnalysis
             /// <summary>
             /// Lox function
             /// </summary>
-            Function
+            Function,
+            /// <summary>
+            /// Lox class constructor
+            /// </summary>
+            Initializer,
+            /// <summary>
+            /// Lox class method
+            /// </summary>
+            Method
+        }
+
+        /// <summary>
+        /// Class scope types.
+        /// </summary>
+        public enum ClassType
+        {
+            /// <summary>
+            /// Lox class
+            /// </summary>
+            Class
         }
 
         private readonly Stack<FunctionType> currentFunction = new Stack<FunctionType>();
+        private readonly Stack<ClassType> currentClass = new Stack<ClassType>();
         private readonly LinkedList<ScopeLevel> scopes = new LinkedList<ScopeLevel>();
         private readonly AstInterpreter interpreter;
 
@@ -83,47 +109,74 @@ namespace LoxFramework.StaticAnalysis
         private bool IsEmpty { get { return scopes.Count == 0; } }
 
         /// <summary>
-        /// Enters a new scope level
+        /// Enters a new block scope level.
+        /// See <see cref="EnterFunction(FunctionType)"/> and <see cref="EnterClass(ClassType)"/> if block is a function or class.
         /// </summary>
-        public void Enter()
+        public void EnterBlock()
         {
             scopes.AddLast(new ScopeLevel());
         }
 
         /// <summary>
-        /// Exits the current scope level and returns to previous scope level
+        /// Exits the current block scope level and returns to previous scope level.
+        /// See <see cref="ExitFunction()"/> and <see cref="ExitClass()"/> if block is a function or class.
         /// </summary>
-        public void Exit()
+        public void ExitBlock()
         {
             scopes.RemoveLast();
         }
 
         /// <summary>
-        /// Enters a new function scope.
+        /// Enters a new function scope. Wrapper for <see cref="EnterBlock"/> for functions.
         /// </summary>
         /// <param name="type">Function type</param>
         public void EnterFunction(FunctionType type)
         {
             currentFunction.Push(type);
-            Enter();
+            EnterBlock();
         }
 
         /// <summary>
-        /// Exits the current function scope and returns to previous scope level
+        /// Exits the current function scope and returns to previous scope level. 
+        /// Wrapper for <see cref="ExitBlock"/> for functions.
         /// </summary>
         public void ExitFunction()
         {
-            Exit();
+            ExitBlock();
             currentFunction.Pop();
         }
 
         /// <summary>
         /// True if in function scope; otherwise false.
         /// </summary>
-        public bool InFunction
+        public bool InFunction { get { return currentFunction.Count > 0; } }
+
+        public bool InInitializer { get { return InFunction && currentFunction.Peek() == FunctionType.Initializer; } }
+
+        /// <summary>
+        /// Enters a new class scope. Wrapper for <see cref="EnterBlock"/> for classes.
+        /// </summary>
+        public void EnterClass(ClassType type)
         {
-            get { return currentFunction.Count > 0; }
+            EnterBlock();
+            currentClass.Push(type);
+            scopes.Last.Value.Initialize("this");
         }
+
+        /// <summary>
+        /// Exits the current class scope and returns to previous scope level.
+        /// Wrapper for<see cref="ExitBlock"/> for classes.
+        /// </summary>
+        public void ExitClass()
+        {
+            ExitBlock();
+            currentClass.Pop();
+        }
+
+        /// <summary>
+        /// True if in class scope; otherwise false.
+        /// </summary>
+        public bool InClass { get { return currentClass.Count > 0; } }
 
         /// <summary>
         /// Attempts to declare a value in the current scope
@@ -133,7 +186,7 @@ namespace LoxFramework.StaticAnalysis
         {
             if (IsEmpty) return;
 
-            if (!scopes.Last.Value.Declare(name))
+            if (!scopes.Last.Value.Declare(name.Lexeme))
             {
                 Interpreter.ScopeError(name, "Variable with this name already declared in this scope.");
             }
@@ -147,7 +200,17 @@ namespace LoxFramework.StaticAnalysis
         {
             if (IsEmpty) return;
 
-            scopes.Last.Value.Define(name);
+            scopes.Last.Value.Define(name.Lexeme);
+        }
+
+        /// <summary>
+        /// Combines <see cref="Declare(Token)"/> and <see cref="Define(Token)"/> into a single operation.
+        /// </summary>
+        /// <param name="name">Value to declare and define</param>
+        public void Initialize(Token name)
+        {
+            Declare(name);
+            Define(name);
         }
 
         /// <summary>
@@ -157,7 +220,7 @@ namespace LoxFramework.StaticAnalysis
         /// <returns>True if declared in current scope; otherwise false.</returns>
         public bool IsDeclared(Token name)
         {
-            return IsEmpty || scopes.Last.Value.IsDeclared(name);
+            return IsEmpty || scopes.Last.Value.IsDeclared(name.Lexeme);
         }
 
         /// <summary>
@@ -167,7 +230,7 @@ namespace LoxFramework.StaticAnalysis
         /// <returns>True if declared and defined; otherwise false.</returns>
         public bool IsDefined(Token name)
         {
-            return IsEmpty || scopes.Last.Value.IsDefined(name);
+            return IsEmpty || scopes.Last.Value.IsDefined(name.Lexeme);
         }
 
         /// <summary>
@@ -182,7 +245,7 @@ namespace LoxFramework.StaticAnalysis
 
             while (scope != null)
             {
-                if (scope.Value.IsDeclared(name))
+                if (scope.Value.IsDeclared(name.Lexeme))
                 {
                     interpreter.Resolve(expression, distance);
                     break;

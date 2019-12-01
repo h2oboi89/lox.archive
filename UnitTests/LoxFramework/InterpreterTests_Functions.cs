@@ -20,7 +20,7 @@ namespace UnitTests.LoxFramework
         }
 
         [Test]
-        public void HelloFunction()
+        public void HelloWorldFunction()
         {
             TestFile("HelloWorld.lox", new string[] { "Hello, Lox World!" });
         }

@@ -1,5 +1,4 @@
-﻿using LoxFramework.Scanning;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace LoxFramework
 {
@@ -23,25 +22,6 @@ namespace LoxFramework
             foreach (var item in collection)
             {
                 yield return new EnumeratedInstance<T> { Index = i++, Value = item };
-            }
-        }
-
-        /// <summary>
-        ///     Wrapper for dictionary key access.
-        ///     Returns null instead of throwing exception.
-        /// </summary>
-        /// <param name="dict">Dictionary to get value from.</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <returns>Value associated with key if key exists; otherwise null.</returns>
-        internal static TokenType? Get(this Dictionary<string, TokenType> dict, string key)
-        {
-            if (dict.ContainsKey(key))
-            {
-                return dict[key];
-            }
-            else
-            {
-                return null;
             }
         }
 

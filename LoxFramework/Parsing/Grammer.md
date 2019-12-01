@@ -5,9 +5,12 @@
 |-----------------------|-----------------------------------------------------------|
 | program				| declaration\* EOF											|
 |						|															|
-| declaration			| functionDeclaration										|
+| declaration			| classDeclaration											|
+|						| functionDeclaration										|
 |						| variableDeclaration										|
 |						| statement													|
+|						|															|
+| classDeclaration		| "class" IDENTIFIER "{" function* "}"						|
 |						|															|
 | functionDeclaration	| "fun" function											|
 |						|															|
@@ -44,7 +47,7 @@
 |						|															|
 | expression			| assignment												|
 |						|															|
-| assignment			| IDENTIFIER "=" assignment									|
+| assignment			| ( call "." )? IDENTIFIER "=" assignment					|
 |						| logic_or													|
 |						|															|
 | logic_or				| logic_and ( "or" logic_and )*								|
@@ -61,7 +64,7 @@
 |						|															|
 | unary					| ( "!" \| "-" ) unary \| call								|
 |						|															|
-| call					| primary ( "(" arguments? ")" )*							|
+| call					| primary ( "(" arguments? ")" | "." IDENTIFIER )*			|
 |						|															|
 | arguments				| expression ( "," expression )*							|
 |						|															|

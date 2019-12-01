@@ -44,8 +44,7 @@ namespace LoxFramework.StaticAnalysis
             scope.EnterFunction(type);
             foreach (var param in function.Parameters)
             {
-                scope.Declare(param);
-                scope.Define(param);
+                scope.Initialize(param);
             }
             Resolve(function.Body);
             scope.ExitFunction();
@@ -55,17 +54,31 @@ namespace LoxFramework.StaticAnalysis
         #region Statements
         public object VisitBlockStatement(BlockStatement statement)
         {
-            scope.Enter();
+            scope.EnterBlock();
             Resolve(statement.Statements);
-            scope.Exit();
+            scope.ExitBlock();
+
+            return null;
+        }
+
+        public object VisitClassStatement(ClassStatement statement)
+        {
+            scope.Initialize(statement.Name);
+
+            scope.EnterClass(Scope.ClassType.Class);
+            foreach (var method in statement.Methods)
+            {
+                var type = LoxClass.IsInitializer(method) ? Scope.FunctionType.Initializer : Scope.FunctionType.Method;
+                ResolveFunction(method, type);
+            }
+            scope.ExitClass();
 
             return null;
         }
 
         public object VisitFunctionStatement(FunctionStatement statement)
         {
-            scope.Declare(statement.Name);
-            scope.Define(statement.Name);
+            scope.Initialize(statement.Name);
 
             ResolveFunction(statement, Scope.FunctionType.Function);
 
@@ -154,6 +167,13 @@ namespace LoxFramework.StaticAnalysis
             return null;
         }
 
+        public object VisitGetExpression(GetExpression expression)
+        {
+            Resolve(expression.Obj);
+
+            return null;
+        }
+
         public object VisitGroupingExpression(GroupingExpression expression)
         {
             Resolve(expression.Expression);
@@ -202,7 +222,34 @@ namespace LoxFramework.StaticAnalysis
                 Interpreter.ScopeError(statement.Keyword, "Cannot return from top-level code.");
             }
 
+            if (scope.InInitializer && statement.Value != null)
+            {
+                Interpreter.ScopeError(statement.Keyword, "Cannot return a value from an initializer.");
+            }
+
             Resolve(statement.Value);
+
+            return null;
+        }
+
+        public object VisitSetExpression(SetExpression expression)
+        {
+            Resolve(expression.Value);
+            Resolve(expression.Obj);
+
+            return null;
+        }
+
+        public object VisitThisExpression(ThisExpression expression)
+        {
+            if (scope.InClass)
+            {
+                scope.ResolveValue(expression, expression.Keyword);
+            }
+            else
+            {
+                Interpreter.ScopeError(expression.Keyword, "Cannot use 'this' outside of a class.");
+            }
 
             return null;
         }
