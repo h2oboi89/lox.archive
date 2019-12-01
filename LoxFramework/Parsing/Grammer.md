@@ -10,7 +10,7 @@
 |						| variableDeclaration										|
 |						| statement													|
 |						|															|
-| classDeclaration		| "class" IDENTIFIER "{" function* "}"						|
+| classDeclaration		| "class" IDENTIFIER  ( "<" IDENTIFIER )? "{" function* "}"	|
 |						|															|
 | functionDeclaration	| "fun" function											|
 |						|															|
