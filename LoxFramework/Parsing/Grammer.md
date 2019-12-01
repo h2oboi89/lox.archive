@@ -72,6 +72,7 @@
 |						| NUMBER \| STRING											|
 |						| "(" expression ")"										|
 |						| IDENTIFIER												|
+|						| "super" "." IDENTIFIER									|
 
 ## Rules
 | Grammar notation	| Code representation				|
