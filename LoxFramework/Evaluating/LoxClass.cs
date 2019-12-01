@@ -13,11 +13,13 @@ namespace LoxFramework.Evaluating
         }
 
         public string Name { get; private set; }
+        private readonly LoxClass superclass;
         private readonly Dictionary<string, LoxFunction> methods;
 
-        public LoxClass(string name, Dictionary<string, LoxFunction> methods)
+        public LoxClass(string name, LoxClass superclass, Dictionary<string, LoxFunction> methods)
         {
             Name = name;
+            this.superclass = superclass;
             this.methods = methods;
         }
 
@@ -28,6 +30,11 @@ namespace LoxFramework.Evaluating
                 if (methods.ContainsKey(name))
                 {
                     return methods[name];
+                }
+
+                if (superclass != null && superclass.methods.ContainsKey(name))
+                {
+                    return superclass.methods[name];
                 }
 
                 return null;

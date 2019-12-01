@@ -92,5 +92,23 @@ namespace UnitTests.LoxFramework
         {
             TestFile("ClassConstructor.lox", new string[] { "50.265482448" });
         }
+
+        [Test]
+        public void Class_SubclassCallsSuperclassMethod_Executes()
+        {
+            TestStatement("class Foo { foo() { print(1); } } class Bar < Foo { } Bar().foo();", "1");
+        }
+
+        [Test]
+        public void Class_InvalidInhertitanceSyntax_ThrowsException()
+        {
+            TestException("class Foo < {}", "Expect superclass name.");
+        }
+
+        [Test]
+        public void Class_SelfInheritance_ThrowsException()
+        {
+            TestException("class Foo < Foo {}", "A class cannot inherit from itself.");
+        }
     }
 }

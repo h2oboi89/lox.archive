@@ -65,6 +65,16 @@ namespace LoxFramework.StaticAnalysis
         {
             scope.Initialize(statement.Name);
 
+            if (statement.Superclass != null)
+            {
+                if (statement.Name.Lexeme == statement.Superclass.Name.Lexeme)
+                {
+                    Interpreter.ScopeError(statement.Superclass.Name, "A class cannot inherit from itself.");
+                }
+
+                Resolve(statement.Superclass);
+            }
+
             scope.EnterClass(Scope.ClassType.Class);
             foreach (var method in statement.Methods)
             {

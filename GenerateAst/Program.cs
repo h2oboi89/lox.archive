@@ -48,7 +48,7 @@ namespace GenerateAst
             {
                 "Block      : IEnumerable<Statement> statements",
                 "Break      : Token keyword",
-                "Class      : Token name, IEnumerable<FunctionStatement> methods",
+                "Class      : Token name, VariableExpression superclass, IEnumerable<FunctionStatement> methods",
                 "Continue   : Token keyword",
                 "Expression : Expression expression",
                 "Function   : Token name, IEnumerable<Token> parameters, IEnumerable<Statement> body" ,

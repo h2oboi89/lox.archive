@@ -346,6 +346,18 @@ namespace LoxFramework.Evaluating
 
         public object VisitClassStatement(ClassStatement statement)
         {
+            object superclass = null;
+
+            if (statement.Superclass != null)
+            {
+                superclass = Evaluate(statement.Superclass);
+
+                if (!(superclass is LoxClass))
+                {
+                    throw new LoxRunTimeException(statement.Superclass.Name, "Superclass must be a class.");
+                }
+            }
+
             environment.Define(statement.Name, null);
 
             var methods = new Dictionary<string, LoxFunction>();
@@ -355,7 +367,7 @@ namespace LoxFramework.Evaluating
                 methods.Add(method.Name.Lexeme, function);
             }
 
-            var loxClass = new LoxClass(statement.Name.Lexeme, methods);
+            var loxClass = new LoxClass(statement.Name.Lexeme, (LoxClass)superclass, methods);
 
             environment.Assign(statement.Name, loxClass);
 
