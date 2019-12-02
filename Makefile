@@ -65,6 +65,16 @@ define copy_to_folder
 	@(robocopy .\$1\bin\$(CONFIG) $2 /S /NFL /NDL /NJH /NJS /NC /NS /NP) ^& if %ERRORLEVEL% leq 1 exit 0
 endef
 
+# Overwrites SharedAssemblyInfo.cs
+# $1 Informational Version
+# $2 Version
+define set_assembly_info
+	@echo using System.Reflection; > $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyInformationalVersion("$1")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyVersion("$2")] >> $(SHARED_ASSEMBLY_FILE)
+	@echo [assembly: AssemblyFileVersion("$2")] >> $(SHARED_ASSEMBLY_FILE)
+endef
+
 # Files that are copied to the artifacts folder.
 # Note: starting with ".\" copies just the file and not the path to the artifacts folder.
 PACKAGE_CONTENTS_SOLUTION =\
@@ -124,10 +134,7 @@ set_assembly_info:
 	@echo Version: $(VERSION) ($(CONFIG))
 	@echo Githash: $(GIT_LONG_HASH)
 	@echo -----------------------------------
-	@echo using System.Reflection; > $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyInformationalVersion("$(CONFIG):$(GIT_LONG_HASH)")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyVersion("$(VERSION)")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyFileVersion("$(VERSION)")] >> $(SHARED_ASSEMBLY_FILE)
+	$(call set_assembly_info,$(CONFIG):$(GIT_LONG_HASH),$(VERSION))
 
 # This rule clears the contents of the SharedAssemblyInfo.cs file. By doing this
 # we ensure that if someone builds locally using visual studio, the version numbers
@@ -139,10 +146,7 @@ clear_assembly_info:
 	@echo Erasing version and git hash to
 	@echo prevent rogue local builds ...
 	@echo -----------------------------------
-	@echo using System.Reflection; > $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyInformationalVersion("LOCAL")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyVersion("0.0.0.0")] >> $(SHARED_ASSEMBLY_FILE)
-	@echo [assembly: AssemblyFileVersion("0.0.0.0")] >> $(SHARED_ASSEMBLY_FILE)
+	$(call set_assembly_info,LOCAL,0.0.0.0)
 
 # This rule packages a build.
 .PHONY: package
