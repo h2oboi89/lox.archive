@@ -105,7 +105,7 @@ namespace UnitTests.LoxFramework.InterpreterTests
         /// There should only be one of these per test.
         /// </summary>
         /// <param name="expectedError">Expected error</param>
-        public void Execute(string expectedError = null)
+        public void Execute(params string[] expectedErrors)
         {
             ExecuteStatements();
 
@@ -116,14 +116,18 @@ namespace UnitTests.LoxFramework.InterpreterTests
                 Assert.That(Results[i], Is.EqualTo(expected[i]));
             }
 
-            if (expectedError == null)
+            if (expectedErrors.Length == 0)
             {
                 Assert.That(Errors, Is.Empty);
             }
             else
             {
-                Assert.That(Errors.Count, Is.EqualTo(1));
-                Assert.That(Errors[0], Does.EndWith(expectedError));
+                Assert.That(Errors.Count, Is.EqualTo(expectedErrors.Length));
+
+                foreach (var error in Errors.Enumerate())
+                {
+                    Assert.That(error.Value, Does.EndWith(expectedErrors[error.Index]));
+                }
             }
         }
     }

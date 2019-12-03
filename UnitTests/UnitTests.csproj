@@ -49,7 +49,6 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="LoxFramework\InterpreterTests\InterpreterTester.cs" />
     <Compile Include="LoxFramework\InterpreterTests\InvalidSyntax.cs" />
-    <Compile Include="LoxFramework\InterpreterTests_InvalidSyntax.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Basic.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Functions.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Globals.cs" />

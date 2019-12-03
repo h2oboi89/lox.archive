@@ -2,7 +2,6 @@
 using LoxFramework.Scanning;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace LoxFramework.Parsing
 {
@@ -109,7 +108,8 @@ namespace LoxFramework.Parsing
         }
         #endregion
 
-        #region Grammer Rules
+        #region Grammar Rules
+#pragma warning disable CA1031 // Do not catch general exception types
         private Statement Declaration()
         {
             try
@@ -126,6 +126,7 @@ namespace LoxFramework.Parsing
                 return null;
             }
         }
+#pragma warning restore CA1031 // Do not catch general exception types
 
         private Statement ClassDeclaration()
         {
@@ -470,7 +471,7 @@ namespace LoxFramework.Parsing
                 }
                 else if (Match(TokenType.DOT))
                 {
-                    var name = Consume(TokenType.IDENTIFIER, "Expect property name afer '.'.");
+                    var name = Consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
 
                     expression = new GetExpression(expression, name);
                 }
@@ -542,18 +543,13 @@ namespace LoxFramework.Parsing
 
             throw Error(Peek(), "Expect expression.");
         }
+        #endregion
 
-        [Serializable]
+#pragma warning disable CA1032 // Implement standard exception constructors
         private class ParseException : Exception
         {
             public ParseException() { }
-
-            public ParseException(string message) : base(message) { }
-
-            public ParseException(string message, Exception innerException) : base(message, innerException) { }
-
-            protected ParseException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         }
-        #endregion
+#pragma warning restore CA1032 // Implement standard exception constructors
     }
 }

@@ -84,7 +84,7 @@ namespace UnitTests.LoxFramework.InterpreterTests
         }
 
         [Test]
-        public void Method_Undefined_ThrowsException()
+        public void UndefinedMethod_ThrowsException()
         {
             GivenThatTestClassWasDeclaredAndInstantiated();
 
