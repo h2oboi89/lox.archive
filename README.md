@@ -14,6 +14,8 @@ Based on Bob Nystrom's Lox book
 
 * redeclaring variables outside of prompt throws an exception
 
+* added % operator (modulo)
+
 ## Challenges
 
 * added `break` and `continue` statements
