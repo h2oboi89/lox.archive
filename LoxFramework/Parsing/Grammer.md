@@ -60,7 +60,7 @@
 |						|															|
 | addition				| multiplication ( ( "-" \| "+" ) multiplication )*			|
 |						|															|
-| multiplication		| unary ( ( "/" \| "\*" ) unary )*							|
+| multiplication		| unary ( ( "%" \| "/" \| "\*" ) unary )*					|
 |						|															|
 | unary					| ( "!" \| "-" ) unary \| call								|
 |						|															|

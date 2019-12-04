@@ -183,6 +183,9 @@ namespace LoxFramework.Evaluating
                 case TokenType.MINUS:
                     CheckNumberOperands(expression.Op, left, right);
                     return (double)left - (double)right;
+                case TokenType.MODULO:
+                    CheckNumberOperands(expression.Op, left, right);
+                    return (double)left % (double)right;
                 case TokenType.PLUS:
                     if (left is double dLeft && right is double dRight)
                     {

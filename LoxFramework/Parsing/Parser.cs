@@ -436,7 +436,7 @@ namespace LoxFramework.Parsing
         {
             var expression = Unary();
 
-            while (Match(TokenType.SLASH, TokenType.STAR))
+            while (Match(TokenType.SLASH, TokenType.STAR, TokenType.MODULO))
             {
                 var op = PreviousToken;
                 var right = Unary();

@@ -108,6 +108,7 @@ namespace UnitTests.LoxFramework
             TestStatement("print(-3 * 2);", "-6");
             TestStatement("print(1 / 2);", "0.5");
             TestStatement("print(1 / 0);", double.PositiveInfinity.ToString());
+            TestStatement("print(33 % 5);", "3");
         }
 
         [Test]

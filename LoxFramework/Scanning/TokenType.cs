@@ -35,6 +35,10 @@
         /// </summary>
         MINUS,
         /// <summary>
+        /// % token
+        /// </summary>
+        MODULO,
+        /// <summary>
         /// + token
         /// </summary>
         PLUS,
