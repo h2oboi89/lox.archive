@@ -63,13 +63,13 @@ namespace UnitTests.LoxFramework.InterpreterTests
         /// </summary>
         /// <param name="statement">Statement to execute.</param>
         /// <param name="expectedOutput">(optional) Expected output from statement.</param>
-        public void Enqueue(string statement, string expectedOutput = null)
+        public void Enqueue(string statement, params string[] expectedOutput)
         {
             statements.Enqueue(statement);
 
-            if (expectedOutput != null)
+            foreach (var e in expectedOutput)
             {
-                expected.Add(expectedOutput);
+                expected.Add(e);
             }
         }
 
@@ -78,12 +78,18 @@ namespace UnitTests.LoxFramework.InterpreterTests
         /// There can be as many of these as needed to get <see cref="Interpreter"/> in required state for <see cref="Execute(string)"/>.
         /// </summary>
         /// <param name="filename">File to read lox source from.</param>
-        public void EnqueueFile(string filename)
+        /// <param name="expectedOutput">(optional) Expected output from file statements.</param>
+        public void EnqueueFile(string filename, params string[] expectedOutput)
         {
             var file = Path.Combine(TEST_FILE_DIRECTORY, filename);
             var source = File.ReadAllText(file);
 
             statements.Enqueue(source);
+
+            foreach (var e in expectedOutput)
+            {
+                expected.Add(e);
+            }
         }
 
         private void ExecuteStatements(string statement = null)

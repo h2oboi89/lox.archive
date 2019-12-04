@@ -153,6 +153,15 @@ namespace UnitTests.LoxFramework.InterpreterTests
         }
 
         [Test]
+        public void Inheritance_InvalidSuperclass_ThrowsException()
+        {
+            tester.Enqueue("var bar = \"NotAClass\";");
+            tester.Enqueue("class Foo < bar {}");
+
+            tester.Execute("Superclass must be a class.");
+        }
+
+        [Test]
         public void Inheritance_UndefinedSuperMethod_ThrowsException()
         {
             tester.Enqueue("class Foo { foo() {} }");
@@ -163,7 +172,7 @@ namespace UnitTests.LoxFramework.InterpreterTests
         }
 
         [Test]
-        public void Inhertitance_SuperclassMethod_CanBeCalled()
+        public void Inheritance_SuperclassMethod_CanBeCalled()
         {
             tester.Enqueue("class Foo { foo() { return 1; } }");
             tester.Enqueue("class Bar < Foo { bar() { return 2; } }");

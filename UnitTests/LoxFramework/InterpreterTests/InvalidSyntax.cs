@@ -497,6 +497,178 @@ namespace UnitTests.LoxFramework.InterpreterTests
                 }
             }
         }
+
+        [TestFixture]
+        public class Resolver : InvalidSyntax
+        {
+            [Test]
+            public void TopLevelReturn_ThrowsException()
+            {
+                tester.Enqueue("return;");
+
+                tester.Execute("Cannot return from top-level code.");
+            }
+        }
+
+        [TestFixture]
+        public class AstInterpreter : InvalidSyntax
+        {
+            [Test]
+            public void UnaryMinus_OperandMustBeNumber()
+            {
+                tester.Enqueue("-true;");
+
+                tester.Execute("Operand must be a number.");
+            }
+
+            [Test]
+            public void BinaryGreater_LeftOperandMustBeNumber()
+            {
+                tester.Enqueue("true > 0;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryGreater_RightOperandMustBeNumber()
+            {
+                tester.Enqueue("0 > true;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryGreaterEqual_LeftOperandMustBeNumber()
+            {
+                tester.Enqueue("true >= 0;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryGreaterEqual_RightOperandMustBeNumber()
+            {
+                tester.Enqueue("0 >= true;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryLess_LeftOperandMustBeNumber()
+            {
+                tester.Enqueue("true < 0;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryLess_RightOperandMustBeNumber()
+            {
+                tester.Enqueue("0 < true;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryLessEqual_LeftOperandMustBeNumber()
+            {
+                tester.Enqueue("true <= 0;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryLessEqual_RightOperandMustBeNumber()
+            {
+                tester.Enqueue("0 <= true;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryMinus_LeftOperandMustBeNumber()
+            {
+                tester.Enqueue("true - 0;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryMinus_RightOperandMustBeNumber()
+            {
+                tester.Enqueue("0 - true;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryAdd_LeftOperandMustBeNumber()
+            {
+                tester.Enqueue("true + 0;");
+
+                tester.Execute("Operands must be two numbers or two strings.");
+            }
+
+            [Test]
+            public void BinaryAdd_RightOperandMustBeNumber()
+            {
+                tester.Enqueue("0 + true;");
+
+                tester.Execute("Operands must be two numbers or two strings.");
+            }
+
+            [Test]
+            public void BinaryConcatenation_LeftOperandMustBeString()
+            {
+                tester.Enqueue("true + \"a\";");
+
+                tester.Execute("Operands must be two numbers or two strings.");
+            }
+
+            [Test]
+            public void BinaryConcatenation_RightOperandMustBeString()
+            {
+                tester.Enqueue("\"a\" + true;");
+
+                tester.Execute("Operands must be two numbers or two strings.");
+            }
+
+            [Test]
+            public void Call_InvalidCall_ThrowsException()
+            {
+                tester.Enqueue("var a;");
+                tester.Enqueue("a();");
+
+                tester.Execute("Can only call functions and classes.");
+            }
+
+            [Test]
+            public void Call_InvalidArity_ThrowsException()
+            {
+                tester.Enqueue("fun foo() { return; }");
+                tester.Enqueue("foo(1);");
+
+                tester.Execute("Expected 0 arguments but got 1.");
+            }
+
+            [Test]
+            public void InvalidGet_ThrowsException()
+            {
+                tester.Enqueue("var a;");
+                tester.Enqueue("a.foo;");
+
+                tester.Execute("Only instances have properties.");
+            }
+
+            [Test]
+            public void InvalidSet_ThrowsException()
+            {
+                tester.Enqueue("var a;");
+                tester.Enqueue("a.foo = 1;");
+
+                tester.Execute("Only instances have fields.");
+            }
+        }
     }
 }
 
