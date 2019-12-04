@@ -193,5 +193,21 @@ namespace UnitTests.LoxFramework.InterpreterTests
 
             tester.Execute();
         }
+
+        [Test]
+        public void KeyWord_SuperOutsideOfClass_ThrowsException()
+        {
+            tester.Enqueue("super.man;");
+
+            tester.Execute("Cannot use 'super' outside of a class.");
+        }
+
+        [Test]
+        public void KeyWord_ThisOutsideOfClass_ThrowsException()
+        {
+            tester.Enqueue("this.guy;");
+
+            tester.Execute("Cannot use 'this' outside of a class.");
+        }
     }
 }

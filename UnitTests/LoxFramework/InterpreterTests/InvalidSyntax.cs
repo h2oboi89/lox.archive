@@ -23,7 +23,7 @@ namespace UnitTests.LoxFramework.InterpreterTests
             {
                 var invalidCharacters = new char[]
                 {
-                '~', '`', '#', '$', '%', '^',
+                '~', '`', '#', '$', '^',
                 '[', ']', '|', '\\',
                 ':', '\'',
                 '?'
@@ -508,6 +508,9 @@ namespace UnitTests.LoxFramework.InterpreterTests
 
                 tester.Execute("Cannot return from top-level code.");
             }
+
+            // variable self reference in initializer
+            //
         }
 
         [TestFixture]
@@ -597,6 +600,22 @@ namespace UnitTests.LoxFramework.InterpreterTests
             public void BinaryMinus_RightOperandMustBeNumber()
             {
                 tester.Enqueue("0 - true;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryModulo_LeftOperandMustBeNumber()
+            {
+                tester.Enqueue("true % 0;");
+
+                tester.Execute("Operands must be numbers.");
+            }
+
+            [Test]
+            public void BinaryModulo_RightOperandMustBeNumber()
+            {
+                tester.Enqueue("0 % true;");
 
                 tester.Execute("Operands must be numbers.");
             }

@@ -1,0 +1,11 @@
+﻿for(var i = 0; i < 3; i = i + 1) 
+{
+	for(var j = 0; j < 3; j = j + 1)
+	{
+		if (j % 2 != 0) { break; }
+
+		print(i + j);
+	}
+}
+
+// 0, 1, 2

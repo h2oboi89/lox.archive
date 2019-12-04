@@ -48,12 +48,12 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="LoxFramework\InterpreterTests\Functions.cs" />
+    <Compile Include="LoxFramework\InterpreterTests\Globals.cs" />
     <Compile Include="LoxFramework\InterpreterTests\InterpreterTester.cs" />
     <Compile Include="LoxFramework\InterpreterTests\InvalidSyntax.cs" />
     <Compile Include="LoxFramework\InterpreterTests\Loops.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Basic.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Globals.cs" />
-    <Compile Include="LoxFramework\InterpreterTests_Loops.cs" />
     <Compile Include="LoxFramework\InterpreterTests_Variables.cs" />
     <Compile Include="LoxFramework\InterpreterTests__Common.cs" />
     <Compile Include="LoxFramework\InterpreterTests\Classes.cs" />
@@ -99,6 +99,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="LoxFramework\TestFiles\HelloWorld.lox">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LoxFramework\TestFiles\Loops_Nested_Break.lox">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LoxFramework\TestFiles\Loops_Nested_Continue.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="LoxFramework\TestFiles\MakeCounter.lox">
