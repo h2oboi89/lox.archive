@@ -68,6 +68,7 @@ namespace LoxFramework.Scanning
                 case ',': AddToken(TokenType.COMMA); break;
                 case '.': AddToken(TokenType.DOT); break;
                 case '-': AddToken(TokenType.MINUS); break;
+                case '%': AddToken(TokenType.MODULO); break;
                 case '+': AddToken(TokenType.PLUS); break;
                 case ';': AddToken(TokenType.SEMICOLON); break;
                 case '*': AddToken(TokenType.STAR); break;
