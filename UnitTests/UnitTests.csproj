@@ -47,6 +47,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="LoxFramework\InterpreterTests\Expressions.cs" />
     <Compile Include="LoxFramework\InterpreterTests\Functions.cs" />
     <Compile Include="LoxFramework\InterpreterTests\Globals.cs" />
     <Compile Include="LoxFramework\InterpreterTests\InterpreterTester.cs" />
