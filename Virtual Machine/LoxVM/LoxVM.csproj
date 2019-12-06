@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5405AD3C-1E82-4CEE-8073-226275F762BC}</ProjectGuid>
+    <ProjectGuid>{F4F59D68-4AC8-4743-9977-1E690E105F40}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>GenerateAst</RootNamespace>
-    <AssemblyName>GenerateAst</AssemblyName>
+    <RootNamespace>LoxVM</RootNamespace>
+    <AssemblyName>LoxVM</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -31,7 +31,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -44,11 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="OutputQueue.cs" />
+    <Compile Include="Chunk.cs" />
+    <Compile Include="Disassembler.cs" />
+    <Compile Include="IReadonlyCollection.cs" />
+    <Compile Include="OpCode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -56,7 +57,4 @@
     <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>$(TargetPath) $(SolutionDir)LoxFramework</PostBuildEvent>
-  </PropertyGroup>
 </Project>

@@ -122,7 +122,7 @@ generate_release_contents: build
 	@echo -----------------------------------
 	@echo Copying to $(RELEASE_DIR) ...
 	@echo -----------------------------------
-	$(call copy_to_release,Lox)
+	$(call copy_to_release,Interpreter/Lox)
 
 # This rule generates a shared assembly info file that sets the git hash and version number
 # for all build assemblies (DLLs and EXEs) in the solution.
