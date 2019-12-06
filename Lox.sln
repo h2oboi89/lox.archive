@@ -9,12 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		version.txt = version.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interpreter", "Interpreter", "{92A87308-864A-4B45-B50F-EB0860E130DA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateAst", "Interpreter\GenerateAst\GenerateAst.csproj", "{5405AD3C-1E82-4CEE-8073-226275F762BC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lox", "Interpreter\Lox\Lox.csproj", "{667F9618-153D-469F-AFAA-63EB4BF87318}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Virtual Machine", "Virtual Machine", "{2DCFC48C-6548-4940-ACA8-592C0A48393C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoxVM", "Virtual Machine\LoxVM\LoxVM.csproj", "{F4F59D68-4AC8-4743-9977-1E690E105F40}"
@@ -23,20 +17,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoxFramework", "LoxFramework\LoxFramework.csproj", "{88EE3220-FF53-4066-B45C-20B25E1EE5DB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TreeInterpreter", "TreeInterpreter", "{29019B20-FF44-4A75-B7C9-68832CAF5BE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateAst", "TreeInterpreter\GenerateAst\GenerateAst.csproj", "{5405AD3C-1E82-4CEE-8073-226275F762BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lox", "TreeInterpreter\Lox\Lox.csproj", "{667F9618-153D-469F-AFAA-63EB4BF87318}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{667F9618-153D-469F-AFAA-63EB4BF87318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{667F9618-153D-469F-AFAA-63EB4BF87318}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{667F9618-153D-469F-AFAA-63EB4BF87318}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{667F9618-153D-469F-AFAA-63EB4BF87318}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4F59D68-4AC8-4743-9977-1E690E105F40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4F59D68-4AC8-4743-9977-1E690E105F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4F59D68-4AC8-4743-9977-1E690E105F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,14 +41,22 @@ Global
 		{88EE3220-FF53-4066-B45C-20B25E1EE5DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88EE3220-FF53-4066-B45C-20B25E1EE5DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88EE3220-FF53-4066-B45C-20B25E1EE5DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5405AD3C-1E82-4CEE-8073-226275F762BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{667F9618-153D-469F-AFAA-63EB4BF87318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{667F9618-153D-469F-AFAA-63EB4BF87318}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{667F9618-153D-469F-AFAA-63EB4BF87318}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{667F9618-153D-469F-AFAA-63EB4BF87318}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5405AD3C-1E82-4CEE-8073-226275F762BC} = {92A87308-864A-4B45-B50F-EB0860E130DA}
-		{667F9618-153D-469F-AFAA-63EB4BF87318} = {92A87308-864A-4B45-B50F-EB0860E130DA}
 		{F4F59D68-4AC8-4743-9977-1E690E105F40} = {2DCFC48C-6548-4940-ACA8-592C0A48393C}
+		{5405AD3C-1E82-4CEE-8073-226275F762BC} = {29019B20-FF44-4A75-B7C9-68832CAF5BE5}
+		{667F9618-153D-469F-AFAA-63EB4BF87318} = {29019B20-FF44-4A75-B7C9-68832CAF5BE5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4D503174-0617-48B1-9888-8739889C370A}
