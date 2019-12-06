@@ -510,7 +510,7 @@ namespace UnitTests.LoxFramework.InterpreterTests
             }
 
             // variable self reference in initializer
-            //
+            // TODO: Other
         }
 
         [TestFixture]

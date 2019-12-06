@@ -170,5 +170,15 @@ namespace UnitTests.LoxFramework.InterpreterTests
 
             tester.Execute();
         }
+
+        // greater, greater equal, less, less equal
+        // addition, subtraction, multiplication, division, modulo
+        // unary
+        // grouping
+
+        // own file?
+        // strings: concat, multiline
+        // - if
+        // - and, or
     }
 }
