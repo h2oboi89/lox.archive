@@ -60,7 +60,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LoxFramework\LoxFramework.csproj">
+    <ProjectReference Include="..\..\LoxFramework\LoxFramework.csproj">
       <Project>{88ee3220-ff53-4066-b45c-20b25e1ee5db}</Project>
       <Name>LoxFramework</Name>
     </ProjectReference>

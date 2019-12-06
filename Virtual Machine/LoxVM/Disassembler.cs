@@ -14,7 +14,7 @@ namespace LoxVM
             }
         }
 
-        private static int Disassemble(Chunk chunk, int offset)
+        public static int Disassemble(Chunk chunk, int offset)
         {
             Console.Write($"{FormatInt(offset)} ");
 
@@ -33,6 +33,16 @@ namespace LoxVM
             {
                 case (byte)OpCode.CONSTANT:
                     return ConstantInstruction("OP_CONSTANT", chunk, offset);
+                case (byte)OpCode.ADD:
+                    return SimpleInstruction("OP_ADD", offset);
+                case (byte)OpCode.SUBTRACT:
+                    return SimpleInstruction("OP_SUBTRACT", offset);
+                case (byte)OpCode.MULTIPLY:
+                    return SimpleInstruction("OP_MULTIPLY", offset);
+                case (byte)OpCode.DIVIDE:
+                    return SimpleInstruction("OP_DIVIDE", offset);
+                case (byte)OpCode.NEGATE:
+                    return SimpleInstruction("OP_NEGATE", offset);
                 case (byte)OpCode.RETURN:
                     return SimpleInstruction("OP_RETURN", offset);
                 default:

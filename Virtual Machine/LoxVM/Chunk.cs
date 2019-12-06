@@ -36,6 +36,8 @@ namespace LoxVM
             AddByte((byte)index, line);
         }
 
+        public IReadOnlyList<byte> Code { get { return code.AsReadOnly(); } }
+
         public IReadOnlyList<double> Constants { get { return constants.AsReadOnly(); } }
 
         public IReadOnlyList<int> Lines { get { return lines.AsReadOnly(); } }
