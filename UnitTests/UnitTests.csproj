@@ -1,19 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="16.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8DFB1BC2-DB67-4571-BF80-9019DFA6F8AE}</ProjectGuid>
+    <ProjectGuid>{8EDF4429-251A-416D-BB68-93F227191BCF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnitTests</RootNamespace>
     <AssemblyName>UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <Deterministic>false</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,36 +32,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="LoxFramework\InterpreterTests\Expressions.cs" />
-    <Compile Include="LoxFramework\InterpreterTests\Functions.cs" />
-    <Compile Include="LoxFramework\InterpreterTests\Globals.cs" />
-    <Compile Include="LoxFramework\InterpreterTests\InterpreterTester.cs" />
-    <Compile Include="LoxFramework\InterpreterTests\InvalidSyntax.cs" />
-    <Compile Include="LoxFramework\InterpreterTests\Loops.cs" />
-    <Compile Include="LoxFramework\InterpreterTests_Basic.cs" />
-    <Compile Include="LoxFramework\InterpreterTests_Variables.cs" />
-    <Compile Include="LoxFramework\InterpreterTests__Common.cs" />
-    <Compile Include="LoxFramework\InterpreterTests\Classes.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LoxFramework\LoxFramework.csproj">
-      <Project>{88ee3220-ff53-4066-b45c-20b25e1ee5db}</Project>
-      <Name>LoxFramework</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NUnit">
@@ -83,42 +51,68 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LoxFramework\TestFiles\Class_Constructor_InstantiatesObject.lox">
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Lox\Classes.cs" />
+    <Compile Include="Lox\Expressions.cs" />
+    <Compile Include="Lox\Functions.cs" />
+    <Compile Include="Lox\Globals.cs" />
+    <Compile Include="Lox\InterpreterTester.cs" />
+    <Compile Include="Lox\InvalidSyntax.cs" />
+    <Compile Include="Lox\Loops.cs" />
+    <Compile Include="Lox\Lox_Basic.cs" />
+    <Compile Include="Lox\Lox_Common.cs" />
+    <Compile Include="Lox\Lox_Variables.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lox\Lox.csproj">
+      <Project>{305ce63a-23db-4dc8-a32c-03986bfb3b86}</Project>
+      <Name>Lox</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestFiles\Class_Constructor_InstantiatesObject.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\Class_Constructor_ReturnNull_IsAllowed.lox">
+    <None Include="TestFiles\Class_Constructor_ReturnNull_IsAllowed.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\CountFunction.lox">
+    <None Include="TestFiles\Class_This_IsBoundToInstance.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\FibonacciFunction.lox">
+    <None Include="TestFiles\CountFunction.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\FibonnaciLoop.lox">
+    <None Include="TestFiles\FibonacciFunction.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\HelloWorld.lox">
+    <None Include="TestFiles\FibonnaciLoop.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\Loops_Nested_Break.lox">
+    <None Include="TestFiles\HelloWorld.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\Loops_Nested_Continue.lox">
+    <None Include="TestFiles\Loops_Nested_Break.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\MakeCounter.lox">
+    <None Include="TestFiles\Loops_Nested_Continue.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\SynchronizeTest.lox">
+    <None Include="TestFiles\MakeCounter.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\Class_This_IsBoundToInstance.lox">
+    <None Include="TestFiles\SynchronizeTest.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LoxFramework\TestFiles\VariableScope.lox">
+    <None Include="TestFiles\VariableScope.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>

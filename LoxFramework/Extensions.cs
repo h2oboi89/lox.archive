@@ -4,7 +4,7 @@ namespace LoxFramework
 {
     static class Extensions
     {
-        internal struct EnumeratedInstance<T>
+        public struct EnumeratedInstance<T>
         {
             public int Index;
             public T Value;
@@ -16,7 +16,7 @@ namespace LoxFramework
         /// <typeparam name="T">IEnumerable type.</typeparam>
         /// <param name="collection">Collection to enumerate over</param>
         /// <returns>Collection of structs with Index and Value of current item during iteration.</returns>
-        internal static IEnumerable<EnumeratedInstance<T>> Enumerate<T>(this IEnumerable<T> collection)
+        public static IEnumerable<EnumeratedInstance<T>> Enumerate<T>(this IEnumerable<T> collection)
         {
             var i = 0;
             foreach (var item in collection)
@@ -37,7 +37,7 @@ namespace LoxFramework
         ///     System.String.Empty if start is equal to the length of this 
         ///     instance or endIndex.
         /// </returns>
-        internal static string Extract(this string str, int startIndex, int endIndex)
+        public static string Extract(this string str, int startIndex, int endIndex)
         {
             return str.Substring(startIndex, endIndex - startIndex);
         }

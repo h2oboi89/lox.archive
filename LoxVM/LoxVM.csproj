@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3A257BA7-699C-4A03-B6F9-7F0BB1882389}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LoxFramework</RootNamespace>
-    <AssemblyName>LoxFramework</AssemblyName>
+    <ProjectGuid>{D4B45093-27D1-43B2-AE87-A00041272F91}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>LoxVM</RootNamespace>
+    <AssemblyName>LoxVM</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -21,16 +22,17 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\LoxFramework.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\LoxVM.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\LoxFramework.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\LoxVM.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,19 +45,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Parsing\Expression.cs" />
-    <Compile Include="Parsing\ParseError.cs" />
-    <Compile Include="Parsing\Parser.cs" />
-    <Compile Include="Parsing\Statement.cs" />
+    <Compile Include="Chunk.cs" />
+    <Compile Include="Disassembler.cs" />
+    <Compile Include="Functor.cs" />
+    <Compile Include="OpCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scanning\ScanError.cs" />
-    <Compile Include="Scanning\Scanner.cs" />
-    <Compile Include="Scanning\Token.cs" />
-    <Compile Include="Scanning\TokenType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

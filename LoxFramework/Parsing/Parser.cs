@@ -1,16 +1,19 @@
-﻿using LoxFramework.AST;
-using LoxFramework.Scanning;
+﻿using LoxFramework.Scanning;
 using System;
 using System.Collections.Generic;
 
 namespace LoxFramework.Parsing
 {
-    class Parser
+    public class Parser
     {
         private const byte MAX_ARGUMENT_COUNT = byte.MaxValue;
 
         private readonly List<Token> tokens;
         private int current = 0;
+
+        private static readonly List<ParseError> errors = new List<ParseError>();
+
+        public static IReadOnlyList<ParseError> Errors { get { return errors.AsReadOnly(); } }
 
         private Parser(IEnumerable<Token> tokens)
         {
@@ -19,6 +22,8 @@ namespace LoxFramework.Parsing
 
         public static IEnumerable<Statement> Parse(IEnumerable<Token> tokens)
         {
+            errors.Clear();
+
             return new Parser(tokens).Parse();
         }
 
@@ -79,7 +84,7 @@ namespace LoxFramework.Parsing
 
         private ParseException Error(Token token, string message)
         {
-            Interpreter.ParseError(token, message);
+            errors.Add(new ParseError(token, message));
             return new ParseException();
         }
 

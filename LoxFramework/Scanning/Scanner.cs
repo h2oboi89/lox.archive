@@ -5,7 +5,7 @@ namespace LoxFramework.Scanning
     /// <summary>
     /// Scans source code and generates <see cref="Token"/>s for the next part of the interpretation of the source.
     /// </summary>
-    static class Scanner
+    public static class Scanner
     {
         private static string _source;
         private static List<Token> _tokens;
@@ -33,6 +33,10 @@ namespace LoxFramework.Scanning
             { "while", TokenType.WHILE }
         };
 
+        private static List<ScanError> errors = new List<ScanError>();
+
+        public static IReadOnlyList<ScanError> Errors { get { return errors.AsReadOnly(); } }
+
         /// <summary>
         /// Scans the specified source and returns a collection of <see cref="Token"/>s.
         /// </summary>
@@ -40,6 +44,8 @@ namespace LoxFramework.Scanning
         /// <returns>Collection of <see cref="Token"/>s representing the source.</returns>
         public static IEnumerable<Token> Scan(string source)
         {
+            errors.Clear();
+
             _source = source;
             _tokens = new List<Token>();
             _start = 0;
@@ -95,7 +101,7 @@ namespace LoxFramework.Scanning
                     }
                     else
                     {
-                        Interpreter.ScanError(_line, $"Unexpected character '{c}'.");
+                        errors.Add(new ScanError(_line, $"Unexpected character '{c}'."));
                     }
                     break;
             }
@@ -200,7 +206,7 @@ namespace LoxFramework.Scanning
 
             if (IsAtEnd())
             {
-                Interpreter.ScanError(_line, "Unterminated string.");
+                errors.Add(new ScanError(_line, "Unterminated string."));
                 return;
             }
 
