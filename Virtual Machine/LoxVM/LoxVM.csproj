@@ -48,10 +48,12 @@
     </Compile>
     <Compile Include="Chunk.cs" />
     <Compile Include="Disassembler.cs" />
+    <Compile Include="Functor.cs" />
     <Compile Include="IReadonlyCollection.cs" />
     <Compile Include="OpCode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VirtualMachine.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
