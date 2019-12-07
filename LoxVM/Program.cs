@@ -1,41 +1,68 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace LoxVM
 {
     class Program
     {
+        private static readonly VirtualMachine vm = new VirtualMachine();
+
         static void Main(string[] args)
         {
-            var vm = new VirtualMachine();
 
-            var chunk = new Chunk();
+            var exitCode = 0;
 
-            chunk.AddConstant(1.2, 1);
-            chunk.AddConstant(3.4, 1);
-
-            chunk.AddInstruction(OpCode.ADD, 1);
-
-            chunk.AddConstant(5.6, 1);
-
-            chunk.AddInstruction(OpCode.DIVIDE, 1);
-
-            chunk.AddInstruction(OpCode.NEGATE, 1);
-
-            chunk.AddInstruction(OpCode.RETURN, 1);
-
-#if DEBUG
-            Disassembler.Disassemble(chunk, "test chunk");
-#endif
-
-            vm.Interpret(chunk);
+            if (args.Length == 0)
+            {
+                Repl();
+            }
+            else if (args.Length == 1)
+            {
+                RunFile(args[0]);
+            }
+            else
+            {
+                Console.WriteLine("Usage: LoxVM [path]");
+                exitCode = 1;
+            }
 
             if (Debugger.IsAttached)
             {
                 Console.ReadKey(true);
             }
 
-            Environment.Exit(0);
+            Environment.Exit(exitCode);
+        }
+
+        private static void Repl()
+        {
+            while (true)
+            {
+                Console.Write("> ");
+
+                var input = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(input))
+                {
+                    Console.WriteLine();
+                    break;
+                }
+
+                vm.Interpret(input);
+            }
+        }
+
+        private static void RunFile(string path)
+        {
+            var result = vm.Interpret(File.ReadAllText(path));
+
+            switch (result)
+            {
+                case VirtualMachine.Result.COMPILE_ERROR:
+                case VirtualMachine.Result.RUNTIME_ERROR:
+                    Environment.Exit(1);
+                    break;
+            }
         }
     }
-}

@@ -29,7 +29,7 @@ namespace Lox
 
             if (args.Length > 1)
             {
-                Console.WriteLine("Usage: lox [script]");
+                Console.WriteLine("Usage: lox [path]");
                 System.Environment.Exit(1);
             }
             else if (args.Length == 1)

@@ -16,11 +16,19 @@ namespace LoxVM
         private int InstructionPointer = 0;
         private readonly Stack<double> stack = new Stack<double>();
 
-        public Result Interpret(Chunk chunk)
+        public Result Interpret(string source)
         {
-            this.chunk = chunk;
+            try
+            {
+                chunk = Compiler.Compile(source);
 
-            return Execute();
+                return Execute();
+            }
+            catch (CompileException)
+            {
+                return Result.COMPILE_ERROR;
+            }
+
         }
 
         private byte Fetch()
