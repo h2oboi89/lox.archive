@@ -22,6 +22,12 @@ namespace UnitTests.Lox
         }
 
         [Test]
+        public void RightAssociativity()
+        {
+            TestStatement("var a; var b; var c; var d; d = 1; a = b = c = d; print(a); print(b); print(c); print(d);", "1", "1", "1", "1");
+        }
+
+        [Test]
         public void ScopingVariables()
         {
             TestException("{ var a = a; }", "Cannot read local variable in its own initializer.");
