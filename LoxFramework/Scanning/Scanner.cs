@@ -8,7 +8,7 @@ namespace LoxFramework.Scanning
     public static class Scanner
     {
         private static string _source;
-        private static List<Token> _tokens;
+        private static Token _token;
         private static int _start;
         private static int _current;
         private static int _line;
@@ -47,19 +47,24 @@ namespace LoxFramework.Scanning
             errors.Clear();
 
             _source = source;
-            _tokens = new List<Token>();
             _start = 0;
             _current = 0;
             _line = 1;
 
             while (!IsAtEnd())
             {
+                _token = null;
+
                 _start = _current;
                 ScanToken();
+
+                if (_token != null)
+                {
+                    yield return _token;
+                }
             }
 
-            _tokens.Add(new Token(TokenType.EOF, "", null, _line));
-            return _tokens;
+            yield return new Token(TokenType.EOF, "", null, _line);
         }
 
         private static void ScanToken()
@@ -224,7 +229,7 @@ namespace LoxFramework.Scanning
         private static void AddToken(TokenType type, object literal = null)
         {
             var text = _source.Extract(_start, _current);
-            _tokens.Add(new Token(type, text, literal, _line));
+            _token = new Token(type, text, literal, _line);
         }
 
         private static bool Match(char expected)

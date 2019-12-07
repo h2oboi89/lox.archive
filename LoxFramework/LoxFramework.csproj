@@ -57,5 +57,8 @@
     <Compile Include="Scanning\Token.cs" />
     <Compile Include="Scanning\TokenType.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Grammar.md" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

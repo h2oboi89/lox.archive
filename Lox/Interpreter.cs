@@ -45,7 +45,7 @@ namespace Lox
 
             hadError = false;
 
-            var tokens = Scanner.Scan(source);
+            var tokens = Scanner.Scan(source).ToList();
 
             foreach (var error in Scanner.Errors)
             {
