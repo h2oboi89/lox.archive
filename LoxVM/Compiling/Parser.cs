@@ -185,7 +185,12 @@ namespace LoxVM.Compiling
 
         internal static void Number()
         {
-            compilingChunk.AddConstant((double)PreviousToken.Literal, PreviousToken.Line);
+            compilingChunk.AddConstant(PreviousToken.Literal, PreviousToken.Line);
+        }
+
+        internal static void String()
+        {
+            compilingChunk.AddConstant(PreviousToken.Literal, PreviousToken.Line);
         }
 
         internal static void Literal()

@@ -60,7 +60,7 @@ namespace GenerateParseRules
             new RuleSpec(TokenType.LESS_EQUAL, null, "Binary", "COMPARISON"),
 
             new RuleSpec(TokenType.IDENTIFIER, null, null, "NONE"),
-            new RuleSpec(TokenType.STRING, null, null, "NONE"),
+            new RuleSpec(TokenType.STRING, "String", null, "NONE"),
             new RuleSpec(TokenType.NUMBER, "Number", null, "NONE"),
 
             new RuleSpec(TokenType.AND, null, null, "NONE"),

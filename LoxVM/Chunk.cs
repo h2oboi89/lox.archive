@@ -5,7 +5,7 @@ namespace LoxVM
     class Chunk
     {
         private readonly List<byte> code = new List<byte>();
-        private readonly List<double> constants = new List<double>();
+        private readonly List<object> constants = new List<object>();
         private readonly List<int> lines = new List<int>();
 
         public int Count { get { return code.Count; } }
@@ -29,7 +29,7 @@ namespace LoxVM
             }
         }
 
-        public void AddConstant(double value, int line)
+        public void AddConstant(object value, int line)
         {
             constants.Add(value);
 
@@ -41,7 +41,7 @@ namespace LoxVM
 
         public IReadOnlyList<byte> Code { get { return code.AsReadOnly(); } }
 
-        public IReadOnlyList<double> Constants { get { return constants.AsReadOnly(); } }
+        public IReadOnlyList<object> Constants { get { return constants.AsReadOnly(); } }
 
         public IReadOnlyList<int> Lines { get { return lines.AsReadOnly(); } }
     }

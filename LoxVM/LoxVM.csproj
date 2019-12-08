@@ -50,6 +50,7 @@
     <Compile Include="Compiling\Compiler.cs" />
     <Compile Include="Compiling\ParseException.cs" />
     <Compile Include="Debug\Disassembler.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Functor.cs" />
     <Compile Include="OpCode.cs" />
     <Compile Include="Compiling\ParseError.cs" />

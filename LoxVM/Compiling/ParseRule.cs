@@ -45,7 +45,7 @@ namespace LoxVM.Compiling
             new ParseRule(null, Parser.Binary, Precedence.COMPARISON),       // TokenType.LESS
             new ParseRule(null, Parser.Binary, Precedence.COMPARISON),       // TokenType.LESS_EQUAL
             new ParseRule(null, null, Precedence.NONE),                      // TokenType.IDENTIFIER
-            new ParseRule(null, null, Precedence.NONE),                      // TokenType.STRING
+            new ParseRule(Parser.String, null, Precedence.NONE),             // TokenType.STRING
             new ParseRule(Parser.Number, null, Precedence.NONE),             // TokenType.NUMBER
             new ParseRule(null, null, Precedence.NONE),                      // TokenType.AND
             new ParseRule(null, null, Precedence.NONE),                      // TokenType.BREAK
