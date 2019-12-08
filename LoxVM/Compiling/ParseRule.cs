@@ -1,5 +1,4 @@
 // Generated code, do not modify.
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 using Scanning;
 using System;
 
@@ -69,4 +68,3 @@ namespace LoxVM.Compiling
         };
     }
 }
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

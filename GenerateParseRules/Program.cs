@@ -127,7 +127,6 @@ namespace GenerateParseRules
         private static void GenerateClass()
         {
             output.Enqueue("// Generated code, do not modify.");
-            output.Enqueue("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
             output.Enqueue("using Scanning;");
             output.Enqueue("using System;");
             output.Enqueue();
@@ -144,7 +143,6 @@ namespace GenerateParseRules
             output.Enqueue("}");
 
             output.Enqueue("}");
-            output.Enqueue("#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member");
         }
 
         private static void GenerateStaticParts()
