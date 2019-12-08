@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{305CE63A-23DB-4DC8-A32C-03986BFB3B86}</ProjectGuid>
+    <ProjectGuid>{A393134E-7FFB-4A00-ACB4-D7B964C7F7D1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Lox</RootNamespace>
-    <AssemblyName>Lox</AssemblyName>
+    <RootNamespace>GenerateParseRules</RootNamespace>
+    <AssemblyName>GenerateParseRules</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -22,7 +22,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Lox.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,7 +31,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Lox.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,40 +46,14 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Runtime\AstInterpreter.cs" />
-    <Compile Include="Runtime\Environment.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Runtime\Globals\Clock.cs" />
-    <Compile Include="Runtime\Globals\LoxBuiltInFunction.cs" />
-    <Compile Include="Runtime\Globals\Print.cs" />
-    <Compile Include="Runtime\Globals\Reset.cs" />
-    <Compile Include="Interpreter.cs" />
-    <Compile Include="InterpreterEventArgs.cs" />
-    <Compile Include="Runtime\LoxBreakException.cs" />
-    <Compile Include="Runtime\LoxCallable.cs" />
-    <Compile Include="Runtime\LoxClass.cs" />
-    <Compile Include="Runtime\LoxContinueException.cs" />
-    <Compile Include="Runtime\LoxFunction.cs" />
-    <Compile Include="Runtime\LoxInstance.cs" />
-    <Compile Include="Runtime\LoxReturn.cs" />
-    <Compile Include="Runtime\LoxRunTimeException.cs" />
-    <Compile Include="Parsing\Expression.cs" />
-    <Compile Include="Parsing\ParseError.cs" />
-    <Compile Include="Parsing\Parser.cs" />
-    <Compile Include="Parsing\Statement.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Runtime\Resolver.cs" />
-    <Compile Include="Runtime\Scope.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Scanning\Scanning.csproj">
-      <Project>{03c26112-3269-485a-a198-38ddd61e8e67}</Project>
-      <Name>Scanning</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>$(TargetPath) $(SolutionDir)LoxVM</PostBuildEvent>
+  </PropertyGroup>
 </Project>

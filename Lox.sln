@@ -5,11 +5,10 @@ VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{588665F8-3D23-4F82-ADE7-9B9A89AFC1CC}"
 	ProjectSection(SolutionItems) = preProject
+		Grammar.md = Grammar.md
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 		version.txt = version.txt
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoxFramework", "LoxFramework\LoxFramework.csproj", "{3A257BA7-699C-4A03-B6F9-7F0BB1882389}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateAst", "GenerateAst\GenerateAst.csproj", "{76C357F4-0B3B-4AA3-8888-ABA3FCFE2A93}"
 EndProject
@@ -19,16 +18,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoxVM", "LoxVM\LoxVM.csproj", "{D4B45093-27D1-43B2-AE87-A00041272F91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateParseRules", "GenerateParseRules\GenerateParseRules.csproj", "{A393134E-7FFB-4A00-ACB4-D7B964C7F7D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scanning", "Scanning\Scanning.csproj", "{03C26112-3269-485A-A198-38DDD61E8E67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3A257BA7-699C-4A03-B6F9-7F0BB1882389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A257BA7-699C-4A03-B6F9-7F0BB1882389}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3A257BA7-699C-4A03-B6F9-7F0BB1882389}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3A257BA7-699C-4A03-B6F9-7F0BB1882389}.Release|Any CPU.Build.0 = Release|Any CPU
 		{76C357F4-0B3B-4AA3-8888-ABA3FCFE2A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{76C357F4-0B3B-4AA3-8888-ABA3FCFE2A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76C357F4-0B3B-4AA3-8888-ABA3FCFE2A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +44,14 @@ Global
 		{D4B45093-27D1-43B2-AE87-A00041272F91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4B45093-27D1-43B2-AE87-A00041272F91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4B45093-27D1-43B2-AE87-A00041272F91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A393134E-7FFB-4A00-ACB4-D7B964C7F7D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A393134E-7FFB-4A00-ACB4-D7B964C7F7D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A393134E-7FFB-4A00-ACB4-D7B964C7F7D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A393134E-7FFB-4A00-ACB4-D7B964C7F7D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03C26112-3269-485A-A198-38DDD61E8E67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03C26112-3269-485A-A198-38DDD61E8E67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03C26112-3269-485A-A198-38DDD61E8E67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03C26112-3269-485A-A198-38DDD61E8E67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

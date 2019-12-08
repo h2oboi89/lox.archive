@@ -2,6 +2,9 @@
 
 namespace Lox
 {
+    /// <summary>
+    /// Event arguments for <see cref="Interpreter.Out"/> and <see cref="Interpreter.Error"/> events.
+    /// </summary>
     public class InterpreterEventArgs : EventArgs
     {
         /// <summary>

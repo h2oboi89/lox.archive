@@ -74,10 +74,10 @@ namespace GenerateAst
         {
             output.Enqueue("// Generated code, do not modify.");
             output.Enqueue("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member");
-            output.Enqueue("using LoxFramework.Scanning;");
+            output.Enqueue("using Scanning;");
             output.Enqueue("using System.Collections.Generic;");
             output.Enqueue();
-            output.Enqueue("namespace LoxFramework.Parsing");
+            output.Enqueue("namespace Lox.Parsing");
             output.Enqueue("{");
 
             DefineVisitor(baseName, types);

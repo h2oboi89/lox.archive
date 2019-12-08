@@ -1,7 +1,9 @@
-﻿using LoxFramework.Parsing;
-using LoxFramework.Scanning;
+﻿using Lox.Parsing;
+using Lox.Runtime;
+using Scanning;
 using System;
 using System.Linq;
+using Environment = Lox.Runtime.Environment;
 
 namespace Lox
 {

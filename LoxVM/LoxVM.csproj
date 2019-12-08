@@ -46,14 +46,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chunk.cs" />
-    <Compile Include="CompileException.cs" />
-    <Compile Include="Compiler.cs" />
-    <Compile Include="Disassembler.cs" />
+    <Compile Include="Compiling\CompileException.cs" />
+    <Compile Include="Compiling\Compiler.cs" />
+    <Compile Include="Compiling\ParseException.cs" />
+    <Compile Include="Debug\Disassembler.cs" />
     <Compile Include="Functor.cs" />
     <Compile Include="OpCode.cs" />
-    <Compile Include="ParseError.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="Precedence.cs" />
+    <Compile Include="Compiling\ParseError.cs" />
+    <Compile Include="Compiling\Parser.cs" />
+    <Compile Include="Compiling\ParseRule.cs" />
+    <Compile Include="Compiling\Precedence.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VirtualMachine.cs" />
@@ -62,9 +64,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LoxFramework\LoxFramework.csproj">
-      <Project>{3A257BA7-699C-4A03-B6F9-7F0BB1882389}</Project>
-      <Name>LoxFramework</Name>
+    <ProjectReference Include="..\Scanning\Scanning.csproj">
+      <Project>{03c26112-3269-485a-a198-38ddd61e8e67}</Project>
+      <Name>Scanning</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

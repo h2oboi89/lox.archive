@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LoxVM.Compiling;
+using LoxVM.Debug;
+using System;
 using System.Collections.Generic;
 
 namespace LoxVM
