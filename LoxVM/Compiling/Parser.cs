@@ -28,13 +28,13 @@ namespace LoxVM.Compiling
             // check for empty input (EOF token)
             if (tokens.Count == 1)
             {
-                compilingChunk.AddOpCode(OpCode.RETURN, 1);
+                compilingChunk.AddOpCode(1, OpCode.RETURN);
                 return compilingChunk;
             }
 
             Expression();
 
-            compilingChunk.AddOpCode(OpCode.RETURN, PreviousToken.Line);
+            compilingChunk.AddOpCode(PreviousToken.Line, OpCode.RETURN);
 
             return compilingChunk;
         }
@@ -156,8 +156,8 @@ namespace LoxVM.Compiling
 
             switch (op.Type)
             {
-                case TokenType.BANG: compilingChunk.AddOpCode(OpCode.NOT, op.Line); break;
-                case TokenType.MINUS: compilingChunk.AddOpCode(OpCode.NEGATE, op.Line); break;
+                case TokenType.BANG: compilingChunk.AddOpCode(op.Line, OpCode.NOT); break;
+                case TokenType.MINUS: compilingChunk.AddOpCode(op.Line, OpCode.NEGATE); break;
             }
         }
 
@@ -170,10 +170,16 @@ namespace LoxVM.Compiling
 
             switch (op.Type)
             {
-                case TokenType.PLUS: compilingChunk.AddOpCode(OpCode.ADD, op.Line); break;
-                case TokenType.MINUS: compilingChunk.AddOpCode(OpCode.SUBTRACT, op.Line); break;
-                case TokenType.STAR: compilingChunk.AddOpCode(OpCode.MULTIPLY, op.Line); break;
-                case TokenType.SLASH: compilingChunk.AddOpCode(OpCode.DIVIDE, op.Line); break;
+                case TokenType.BANG_EQUAL: compilingChunk.AddOpCode(op.Line, OpCode.EQUAL, OpCode.NOT); break;
+                case TokenType.EQUAL: compilingChunk.AddOpCode(op.Line, OpCode.EQUAL); break;
+                case TokenType.GREATER: compilingChunk.AddOpCode(op.Line, OpCode.GREATER); break;
+                case TokenType.GREATER_EQUAL: compilingChunk.AddOpCode(op.Line, OpCode.LESS, OpCode.NOT); break;
+                case TokenType.LESS: compilingChunk.AddOpCode(op.Line, OpCode.LESS); break;
+                case TokenType.LESS_EQUAL: compilingChunk.AddOpCode(op.Line, OpCode.GREATER, OpCode.NOT); break;
+                case TokenType.PLUS: compilingChunk.AddOpCode(op.Line, OpCode.ADD); break;
+                case TokenType.MINUS: compilingChunk.AddOpCode(op.Line, OpCode.SUBTRACT); break;
+                case TokenType.STAR: compilingChunk.AddOpCode(op.Line, OpCode.MULTIPLY); break;
+                case TokenType.SLASH: compilingChunk.AddOpCode(op.Line, OpCode.DIVIDE); break;
             }
         }
 
@@ -186,9 +192,9 @@ namespace LoxVM.Compiling
         {
             switch (PreviousToken.Type)
             {
-                case TokenType.FALSE: compilingChunk.AddOpCode(OpCode.FALSE, PreviousToken.Line); break;
-                case TokenType.TRUE: compilingChunk.AddOpCode(OpCode.TRUE, PreviousToken.Line); break;
-                case TokenType.NIL: compilingChunk.AddOpCode(OpCode.NIL, PreviousToken.Line); break;
+                case TokenType.FALSE: compilingChunk.AddOpCode(PreviousToken.Line, OpCode.FALSE); break;
+                case TokenType.TRUE: compilingChunk.AddOpCode(PreviousToken.Line, OpCode.TRUE); break;
+                case TokenType.NIL: compilingChunk.AddOpCode(PreviousToken.Line, OpCode.NIL); break;
             }
         }
         #endregion

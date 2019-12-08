@@ -21,9 +21,12 @@ namespace LoxVM
             lines.Add(line);
         }
 
-        public void AddOpCode(OpCode opcode, int line)
+        public void AddOpCode(int line, params OpCode[] opcodes)
         {
-            AddByte((byte)opcode, line);
+            foreach (var opcode in opcodes)
+            {
+                AddByte((byte)opcode, line);
+            }
         }
 
         public void AddConstant(double value, int line)

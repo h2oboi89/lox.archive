@@ -76,6 +76,21 @@ namespace LoxVM
             return false;
         }
 
+        private bool AreEqual(object a, object b)
+        {
+            if (a == null && b == null)
+            {
+                return true;
+            }
+
+            if (a == null)
+            {
+                return false;
+            }
+
+            return a.Equals(b);
+        }
+
         private Result Execute()
         {
             while (true)
@@ -95,6 +110,13 @@ namespace LoxVM
                         case (byte)OpCode.NIL: stack.Push(null); break;
                         case (byte)OpCode.TRUE: stack.Push(true); break;
                         case (byte)OpCode.FALSE: stack.Push(false); break;
+                        case (byte)OpCode.EQUAL:
+                            var b = stack.Pop();
+                            var a = stack.Pop();
+                            stack.Push(AreEqual(a, b));
+                            break;
+                        case (byte)OpCode.GREATER: BinaryOperation(Functor.Greater()); break;
+                        case (byte)OpCode.LESS: BinaryOperation(Functor.Less()); break;
                         case (byte)OpCode.ADD: BinaryOperation(Functor.Add()); break;
                         case (byte)OpCode.SUBTRACT: BinaryOperation(Functor.Subtract()); break;
                         case (byte)OpCode.MULTIPLY: BinaryOperation(Functor.Multiply()); break;
@@ -119,15 +141,30 @@ namespace LoxVM
             }
         }
 
+        private void CheckOperands(object left, object right)
+        {
+            if (!IsNumber(right) || !IsNumber(left))
+            {
+                RuntimeError("Operands must be numbers.");
+            }
+        }
+
+        private void BinaryOperation(Func<double, double, bool> op)
+        {
+            var right = stack.Pop();
+            var left = stack.Pop();
+
+            CheckOperands(left, right);
+
+            stack.Push(op((double)left, (double)right));
+        }
+
         private void BinaryOperation(Func<double, double, double> op)
         {
             var right = stack.Pop();
             var left = stack.Pop();
 
-            if (!IsNumber(right) || !IsNumber(left))
-            {
-                RuntimeError("Operands must be numbers.");
-            }
+            CheckOperands(left, right);
 
             stack.Push(op((double)left, (double)right));
         }

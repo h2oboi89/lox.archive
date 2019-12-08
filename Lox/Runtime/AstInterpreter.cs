@@ -116,7 +116,7 @@ namespace Lox.Runtime
             return true;
         }
 
-        private bool IsEqual(object a, object b)
+        private bool AreEqual(object a, object b)
         {
             if (a == null && b == null)
             {
@@ -177,8 +177,8 @@ namespace Lox.Runtime
                 case TokenType.LESS_EQUAL:
                     CheckNumberOperands(expression.Op, left, right);
                     return (double)left <= (double)right;
-                case TokenType.BANG_EQUAL: return !IsEqual(left, right);
-                case TokenType.EQUAL_EQUAL: return IsEqual(left, right);
+                case TokenType.BANG_EQUAL: return !AreEqual(left, right);
+                case TokenType.EQUAL_EQUAL: return AreEqual(left, right);
                 // Arithmetic
                 case TokenType.MINUS:
                     CheckNumberOperands(expression.Op, left, right);

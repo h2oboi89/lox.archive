@@ -37,13 +37,13 @@ namespace LoxVM.Compiling
             new ParseRule(null, Parser.Binary, Precedence.FACTOR),           // TokenType.SLASH
             new ParseRule(null, Parser.Binary, Precedence.FACTOR),           // TokenType.STAR
             new ParseRule(Parser.Unary, null, Precedence.NONE),              // TokenType.BANG
-            new ParseRule(null, null, Precedence.NONE),                      // TokenType.BANG_EQUAL
+            new ParseRule(null, Parser.Binary, Precedence.EQUALITY),         // TokenType.BANG_EQUAL
             new ParseRule(null, null, Precedence.NONE),                      // TokenType.EQUAL
-            new ParseRule(null, null, Precedence.NONE),                      // TokenType.EQUAL_EQUAL
-            new ParseRule(null, null, Precedence.NONE),                      // TokenType.GREATER
-            new ParseRule(null, null, Precedence.NONE),                      // TokenType.GREATER_EQUAL
-            new ParseRule(null, null, Precedence.NONE),                      // TokenType.LESS
-            new ParseRule(null, null, Precedence.NONE),                      // TokenType.LESS_EQUAL
+            new ParseRule(null, Parser.Binary, Precedence.EQUALITY),         // TokenType.EQUAL_EQUAL
+            new ParseRule(null, Parser.Binary, Precedence.COMPARISON),       // TokenType.GREATER
+            new ParseRule(Parser.Binary, null, Precedence.COMPARISON),       // TokenType.GREATER_EQUAL
+            new ParseRule(null, Parser.Binary, Precedence.COMPARISON),       // TokenType.LESS
+            new ParseRule(null, Parser.Binary, Precedence.COMPARISON),       // TokenType.LESS_EQUAL
             new ParseRule(null, null, Precedence.NONE),                      // TokenType.IDENTIFIER
             new ParseRule(null, null, Precedence.NONE),                      // TokenType.STRING
             new ParseRule(Parser.Number, null, Precedence.NONE),             // TokenType.NUMBER

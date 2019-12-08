@@ -23,5 +23,15 @@ namespace LoxVM
         {
             return (left, right) => left / right;
         }
+
+        public static Func<double, double, bool> Greater()
+        {
+            return (left, right) => left > right;
+        }
+
+        public static Func<double, double, bool> Less()
+        {
+            return (left, right) => left < right;
+        }
     }
 }
