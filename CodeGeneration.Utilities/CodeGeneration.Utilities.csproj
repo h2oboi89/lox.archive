@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A393134E-7FFB-4A00-ACB4-D7B964C7F7D1}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>GenerateParseRules</RootNamespace>
-    <AssemblyName>GenerateParseRules</AssemblyName>
+    <ProjectGuid>{55B8FC14-0CE9-4F45-9071-2E2F2E44E5A5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CodeGeneration.Utilities</RootNamespace>
+    <AssemblyName>CodeGeneration.Utilities</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,28 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="Extensions.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="OutputQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CodeGeneration.Utilities\CodeGeneration.Utilities.csproj">
-      <Project>{55b8fc14-0ce9-4f45-9071-2e2f2e44e5a5}</Project>
-      <Name>CodeGeneration.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Scanning\Scanning.csproj">
-      <Project>{03C26112-3269-485A-A198-38DDD61E8E67}</Project>
-      <Name>Scanning</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>$(TargetPath) $(SolutionDir)LoxVM</PostBuildEvent>
-  </PropertyGroup>
 </Project>

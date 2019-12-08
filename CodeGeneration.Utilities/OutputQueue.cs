@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace GenerateAst
+namespace CodeGeneration.Utilities
 {
-    class OutputQueue
+    public class OutputQueue
     {
         private readonly Queue<string> output = new Queue<string>();
 
@@ -27,6 +27,7 @@ namespace GenerateAst
                         indent = tab.Repeat(tabLevel++);
                         break;
                     case "}":
+                    case "};":
                         indent = tab.Repeat(--tabLevel);
                         break;
                     case "":
