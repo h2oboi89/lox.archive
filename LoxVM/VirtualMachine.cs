@@ -1,5 +1,5 @@
 ﻿using LoxVM.Compiling;
-using LoxVM.Debug;
+using LoxVM.Debugging;
 using System;
 using System.Collections.Generic;
 

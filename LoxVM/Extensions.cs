@@ -63,5 +63,15 @@ namespace LoxVM
 
             return t;
         }
+
+        public static string Format(this byte b)
+        {
+            return "0x" + b.ToString("X2");
+        }
+
+        public static string Format(this int i)
+        {
+            return i.ToString("D04");
+        }
     }
 }

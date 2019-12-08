@@ -8,7 +8,13 @@ namespace LoxVM
         private readonly List<object> constants = new List<object>();
         private readonly List<int> lines = new List<int>();
 
-        public int Count { get { return code.Count; } }
+        public IReadOnlyList<byte> Code { get { return code.AsReadOnly(); } }
+
+        public IReadOnlyList<object> Constants { get { return constants.AsReadOnly(); } }
+
+        public IReadOnlyList<int> Lines { get { return lines.AsReadOnly(); } }
+
+        public int Size { get { return code.Count; } }
 
         public byte this[int i]
         {
@@ -31,6 +37,7 @@ namespace LoxVM
 
         public void AddConstant(object value, int line)
         {
+            // TODO: throw exception if greater than 256 constants
             constants.Add(value);
 
             var index = constants.Count - 1;
@@ -38,11 +45,5 @@ namespace LoxVM
             AddByte((byte)OpCode.CONSTANT, line);
             AddByte((byte)index, line);
         }
-
-        public IReadOnlyList<byte> Code { get { return code.AsReadOnly(); } }
-
-        public IReadOnlyList<object> Constants { get { return constants.AsReadOnly(); } }
-
-        public IReadOnlyList<int> Lines { get { return lines.AsReadOnly(); } }
     }
 }

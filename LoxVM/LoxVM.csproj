@@ -49,7 +49,7 @@
     <Compile Include="Compiling\CompileException.cs" />
     <Compile Include="Compiling\Compiler.cs" />
     <Compile Include="Compiling\ParseException.cs" />
-    <Compile Include="Debug\Disassembler.cs" />
+    <Compile Include="Debugging\Disassembler.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Functor.cs" />
     <Compile Include="OpCode.cs" />
