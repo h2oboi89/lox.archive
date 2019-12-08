@@ -43,12 +43,6 @@ namespace LoxVM
 
                 var input = Console.ReadLine();
 
-                if (string.IsNullOrEmpty(input))
-                {
-                    Console.WriteLine();
-                    break;
-                }
-
                 vm.Interpret(input);
             }
         }

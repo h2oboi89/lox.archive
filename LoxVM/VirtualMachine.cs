@@ -8,19 +8,26 @@ namespace LoxVM
         public enum Result
         {
             OK,
+            NOOP,
             COMPILE_ERROR,
             RUNTIME_ERROR
         }
 
         private Chunk chunk;
-        private int InstructionPointer = 0;
+        private int InstructionPointer;
         private readonly Stack<double> stack = new Stack<double>();
 
         public Result Interpret(string source)
         {
             try
             {
+                if (string.IsNullOrEmpty(source))
+                {
+                    return Result.NOOP;
+                }
+
                 chunk = Compiler.Compile(source);
+                InstructionPointer = 0;
 
                 return Execute();
             }
@@ -28,7 +35,6 @@ namespace LoxVM
             {
                 return Result.COMPILE_ERROR;
             }
-
         }
 
         private byte Fetch()

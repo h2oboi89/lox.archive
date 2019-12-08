@@ -55,7 +55,7 @@ namespace Lox
             // check for empty input (EOF token)
             if (!hadError && tokens.Count() == 1) return;
 
-            var statements = Parser.Parse(tokens);
+            var statements = Parser.Parse(tokens).ToList();
 
             foreach (var error in Parser.Errors)
             {

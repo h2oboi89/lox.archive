@@ -1,24 +1,54 @@
-﻿using LoxFramework.Parsing;
-using LoxFramework.Scanning;
+﻿using LoxFramework.Scanning;
 using System;
+using System.Linq;
 
 namespace LoxVM
 {
     static class Compiler
     {
+        private static bool hadError;
+
         public static Chunk Compile(string source)
         {
-            var tokens = Scanner.Scan(source);
+            hadError = false;
 
-            // TODO: check for scan errors
+            var tokens = Scanner.Scan(source).ToList();
 
-            var statements = Parser.Parse(tokens);
+            foreach (var error in Scanner.Errors)
+            {
+                Report(error.Line, "", error.Message);
+            }
 
-            // TODO: check for parser errors
+            if (hadError) throw new CompileException();
 
-            // TODO: iterate through statements and generate chunk(s)
+            var chunk = Parser.Parse(tokens);
 
-            throw new NotImplementedException();
+            foreach (var error in Parser.Errors)
+            {
+                ParseError(error.Token, error.Message);
+            }
+
+            if (hadError) throw new CompileException();
+
+            return chunk;
+        }
+
+        private static void Report(int line, string where, string message)
+        {
+            Console.Error.WriteLine($"[line {line}] Error{where}: {message}");
+            hadError = true;
+        }
+
+        internal static void ParseError(Token token, string message)
+        {
+            if (token.Type == TokenType.EOF)
+            {
+                Report(token.Line, " at end", message);
+            }
+            else
+            {
+                Report(token.Line, $" at '{token.Lexeme}'", message);
+            }
         }
     }
 }
