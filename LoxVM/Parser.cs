@@ -30,13 +30,13 @@ namespace LoxVM
             // check for empty input (EOF token)
             if (tokens.Count == 1)
             {
-                compilingChunk.AddInstruction(OpCode.RETURN, 1);
+                compilingChunk.AddOpCode(OpCode.RETURN, 1);
                 return compilingChunk;
             }
 
             Expression();
 
-            compilingChunk.AddInstruction(OpCode.RETURN, PreviousToken.Line);
+            compilingChunk.AddOpCode(OpCode.RETURN, PreviousToken.Line);
 
             return compilingChunk;
         }
@@ -145,7 +145,7 @@ namespace LoxVM
             new ParseRule(null, Binary, Precedence.FACTOR),     // TokenType.SLASH
             new ParseRule(null, Binary, Precedence.FACTOR),     // TokenType.STAR
 
-            new ParseRule(null, null, Precedence.NONE),         // TokenType.BANG
+            new ParseRule(Unary, null, Precedence.NONE),        // TokenType.BANG
             new ParseRule(null, null, Precedence.NONE),         // TokenType.BANG_EQUAL
             new ParseRule(null, null, Precedence.NONE),         // TokenType.EQUAL
             new ParseRule(null, null, Precedence.NONE),         // TokenType.EQUAL_EQUAL
@@ -163,16 +163,16 @@ namespace LoxVM
             new ParseRule(null, null, Precedence.NONE),         // TokenType.CLASS
             new ParseRule(null, null, Precedence.NONE),         // TokenType.CONTINUE
             new ParseRule(null, null, Precedence.NONE),         // TokenType.ELSE
-            new ParseRule(null, null, Precedence.NONE),         // TokenType.FALSE
+            new ParseRule(Literal, null, Precedence.NONE),      // TokenType.FALSE
             new ParseRule(null, null, Precedence.NONE),         // TokenType.FUN
             new ParseRule(null, null, Precedence.NONE),         // TokenType.FOR
             new ParseRule(null, null, Precedence.NONE),         // TokenType.IF
-            new ParseRule(null, null, Precedence.NONE),         // TokenType.NIL
+            new ParseRule(Literal, null, Precedence.NONE),      // TokenType.NIL
             new ParseRule(null, null, Precedence.NONE),         // TokenType.OR
             new ParseRule(null, null, Precedence.NONE),         // TokenType.RETURN
             new ParseRule(null, null, Precedence.NONE),         // TokenType.SUPER
             new ParseRule(null, null, Precedence.NONE),         // TokenType.THIS
-            new ParseRule(null, null, Precedence.NONE),         // TokenType.TRUE
+            new ParseRule(Literal, null, Precedence.NONE),      // TokenType.TRUE
             new ParseRule(null, null, Precedence.NONE),         // TokenType.VAR
             new ParseRule(null, null, Precedence.NONE),         // TokenType.WHILE
 
@@ -224,9 +224,10 @@ namespace LoxVM
 
             ParsePrecedence(Precedence.UNARY);
 
-            if (op.Type == TokenType.MINUS)
+            switch (op.Type)
             {
-                compilingChunk.AddInstruction(OpCode.NEGATE, op.Line);
+                case TokenType.BANG: compilingChunk.AddOpCode(OpCode.NOT, op.Line); break;
+                case TokenType.MINUS: compilingChunk.AddOpCode(OpCode.NEGATE, op.Line); break;
             }
         }
 
@@ -239,16 +240,26 @@ namespace LoxVM
 
             switch (op.Type)
             {
-                case TokenType.PLUS: compilingChunk.AddInstruction(OpCode.ADD, op.Line); break;
-                case TokenType.MINUS: compilingChunk.AddInstruction(OpCode.SUBTRACT, op.Line); break;
-                case TokenType.STAR: compilingChunk.AddInstruction(OpCode.MULTIPLY, op.Line); break;
-                case TokenType.SLASH: compilingChunk.AddInstruction(OpCode.DIVIDE, op.Line); break;
+                case TokenType.PLUS: compilingChunk.AddOpCode(OpCode.ADD, op.Line); break;
+                case TokenType.MINUS: compilingChunk.AddOpCode(OpCode.SUBTRACT, op.Line); break;
+                case TokenType.STAR: compilingChunk.AddOpCode(OpCode.MULTIPLY, op.Line); break;
+                case TokenType.SLASH: compilingChunk.AddOpCode(OpCode.DIVIDE, op.Line); break;
             }
         }
 
         private static void Number()
         {
             compilingChunk.AddConstant((double)PreviousToken.Literal, PreviousToken.Line);
+        }
+
+        private static void Literal()
+        {
+            switch (PreviousToken.Type)
+            {
+                case TokenType.FALSE: compilingChunk.AddOpCode(OpCode.FALSE, PreviousToken.Line); break;
+                case TokenType.TRUE: compilingChunk.AddOpCode(OpCode.TRUE, PreviousToken.Line); break;
+                case TokenType.NIL: compilingChunk.AddOpCode(OpCode.NIL, PreviousToken.Line); break;
+            }
         }
         #endregion
     }

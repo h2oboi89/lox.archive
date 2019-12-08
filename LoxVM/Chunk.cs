@@ -21,7 +21,7 @@ namespace LoxVM
             lines.Add(line);
         }
 
-        public void AddInstruction(OpCode opcode, int line)
+        public void AddOpCode(OpCode opcode, int line)
         {
             AddByte((byte)opcode, line);
         }

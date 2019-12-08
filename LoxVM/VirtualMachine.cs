@@ -15,7 +15,7 @@ namespace LoxVM
 
         private Chunk chunk;
         private int InstructionPointer;
-        private readonly Stack<double> stack = new Stack<double>();
+        private readonly Stack<object> stack = new Stack<object>();
 
         public Result Interpret(string source)
         {
@@ -37,6 +37,16 @@ namespace LoxVM
             }
         }
 
+        private void RuntimeError(string message)
+        {
+            var line = chunk.Lines[InstructionPointer];
+
+            Console.Error.WriteLine(message);
+            Console.Error.WriteLine($"[line {line}] in script");
+
+            throw new Exception();
+        }
+
         private byte Fetch()
         {
             return chunk.Code[InstructionPointer++];
@@ -47,9 +57,26 @@ namespace LoxVM
             return chunk.Constants[Fetch()];
         }
 
+        private bool IsNumber(object value)
+        {
+            return value.GetType() == typeof(double);
+        }
+
+        private bool IsBoolean(object value)
+        {
+            return value.GetType() == typeof(bool);
+        }
+
+        private bool IsFalsey(object value)
+        {
+            if (value == null) return true;
+            if (IsBoolean(value)) return !(bool)value;
+            return false;
+        }
+
         private Result Execute()
         {
-            for (; ; )
+            while (true)
             {
 #if DEBUG
                 PrintStack();
@@ -58,22 +85,34 @@ namespace LoxVM
 #endif
 
                 var instruction = Fetch();
-
-                switch (instruction)
+                try
                 {
-                    case (byte)OpCode.CONSTANT:
-                        stack.Push(ReadConstant());
-                        break;
-                    case (byte)OpCode.ADD: BinaryOperation(Functor.Add()); break;
-                    case (byte)OpCode.SUBTRACT: BinaryOperation(Functor.Subtract()); break;
-                    case (byte)OpCode.MULTIPLY: BinaryOperation(Functor.Multiply()); break;
-                    case (byte)OpCode.DIVIDE: BinaryOperation(Functor.Divide()); break;
-                    case (byte)OpCode.NEGATE:
-                        stack.Push(-stack.Pop());
-                        break;
-                    case (byte)OpCode.RETURN:
-                        Console.WriteLine($"{PrintValue(stack.Pop())}");
-                        return Result.OK;
+                    switch (instruction)
+                    {
+                        case (byte)OpCode.CONSTANT: stack.Push(ReadConstant()); break;
+                        case (byte)OpCode.NIL: stack.Push(null); break;
+                        case (byte)OpCode.TRUE: stack.Push(true); break;
+                        case (byte)OpCode.FALSE: stack.Push(false); break;
+                        case (byte)OpCode.ADD: BinaryOperation(Functor.Add()); break;
+                        case (byte)OpCode.SUBTRACT: BinaryOperation(Functor.Subtract()); break;
+                        case (byte)OpCode.MULTIPLY: BinaryOperation(Functor.Multiply()); break;
+                        case (byte)OpCode.DIVIDE: BinaryOperation(Functor.Divide()); break;
+                        case (byte)OpCode.NOT: stack.Push(IsFalsey(stack.Pop())); break;
+                        case (byte)OpCode.NEGATE:
+                            if (!IsNumber(stack.Peek()))
+                            {
+                                RuntimeError("Operand must be a number.");
+                            }
+                            stack.Push(-(double)stack.Pop());
+                            break;
+                        case (byte)OpCode.RETURN:
+                            Console.WriteLine($"{PrintValue(stack.Pop())}");
+                            return Result.OK;
+                    }
+                }
+                catch (Exception)
+                {
+                    return Result.RUNTIME_ERROR;
                 }
             }
         }
@@ -83,7 +122,12 @@ namespace LoxVM
             var right = stack.Pop();
             var left = stack.Pop();
 
-            stack.Push(op(left, right));
+            if (!IsNumber(right) || !IsNumber(left))
+            {
+                RuntimeError("Operands must be numbers.");
+            }
+
+            stack.Push(op((double)left, (double)right));
         }
 
         private void PrintStack()
@@ -96,9 +140,24 @@ namespace LoxVM
             Console.WriteLine();
         }
 
-        private static string PrintValue(double value)
+        private string PrintValue(object value)
         {
-            return value.ToString("G");
+            if (value == null)
+            {
+                return "nil";
+            }
+            else if (IsNumber(value))
+            {
+                return ((double)value).ToString("G");
+            }
+            else if (IsBoolean(value))
+            {
+                return (bool)value ? "true" : "false";
+            }
+            else
+            {
+                return value.ToString();
+            }
         }
     }
 }
