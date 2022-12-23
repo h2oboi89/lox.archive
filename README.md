@@ -1,8 +1,11 @@
-# [lox](https://github.com/h2oboi89/lox)
+# [lox](https://github.com/h2oboi89/lox.archive)
 
 ## Summary
 
 Lox interpreter written in C# (.NET Framework 4.8)
+
+This was my first attempt at Crafting Interpreters that sputtered out at some point.
+Doing it all over again in C# .NET 7 here: https://github.com/h2oboi89/lox
 
 Based on Bob Nystrom's Lox book
  - website: <a href="http://craftinginterpreters.com/">Crafting Interpreters</a>
